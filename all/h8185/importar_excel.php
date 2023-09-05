@@ -17,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 
-$hotel = 'Novotel Salvador Hangar Aeroporto';
+$hotel = $_SESSION['hotel_name'];
 $worksheet_password = 'h8185@Accor';
 
 $dir = substr(__DIR__, -5);
@@ -374,7 +374,6 @@ $linha_excel = 6;
 
 //Total Comissões
 foreach ($excel_all_planilha as $select) {
-    $id = ''; // You can remove this line if not needed
     $pmid = $select['pmid'];
     $hospede_hl = $select['hospede_hl'];
     $hospede_pms = $select['hospede_pms'];
@@ -742,14 +741,12 @@ $filtered_pms_data = array_filter($excel_all_pms, function ($pmsData) {
 $linha_excel = 6;
 
 foreach ($filtered_pms_data as $select) {
-    $id = ''; // You can remove this line if not needed
     $pmid = $select['pmid'];
     $guest_name = $select['guest_name'];
     $checkin = $select['checkin'];
     $checkout = $select['checkout'];
     $ratecode = $select['ratecode'];
     $pontuacao_total = $select['pontuacao_total'];
-    $pontuacao_room = $select['pontuacao_room'];
 
     $linha_excel++;
 
@@ -762,7 +759,7 @@ foreach ($filtered_pms_data as $select) {
     $activeWorksheet->setCellValue('E'.$linha_excel, $checkin);
     $activeWorksheet->setCellValue('F'.$linha_excel, $checkout);
     $activeWorksheet->setCellValue('G'.$linha_excel, $ratecode);
-    $activeWorksheet->setCellValue('H'.$linha_excel, ($pontuacao_total - $pontuacao_room * 0.05));
+    $activeWorksheet->setCellValue('H'.$linha_excel, $pontuacao_total);
     $activeWorksheet->setCellValue('I'.$linha_excel, '');
 
 }

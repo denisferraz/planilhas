@@ -12,9 +12,6 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 
-$hotel = 'Novotel Salvador Hangar Aeroporto';
-$worksheet_password = 'h8185@Accor';
-
 $dir = substr(__DIR__, -5);
 
 if($dir != $_SESSION['hotel']){
@@ -25,18 +22,13 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-//error_reporting(0);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+error_reporting(0);
 
-$query = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria_status WHERE id = 1");
-$query->execute();
+$limite_credito = 1500;
 
-while($select = $query->fetch(PDO::FETCH_ASSOC)){
-    $data_auditoria = $select['data_auditoria'];
-    $limite_credito = $select['limite_credito'];
-}
 
 if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_name"])) {
     $uploadedFile = $_FILES["excelFile"]["tmp_name"];
