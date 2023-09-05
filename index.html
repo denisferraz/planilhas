@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Planilhas Hotelaria</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <form class="form" action="login.php" method="POST">
+        <div class="card">
+            <div class="card-top">
+                <h2 class="title">Painel de Acesso</h2>
+                <p>Entrar com sua conta para Acessar as Planilhas</p><br>
+            </div>
+
+            <div class="card-group">
+                <label>Login</label>
+                <input type="text" minlength="6" maxlength="35" name="login" placeholder="Login" required>
+                <label>Senha</label>
+                <input type="password" minlength="4" maxlength="30" name="senha" placeholder="Senha" required>
+                <input type="hidden" name="id_job" value="login">
+                <div class="card-group btn"><button type="submit">Acessar</button></div>
+            </div>
+            <br>
+            <span class="card-group-span">Não tem Senha? Fale com o Administrador</span>
+        </div>
+    </form>
+
+</body>
+</html>
