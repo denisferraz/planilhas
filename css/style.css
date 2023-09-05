@@ -1,0 +1,191 @@
+:root {
+    --cor-marsala: #4A1010;
+    --cor-vermelha: #9D3241;
+    --cor-marrom: #8E604E;
+    --cor-rosa: #EEC2AE;
+    --cor-branca: #EEE9E3;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-top: 100px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card{
+    margin-top: 50px;
+    box-shadow: 1px 1px 5px #ccc;
+    background-color: hsl(0, 0%, 100%);
+    padding: 100px;
+    border-radius: 5px;
+    
+}
+
+.card-top{
+    text-align: center;
+}
+
+.card-group-right{
+    font-size: 14px;
+    float: right;
+    margin-top: 10px;
+    margin-right: 50px;
+}
+
+.card-group-left{
+    font-size: 14px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 50px;
+}
+
+.card-group{
+    margin-bottom: 10px;
+}
+
+.card-group > table{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+}
+
+.card-group > table tr {
+    border: 2px solid black;
+}
+
+.card-group > table td {
+    vertical-align: middle;
+    padding: 5px;
+}
+
+.card-group > label{
+    width: 100%;
+    color: hsl(0, 0%, 0%);
+    display: block;
+    font-weight: bold;
+}
+
+.card-group > input{
+    border-radius: 5px;
+    outline: 0;
+    width: 100%;
+    height: 25px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
+.card-group > button{
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    border: 0px;
+    outline: 0;
+}
+
+button{
+    border-radius: 3.5px;
+    background-color: var(--cor-marsala);
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+    width: 150px;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: var(--cor-marrom);
+}
+
+.botao-alterar {
+    background-color: darkred;
+    padding: 2px;
+    width: 100px;
+}
+
+.botao-alterar:hover{
+    background-color: black;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="file"] {
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #307533;
+}
+
+.botao-planilha-1{
+    border-radius: 3.5px;
+    background-color: darkgreen;
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.botao-planilha-1:hover{
+    background-color: greenyellow;
+    color: black;
+}
+
+.botao-planilha-2{
+    border-radius: 3.5px;
+    background-color: darkblue;
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+}
+
+.botao-planilha-2:hover{
+    background-color: rgb(81, 81, 247);
+    color: black;
+}
+
+.password-fields > label{
+    width: 100%;
+    color: hsl(0, 0%, 0%);
+    display: block;
+    font-weight: bold;
+}
+
+.password-fields > input{
+    border-radius: 5px;
+    outline: 0;
+    width: 100%;
+    height: 25px;
+    padding: 5px;
+    margin-bottom: 15px;
+}

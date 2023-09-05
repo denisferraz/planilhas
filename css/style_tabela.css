@@ -1,0 +1,313 @@
+:root {
+    --cor-marsala: #17104a;
+    --cor-vermelha: #9D3241;
+    --cor-marrom: #8E604E;
+    --cor-rosa: #299ac0;
+    --cor-branca: #efebe6;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+iframe{
+  width: 98%;
+  height: 70vh;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: var(--cor-vermelha);
+}
+
+#container-topo {
+  display: inherit;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.botao-topo, .botao-topo-chegadas, .botao-topo-inhouse, .botao-topo-saidas, .botao-topo-rooms {
+    padding: 3px;
+    border-radius: 5px;
+    border: 2px solid black;
+    width: 100px;
+    cursor: pointer;
+    margin: 3px;
+}
+
+.botao-topo-chegadas {
+  background-color: green;
+}
+
+.botao-topo-inhouse {
+  background-color: orange;
+}
+
+.botao-topo-saidas {
+  background-color: red;
+}
+
+.botao-topo-rooms {
+  background-color: var(--cor-rosa);
+}
+
+.botao-topo:hover, .botao-topo-chegadas:hover, .botao-topo-inhouse:hover, .botao-topo-saidas:hover, .botao-topo-rooms:hover {
+  background-color: black;
+  color: white;
+  border-color: darkred;
+}
+
+.botao-logout-right{
+  background-color: rgb(71, 71, 71);
+  color: white;
+  font-size: 13px;
+  margin-left: 75vw;
+}
+
+.botao-logout-left{
+  background-color: rgb(71, 71, 71);
+  color: white;
+  font-size: 13px;
+  margin-right: 75vw;
+}
+
+.botao-logout-right:hover, .botao-logout-left:hover{
+  background-color: rgb(176, 175, 175);
+  color: black;
+}
+
+.botao-acao {
+  padding: 2px;
+  border-radius: 5px;
+  border: 2px solid black;
+  cursor: pointer;
+  margin: 3px;
+  height: 40px;
+}
+
+.botao{
+  background-color: var(--cor-marsala);
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+  border: 2px solid var(--cor-marsala);
+  cursor: pointer;
+  height: 40px;
+}
+
+.botao:hover{
+  background-color: white;
+  color: var(--cor-marsala);
+  font-weight: bold;
+}
+
+.botao-rs-limpar{
+  background-color: darkgreen;
+  color: white;
+  padding: 2px;
+  border-radius: 5px;
+  border: 2px solid darkgreen;
+  cursor: pointer;
+}
+
+.botao-rs-sujar{
+  background-color: var(--cor-vermelha);
+  color: white;
+  padding: 2px;
+  border-radius: 5px;
+  border: 2px solid var(--cor-vermelha);
+  cursor: pointer;
+}
+
+.botao-rs-bloquear{
+  background-color: darkgrey;
+  color: white;
+  padding: 2px;
+  border-radius: 5px;
+  border: 2px solid darkgrey;
+  cursor: pointer;
+}
+.botao-rs-limpar:hover, .botao-rs-sujar:hover, .botao-rs-bloquear:hover{
+  background-color: white;
+  color: var(--cor-marsala);
+  font-weight: bold;
+}
+
+.botao-acao:hover {
+background-color: black;
+color: white;
+border-color: darkred;
+}
+
+.input-field{
+  width: 300px;
+  border: 3px solid black;
+  border-radius: 4px;
+  margin: 5px;
+}
+
+.input-field-auditoria{
+  width: 60px;
+  border: 3px solid black;
+  border-radius: 4px;
+  margin: 5px;
+}
+
+.input-field-auditoria-2{
+  width: 20px;
+  border: 3px solid black;
+  border-radius: 4px;
+  margin: 5px;
+}
+
+.submit {
+  padding: 5px;
+  background-color: var(--cor-marsala);
+  color: white;
+  border: 4px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submit:hover {
+  background-color: var(--cor-rosa);
+  border: 4px solid var(--cor-marsala);
+}
+
+.container {
+    width: 97%;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: var(--cor-branca);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black;
+  }
+  
+  .container fieldset{
+    border-radius: 5px;
+    border-width: 3px;
+    border-style: dotted;
+    border-color: var(--cor-marsala);
+  }
+
+  .container legend{
+    font-weight: bold;
+    color: var(--cor-marsala);
+  }
+
+  h1 {
+    text-align: center;
+    color: #333333;
+  }
+  
+  .appointment-list {
+    margin-top: 5px;
+  }
+  
+  .appointment, .appointment-chegadas, .appointment-inhouse, .appointment-saidas, .appointment-resumo-1, .appointment-resumo-2 {
+    padding: 3px;
+    margin-bottom: 3px;
+    border-radius: 5px;
+    border: 3px solid black;
+  }
+
+  .appointment{
+    background-color: var(--cor-rosa);
+  }
+
+  .appointment-chegadas{
+    background-color: green;
+  }
+
+  .appointment-inhouse{
+    background-color: orange;
+  }
+
+  .appointment-saidas{
+    background-color: red;
+  }
+
+  .appointment-resumo-1{
+    background-color: darkgrey;
+  }
+
+  .appointment-resumo-2{
+    background-color: grey;
+  }
+  
+  .appointment .time, .appointment-resumo-1 .time, .appointment-resumo-2 .time {
+    font-weight: bold;
+  }
+  
+  .appointment .name, .appointment-resumo-1 .name, .appointment-resumo-2 .name {
+    font-weight: bold;
+    color: #2f2f2f;
+  }
+
+button{
+    padding: 5px;
+    border-radius: 5px;
+    border: 2px solid black;
+    width: 100px;
+    cursor: pointer;
+}
+
+.black:hover{
+    background-color: black;
+    color: white;
+    border-color: darkred;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+table{
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 5px;
+  font-size: large;
+}
+
+th{
+  font-size: 30px;
+  background-color: orange;
+}
+
+tr.header {
+  background-color: yellow;
+}
+
+tr.darkgrey {
+  background-color: darkgrey;
+}
+
+tr.receitatotal {
+  background-color: greenyellow;
+}
+
+tr.orange {
+  background-color: orange;
+}
+
+td{
+  padding: 5px;
+  border: 1px solid black;
+}
+
+@media screen and (max-width:750px) {
+
+    .black{
+        background-color: black;
+        color: white;
+        border-color: darkred;
+    }
+    
+}
