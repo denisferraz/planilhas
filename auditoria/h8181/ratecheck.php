@@ -46,7 +46,7 @@ $quantidade_dados = count($_SESSION['dados_ratecheck']);
 <!-- Diarias -->
 <fieldset>
 <legend>Rate Check</legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
 <th colspan="7">Conferência de Diárias</th>
 <tr><td style="background-color: black" colspan="7"></td></tr>
@@ -121,7 +121,7 @@ foreach ($dados_ratecheck as $select) {
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
 <input type="hidden" name="id_job" value="ratecheck">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>

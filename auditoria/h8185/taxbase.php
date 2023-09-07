@@ -80,7 +80,7 @@ $sum_diferenca = '<b>R$</b>' . number_format($sum_diferenca, 2, ",", ".");
 <!-- Diarias -->
 <fieldset>
 <legend>Tax Base</legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
 <th colspan="17">Tax Base Calculaiton</th>
 <tr><td style="background-color: black" colspan="17"></td></tr>
@@ -178,7 +178,7 @@ foreach ($_SESSION['dados_taxbase'] as $select) {
 <b>Comentarios:</b><br>
 <textarea name="comentarios" id="" cols="100" rows="5" required><?php echo $comentarios; ?></textarea><br>
 <input type="hidden" name="id_job" value="taxbase">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>

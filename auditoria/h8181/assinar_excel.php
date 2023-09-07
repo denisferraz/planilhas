@@ -27,8 +27,7 @@ if($dir != $_SESSION['hotel']){
 //error_reporting(E_ALL);
 error_reporting(0);
 
-$limite_credito = 1500;
-
+$limite_credito = 1800;
 
 if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_name"])) {
     $uploadedFile = $_FILES["excelFile"]["tmp_name"];

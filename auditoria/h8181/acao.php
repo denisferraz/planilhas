@@ -20,6 +20,15 @@ if($dir != $_SESSION['hotel']){
 error_reporting(0);
 
 $id_job = mysqli_real_escape_string($conn_mysqli, $_POST['id_job']);
+if (isset($_POST['id_acao'])) {
+$id_acao = mysqli_real_escape_string($conn_mysqli, $_POST['id_acao']);
+}
+
+if($id_acao == 'salvar_parcial'){
+    $_SESSION[$id_job] = 0;
+}else{
+    $_SESSION[$id_job] = 1;
+}
 
 if($id_job == 'ratecheck' || $id_job == 'creditlimit' || $id_job == 'freestay'){
 

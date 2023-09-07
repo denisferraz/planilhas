@@ -205,6 +205,9 @@ if($arquivos_selecionados == 2){
 
 $_SESSION['status_auditoria'] = 'Em Andamento Pre';
 
+$_SESSION['ratecheck'] = 0;
+$_SESSION['creditlimit'] = 0;
+
 echo "<script>
     window.location.replace('auditoria.php')
     </script>";

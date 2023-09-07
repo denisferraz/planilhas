@@ -78,7 +78,7 @@ $query_qtd = count($dados_filtrados);
 <!-- Diarias -->
 <fieldset>
 <legend>Controle du Bac</legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
 <th colspan="18">Controle du Bac</th>
 <tr><td style="background-color: black" colspan="18"></td></tr>
@@ -218,7 +218,7 @@ foreach ($dados_filtrados as $select) {
 <textarea name="comentarios" id="" cols="100" rows="5" required><?php echo $comentarios; ?></textarea><br>
 <input type="hidden" name="quantidade" value="<?php echo $query_qtd ?>">
 <input type="hidden" name="id_job" value="controlebac">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>

@@ -53,7 +53,7 @@ $quantidade_dados = count($_SESSION['dados_freestay']);
 <!-- Diarias -->
 <fieldset>
 <legend>Free Stays</legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
 <th colspan="7">Cortesias e Uso da Casa</th>
 <tr><td style="background-color: black" colspan="7"></td></tr>
@@ -107,7 +107,7 @@ foreach ($_SESSION['dados_freestay'] as $select) {
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
 <input type="hidden" name="id_job" value="freestay">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>

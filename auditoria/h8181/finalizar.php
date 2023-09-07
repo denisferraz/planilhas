@@ -26,10 +26,10 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-//error_reporting(0);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+error_reporting(0);
 
     $data_auditoria = $_SESSION['data_auditoria'];
     $hotel = $_SESSION['hotel_name'];
@@ -39,6 +39,56 @@ error_reporting(E_ALL);
     $comentario_garantias = $_SESSION['comentario_garantias'];
     $comentario_taxbase = $_SESSION['comentario_taxbase'];
 
+//Valida se toda a auditoria foi preenchida
+if($_SESSION['freestay'] == 0){
+    echo "<script>
+    alert('Free Stay não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
+if($_SESSION['gerencial'] == 0){
+    echo "<script>
+    alert('Gerencial não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
+if($_SESSION['taxbase'] == 0){
+    echo "<script>
+    alert('Tax Base não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
+if($_SESSION['controlebac'] == 0){
+    echo "<script>
+    alert('Controle du Bac não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
+if($_SESSION['Garantias'] == 0){
+    echo "<script>
+    alert('Controle de Garantias não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
+if($_SESSION['ratecheck'] == 0){
+    echo "<script>
+    alert('Conferencia de Diárias não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
+if($_SESSION['creditlimit'] == 0){
+    echo "<script>
+    alert('Saldo Elevado não foi Validado')
+    window.location.replace('auditoria.php')
+    </script>";
+    exit();
+}
 
 $hotel = 'Auditoria Digital - '.$hotel.' ['.date('d/m/Y', strtotime("$data_auditoria")).']';
 $data_quando = date('d/m/Y - H:i:s');
@@ -1744,23 +1794,23 @@ foreach ($_SESSION['dados_taxbase'] as $select) {
     $spreadsheet->getActiveSheet()->getStyle('N'.$linha_excel)->applyFromArray($styleArray_difissok); 
     }
 
-$activeWorksheet->setCellValue('C'.$linha_excel, $qtd);
-$activeWorksheet->setCellValue('D'.$linha_excel, $rps_num);
-$activeWorksheet->setCellValue('E'.$linha_excel, $situacao);
-$activeWorksheet->setCellValue('F'.$linha_excel, date('d/m/Y', strtotime("$data_emissao")));
-$activeWorksheet->setCellValue('G'.$linha_excel, $guest_name);
-$activeWorksheet->setCellValue('H'.$linha_excel, $guest_empresa);
-$activeWorksheet->setCellValue('I'.$linha_excel, $room_number);
-$activeWorksheet->setCellValue('J'.$linha_excel, $valor_nf);
-$activeWorksheet->setCellValue('K'.$linha_excel, $valor_base_iss);
-$activeWorksheet->setCellValue('L'.$linha_excel, $valor_iss);
-$activeWorksheet->setCellValue('M'.$linha_excel, $valor_iss_esperado);
-$activeWorksheet->setCellValue('N'.$linha_excel, '');
-$activeWorksheet->setCellValue('O'.$linha_excel, $valor_iss_retido);
-$activeWorksheet->setCellValue('P'.$linha_excel, $valor_servico);
-$activeWorksheet->setCellValue('Q'.$linha_excel, $valor_aeb);
-$activeWorksheet->setCellValue('R'.$linha_excel, $valor_diversos);
-$activeWorksheet->setCellValue('S'.$linha_excel, $valor_evento);
+    $activeWorksheet->setCellValue('C'.$linha_excel, $qtd);
+    $activeWorksheet->setCellValue('D'.$linha_excel, $rps_num);
+    $activeWorksheet->setCellValue('E'.$linha_excel, $situacao);
+    $activeWorksheet->setCellValue('F'.$linha_excel, date('d/m/Y', strtotime("$data_emissao")));
+    $activeWorksheet->setCellValue('G'.$linha_excel, $guest_name);
+    $activeWorksheet->setCellValue('H'.$linha_excel, $guest_empresa);
+    $activeWorksheet->setCellValue('I'.$linha_excel, $room_number);
+    $activeWorksheet->setCellValue('J'.$linha_excel, $valor_nf);
+    $activeWorksheet->setCellValue('K'.$linha_excel, $valor_base_iss);
+    $activeWorksheet->setCellValue('L'.$linha_excel, $valor_iss);
+    $activeWorksheet->setCellValue('M'.$linha_excel, $valor_iss_esperado);
+    $activeWorksheet->setCellValue('N'.$linha_excel, '');
+    $activeWorksheet->setCellValue('O'.$linha_excel, $valor_iss_retido);
+    $activeWorksheet->setCellValue('P'.$linha_excel, $valor_servico);
+    $activeWorksheet->setCellValue('Q'.$linha_excel, $valor_aeb);
+    $activeWorksheet->setCellValue('R'.$linha_excel, $valor_diversos);
+    $activeWorksheet->setCellValue('S'.$linha_excel, $valor_evento);
 
 }
 
@@ -1880,6 +1930,14 @@ $spreadsheet->setActiveSheetIndexByName('Gerencial');
 
 
 $_SESSION['status_auditoria'] = 'Concluida';
+
+$_SESSION['freestay'] = 0;
+$_SESSION['gerencial'] = 0;
+$_SESSION['taxbase'] = 0;
+$_SESSION['controlebac'] = 0;
+$_SESSION['Garantias'] = 0;
+$_SESSION['ratecheck'] = 0;
+$_SESSION['creditlimit'] = 0;
 
 // Create a temporary file for download
 $filename = ucfirst($dir).' - Auditoria Digital - '.date('d-m-Y', strtotime("$data_auditoria")).'.xls';

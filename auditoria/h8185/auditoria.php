@@ -66,10 +66,47 @@ if($status_auditoria == 'Concluida'){
 <div class="botao-topo-chegadas"><a href="javascript:void(0)" onclick='window.open("taxbase.php","iframe")'><button>Tax Base</button></a></div>
 </div>
 <br>
+<div id="container-topo">
+<div class="botao-acao"><button onclick='window.open("importar.php","iframe")' class="botao">Importar</button></div>
+<div class="botao-acao"><button onclick="executarForm('salvar_parcial')" class="botao">Salvar Parcial</button></div>
+<div class="botao-acao"><button onclick='window.open("exportar.php","iframe")' class="botao">Exportar</button></div>
+</div>
 <?php if($status_auditoria == 'Em Andamento Pre'){ ?>
 <iframe name="iframe" id="iframe" src="ratecheck.php"></iframe>
 <?php }else{ ?>
 <iframe name="iframe" id="iframe" src="gerencial.php"></iframe>
 <?php } ?>
+
+<script>
+function executarForm(valor) {
+  var iframe = document.getElementById("iframe");
+  var iframeWindow = iframe.contentWindow;
+  var formulario = iframeWindow.document.getElementById("formulario_auditoria");
+
+  if(valor === 'salvar_parcial'){
+
+    // Remova o atributo 'required' de todos os elementos de input no formulário
+  var inputs = formulario.getElementsByTagName("input");
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].removeAttribute("required");
+
+  }
+  }
+
+  // Criar o elemento input hidden
+  var inputHidden = document.createElement("input");
+  inputHidden.type = "hidden";
+  inputHidden.name = "id_acao";
+  inputHidden.value = valor;
+
+  // Adicionar o elemento input hidden ao formulário
+  formulario.appendChild(inputHidden);
+
+  // Faça qualquer manipulação adicional no formulário, se necessário
+
+  formulario.submit();
+}
+</script>
+
 </body>
 </html>

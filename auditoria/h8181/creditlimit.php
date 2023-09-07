@@ -46,7 +46,7 @@ $limite_creditos = number_format($limite_credito, 2, ',', '.');
 <!-- Diarias -->
 <fieldset>
 <legend>Saldo Elevado</legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
 <th colspan="6">Saldo Elevado</th>
 <tr><td style="background-color: black" colspan="6"></td></tr>
@@ -106,7 +106,7 @@ foreach ($dados_creditlimit as $select) {
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
 <input type="hidden" name="id_job" value="creditlimit">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>

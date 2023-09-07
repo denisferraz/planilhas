@@ -216,9 +216,9 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) == 8
                         'auditoria_garantia' => '',
                         'auditoria_valor' => '',
                         'auditoria_pasta_limpa' => 'Sim',
-                        'auditoria_pasta_pdv' => '',
-                        'auditoria_pasta_pasta' => '',
-                        'auditoria_pasta_ass' => '',
+                        'auditoria_pasta_pdv' => 0,
+                        'auditoria_pasta_pasta' => 0,
+                        'auditoria_pasta_ass' => 0,
                         'auditoria_fnrh' => 'Sim',
                         'auditoria_doc' => 'Sim'
                     ];
@@ -388,6 +388,12 @@ $_SESSION['comentario_gerencial'] = '';
 $_SESSION['comentario_bac'] = '';
 $_SESSION['comentario_garantias'] = '';
 $_SESSION['comentario_taxbase'] = '';
+
+$_SESSION['freestay'] = 0;
+$_SESSION['gerencial'] = 0;
+$_SESSION['taxbase'] = 0;
+$_SESSION['controlebac'] = 0;
+$_SESSION['Garantias'] = 0;
 
 $_SESSION['dados_gerencial'] = array_merge($dados_gerencial1, $dados_gerencial2);
 

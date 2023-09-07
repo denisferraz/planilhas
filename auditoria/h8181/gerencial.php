@@ -177,7 +177,7 @@ $sales_total_ano = '<b>R$</b>' . number_format($sales_total_ano, 2, ",", ".");
 <div class="container">
 <fieldset>
 <legend> Manager Report </legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
     <br>
         <table>
 <th colspan="4">Relatorio Gerencial - <?php echo date('d/m/Y', strtotime("$data_auditoria")) ?></th>
@@ -387,7 +387,7 @@ $sales_total_ano = '<b>R$</b>' . number_format($sales_total_ano, 2, ",", ".");
 <b>Comentarios:</b><br>
 <textarea name="comentarios" id="" cols="100" rows="5" required><?php echo $comentarios; ?></textarea><br>
 <input type="hidden" name="id_job" value="gerencial">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>

@@ -67,7 +67,7 @@ $quantidade_dados = count($dados_filtrados);
 <!-- Diarias -->
 <fieldset>
 <legend>Garantias</legend>
-<form action="acao.php" method="POST">
+<form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
 <th colspan="7">Controle de Garantias</th>
 <tr><td style="background-color: black" colspan="7"></td></tr>
@@ -136,7 +136,7 @@ foreach ($dados_filtrados as $select) {
 <textarea name="comentarios" id="" cols="100" rows="5" required><?php echo $comentarios; ?></textarea><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
 <input type="hidden" name="id_job" value="Garantias">
-<input type="submit" class="submit" value="Salvar Dados">
+<input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
 </div>
