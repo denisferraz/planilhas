@@ -119,7 +119,7 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
         $datas = $worksheet->toArray();
         $qtd = 0;
 
-        foreach ($datas as $row) {
+        foreach ($datas as $data_row) {
 
             $qtd++;
 
@@ -127,8 +127,10 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
                 continue;
             }
 
-            $data_rows = str_replace('"', '', $row[0].$row[1].' '.$row[2].' '.$row[3].' '.$row[4].$row[5]);
+            if($data_row[24] == ''){
+            $data_rows = str_replace('"', '', $data_row[0].$data_row[1].' '.$data_row[2].' '.$data_row[3].' '.$data_row[4].$data_row[5]);
             $data_row = explode(';', $data_rows);
+            }
 
             $pmid = explode(" ", $data_row[0]);
 
