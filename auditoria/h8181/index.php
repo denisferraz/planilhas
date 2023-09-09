@@ -45,7 +45,7 @@ $status_auditoria = $_SESSION['status_auditoria'];
         <label><b>Data da Auditoria</b></label>
         <input type="date" name="data_auditoria" min="<?php echo $min_dia ?>" max="<?php echo $hoje ?>" value="<?php echo $hoje ?>" required><br>
         <label><b>Limite de Credito</b></label>
-        <input type="number" name="limite_credito" min="0" max="10000" value="1800" required><br><br>
+        <input type="number" name="limite_credito" min="0" max="10000" value="1500" required><br><br>
         <label><b>Rate Check Report by Room[CSV] + Credit Limit[CSV]</b></label>
         <input type="file" name="csvFile[]" accept=".csv" multiple required><br><br>
         <input type="submit" value="Upload">

@@ -1300,7 +1300,7 @@ foreach ($dados_filtrados_garantias as $select) {
     $guest_name = $select['guest_name'];
     $checkin = $select['checkin'];
     $checkout = $select['checkout'];
-    $auditoria_valor = $select['auditoria_valor'];
+    $auditoria_diarias = $select['auditoria_diarias'];
     $auditoria_garantia = $select['auditoria_garantia'];
 
     $linha_excel++;
@@ -1315,7 +1315,7 @@ $activeWorksheet->setCellValue('D'.$linha_excel, $room_number);
 $activeWorksheet->setCellValue('E'.$linha_excel, $guest_name);
 $activeWorksheet->setCellValue('F'.$linha_excel, date('d/m/Y', strtotime("$checkin")));
 $activeWorksheet->setCellValue('G'.$linha_excel, date('d/m/Y', strtotime("$checkout")));
-$activeWorksheet->setCellValue('H'.$linha_excel, $auditoria_valor);
+$activeWorksheet->setCellValue('H'.$linha_excel, $auditoria_diarias);
 $activeWorksheet->setCellValue('I'.$linha_excel, $auditoria_garantia);
 
 }
@@ -1574,7 +1574,7 @@ $activeWorksheet->setCellValue('E9', '[Reserva] - Hospede');
 $activeWorksheet->setCellValue('F9', 'Checkin');
 $activeWorksheet->setCellValue('G9', 'Checkout');
 $activeWorksheet->setCellValue('H9', 'Tipo Free Stay');
-$activeWorksheet->setCellValue('I9', 'Tipo Free Stay');
+$activeWorksheet->setCellValue('I9', 'Comentario');
 
   
 $quantidade_dados = count($_SESSION['dados_freestay']);
