@@ -40,6 +40,9 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
     $file_names = $_FILES["csvFile"]["name"];
     $file_tmp_names = $_FILES["csvFile"]["tmp_name"];
 
+    //Importar Loyalts Reports
+    $excel_all_pms = [];
+    
     for ($i = 0; $i < count($file_names); $i++) {
         $file_name = $file_names[$i];
         $tmp_name = $file_tmp_names[$i];
@@ -50,9 +53,6 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
             $file_handle = fopen($tmp_name, "r");
             if ($file_handle !== FALSE) {
                 $skip_first_line = true;
-    
-                //Importar Loyalts Reports
-                $excel_all_pms = [];
     
                 // Process each row in the CSV file
                 while (($data = fgetcsv($file_handle, 10000, ";")) !== FALSE) {
@@ -116,73 +116,78 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
         $worksheet = $spreadsheet->getActiveSheet();
 
         // Obtém todas as células da planilha como uma matriz
-        $data = $worksheet->toArray();
+        $datas = $worksheet->toArray();
+        $qtd = 0;
 
-        foreach ($data as $row) {
+        foreach ($datas as $row) {
 
-            if(empty($row[5])){
+            $qtd++;
+
+            if ($qtd <= 4) {
                 continue;
             }
 
-            if ($skip_first_line) {
-                $skip_first_line = false;
-                continue;
-            }
+            $data_rows = str_replace('"', '', $row[0].$row[1].' '.$row[2].' '.$row[3].' '.$row[4].$row[5]);
+            $data_row = explode(';', $data_rows);
 
-            $checkin = str_replace('/', '-', substr($row[2], 0, 10));
-            $checkout = str_replace('/', '-', substr($row[3], 0, 10));
-            $data_pontuacao = str_replace('/', '-', substr($row[5], 0, 10));
+            $pmid = explode(" ", $data_row[0]);
 
-            $colunaA_partes = explode("-", $checkin);
+            $checkin_partes = substr($data_row[2], 0, 10);
+            $checkout_partes = substr($data_row[3], 0, 10);
+            $data_pontuacao_partes = substr($data_row[5], 0, 10);
+
+            $colunaA_partes = explode("-", $checkin_partes);
             $checkin = $colunaA_partes[2] . "-" . $colunaA_partes[1] . "-" . $colunaA_partes[0];
-            $colunaB_partes = explode("-", $checkout);
+            $colunaB_partes = explode("-", $checkout_partes);
             $checkout = $colunaB_partes[2] . "-" . $colunaB_partes[1] . "-" . $colunaB_partes[0];
-            $colunaC_partes = explode("-", $data_pontuacao);
+            $colunaC_partes = explode("-", $data_pontuacao_partes);
             $data_pontuacao = $colunaC_partes[2] . "-" . $colunaC_partes[1] . "-" . $colunaC_partes[0];
 
-            $pmid = explode(" ", $row[0]);
-
-            if($row[18] == ''){
+            if($data_row[18] == ''){
             $reason =  'Cancelamento para Correção';
-            }else  if($row[21] == '' && $row[24] != 'null'){
-            $reason = $row[24];
+            }else  if($data_row[21] == '' && $data_row[24] != 'null'){
+            $reason = $data_row[24];
             }else{
-            $reason = $row[21];  
+            $reason = $data_row[21];  
             }
 
             $excel_all_hotellink[] = [
                 'pmid' => $pmid[2],
-                'card_name' => $row[4],
-                'data_pontuacao' => $data_pontuacao,
-                'checkin' => $checkin,
-                'checkout' => $checkout,
-                'ratecode' => $row[11],
-                'earnmidia' => $row[18],
-                'usuario' => $row[20],
-                'reserva' => $row[24],
-                'pontuacao_real' => $row[15],
-                'pontuacao_euro' => $row[14],
-                'pontuacao_burn' => $row[17],
+                'card_name' => $data_row[4],
+                'data_pontuacao' => $data_row[5],
+                'checkin' => $data_row[2],
+                'checkout' => $data_row[3],
+                'ratecode' => $data_row[11],
+                'earnmidia' => $data_row[18],
+                'usuario' => $data_row[20],
+                'reserva' => $data_row[24],
+                'pontuacao_real' => $data_row[15],
+                'pontuacao_euro' => $data_row[14],
+                'pontuacao_burn' => $data_row[17],
                 'reason' => $reason,
             ];
         
             $excel_all_planilha[] = [
                 'pmid' => $pmid[2],
-                'hospede_hl' => $row[4],
+                'hospede_hl' => $data_row[4],
                 'hospede_pms' => '',
-                'checkin' => $checkin,
-                'checkout' => $checkout,
-                'data_pontuacao' => $data_pontuacao,
-                'ratecode' => $row[11],
-                'pontuacao_hl' => $row[15],
+                'checkin' => $data_row[2],
+                'checkout' => $data_row[3],
+                'data_pontuacao' => $data_row[5],
+                'ratecode' => $data_row[11],
+                'pontuacao_hl' => $data_row[15],
                 'pontuacao_pms' => 0,
-                'burn' => $row[17],
-                'earnmidia' => $row[18],
-                'usuario' => $row[20],
+                'burn' => $data_row[17],
+                'earnmidia' => $data_row[18],
+                'usuario' => $data_row[20],
                 'reason' => $reason,
             ];
+
         }
 
+}else {
+    echo "Favor selecionar todos os aquivos.";
+}
 
 //Total ALL
 foreach ($excel_all_hotellink as $hotelLinkData) {
@@ -236,6 +241,7 @@ foreach ($excel_all_hotellink as $hotelLinkData) {
         }
     }
 }
+
 
 //Criar Planilha Excel
 $spreadsheet = new Spreadsheet();
@@ -972,9 +978,5 @@ $conn_mysqli->close();
 
 header('Location: index.php');
     exit();
-
-}else {
-    echo "Favor selecionar todos os aquivos.";
-}
 
 ?>
