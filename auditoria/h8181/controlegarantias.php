@@ -59,6 +59,7 @@ $quantidade_dados = count($dados_filtrados);
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../../css/style_tabela.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Auditoria Digital</title>
 </head>
 <body>
@@ -113,7 +114,7 @@ foreach ($dados_filtrados as $select) {
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkin")); ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
     <td>
-        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_diarias_<?php echo $quantidade ?>" value="<?php echo $auditoria_diarias ?>" required>
+        <input class="input-field-auditoria replace-comma" type="text" name="auditoria_diarias_<?php echo $quantidade ?>" value="<?php echo $auditoria_diarias ?>" required>
     </td>
     <td>
         <select name="auditoria_garantia_<?php echo $quantidade ?>">
@@ -143,14 +144,10 @@ foreach ($dados_filtrados as $select) {
 </fieldset>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var inputs = document.querySelectorAll('.replace-comma');
-
-    inputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            // Substituir vírgulas por pontos
-            this.value = this.value.replace(',', '.');
-        });
+$(document).ready(function() {
+    $('.replace-comma').on('input', function() {
+        // Substituir vírgulas por pontos
+        $(this).val($(this).val().replace(',', '.'));
     });
 });
 </script>

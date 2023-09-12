@@ -70,6 +70,7 @@ $query_qtd = count($dados_filtrados);
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../../css/style_tabela.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Auditoria Digital</title>
 </head>
 <body>
@@ -160,10 +161,10 @@ foreach ($dados_filtrados as $select) {
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
     <td style="background-color: <?php echo $cor_td; ?>">R$<?php echo number_format($room_balance ,2,",","."); ?></td>
     <td>
-        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_diarias_<?php echo $quantidade ?>" value="<?php echo $auditoria_diarias ?>" required>
+        <input class="input-field-auditoria replace-comma" type="text" name="auditoria_diarias_<?php echo $quantidade ?>" value="<?php echo $auditoria_diarias ?>" required>
     </td>
     <td>
-        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_extras_<?php echo $quantidade ?>" value="<?php echo $auditoria_extras ?>" required>
+        <input class="input-field-auditoria replace-comma" type="text" name="auditoria_extras_<?php echo $quantidade ?>" value="<?php echo $auditoria_extras ?>" required>
     </td>
     <td>
         <select name="auditoria_garantia_<?php echo $quantidade ?>">
@@ -180,7 +181,7 @@ foreach ($dados_filtrados as $select) {
         </select>
     </td>
     <td>
-        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_valor_<?php echo $quantidade ?>" value="<?php echo $auditoria_valor ?>" required>
+        <input class="input-field-auditoria replace-comma" type="text" name="auditoria_valor_<?php echo $quantidade ?>" value="<?php echo $auditoria_valor ?>" required>
     </td>
     <td>
         <select name="auditoria_pasta_limpa_<?php echo $quantidade ?>">
@@ -189,13 +190,13 @@ foreach ($dados_filtrados as $select) {
         </select>
     </td>
     <td>
-        <input class="input-field-auditoria-2" type="number" name="auditoria_pasta_pdv_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pdv ?>" required>
+        <input class="input-field-auditoria-2" type="text" name="auditoria_pasta_pdv_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pdv ?>" required>
     </td>
     <td>
-        <input class="input-field-auditoria-2" type="number" name="auditoria_pasta_pasta_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pasta ?>" required>
+        <input class="input-field-auditoria-2" type="text" name="auditoria_pasta_pasta_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pasta ?>" required>
     </td>
     <td>
-        <input class="input-field-auditoria-2" type="number" name="auditoria_pasta_ass_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_ass ?>" required>
+        <input class="input-field-auditoria-2" type="text" name="auditoria_pasta_ass_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_ass ?>" required>
     </td>
     <td align="center"><?php echo $adultos; ?></td>
     <td>
@@ -225,17 +226,12 @@ foreach ($dados_filtrados as $select) {
 </fieldset>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var inputs = document.querySelectorAll('.replace-comma');
-
-    inputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            // Substituir vírgulas por pontos
-            this.value = this.value.replace(',', '.');
-        });
+$(document).ready(function() {
+    $('.replace-comma').on('input', function() {
+        // Substituir vírgulas por pontos
+        $(this).val($(this).val().replace(',', '.'));
     });
 });
 </script>
-
 </body>
 </html>
