@@ -9,6 +9,12 @@ if ( $_SERVER['REQUEST_METHOD']=='GET' && realpath(__FILE__) == realpath( $_SERV
 
 date_default_timezone_set('America/Sao_Paulo');
 
+// Chave de criptografia
+$chave = 'SUA CHAVE_1 AQUI';
+$metodo = 'AES-256-CBC';
+//$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($metodo));
+$iv = 'SUA CHAVE_2 AQUI'; //precisa ter exatos 16 caractere
+
 //Local de Configuração
 $local_configuracao = 'Casa';
 
