@@ -37,7 +37,7 @@ error_reporting(0);
 <label id="room_type">Selecione o Tipo de Quarto</label>
     <select name="room_type" id="room_type">
 <?php
-$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 AND (room_status != 'O.O.O-CL.' AND room_status != 'O.O.O-DTY') GROUP BY room_type");
+$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_roomtypes WHERE id > 0");
 $query->execute();
 while($select = $query->fetch(PDO::FETCH_ASSOC)){  
 ?>

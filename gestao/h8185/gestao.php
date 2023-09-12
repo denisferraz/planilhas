@@ -5,6 +5,9 @@ session_start();
 require('../../conexao.php');
 require('../../verifica_login.php');
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 error_reporting(0);
 
 $dir = substr(__DIR__, -5);
@@ -19,6 +22,95 @@ if($dir != $_SESSION['hotel']){
 
 $hoje = date('Y-m-d');
 
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
+
+//Transformar Database em Arrays
+$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0");
+$query->execute();
+
+$presentlist_array = [];
+while($select = $query->fetch(PDO::FETCH_ASSOC)){
+    $dados_presentlist = $select['dados_presentlist'];
+    $id = $select['id'];
+
+// Para descriptografar os dados
+$dados = base64_decode($dados_presentlist);
+$dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+$dados_array = explode(';', $dados_decifrados);
+
+$presentlist_array[] = [
+    'id' => $id,
+    'guest_name' => $dados_array[0],
+    'checkin' => $dados_array[1],
+    'checkout' => $dados_array[2],
+    'noites' => $dados_array[3],
+    'adultos' => $dados_array[4],
+    'criancas' => $dados_array[5],
+    'room_ratecode' => $dados_array[6],
+    'room_msg' => $dados_array[9],
+    'room_number' => $dados_array[8],
+    'room_company' => $dados_array[10],
+    'room_balance' => $dados_array[7],
+    'alteracao' => $dados_array[11]
+];
+
+}
+
+$filtered_presentlist = [];
+foreach ($presentlist_array as $item) {
+    if ($item['checkout'] === $hoje) {
+        $filtered_presentlist[] = $item;
+    }
+}
+
+$query_chegadas = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0");
+$query_chegadas->execute();
+
+$arrivalslist_array = [];
+while($select = $query_chegadas->fetch(PDO::FETCH_ASSOC)){
+    $dados_arrivals = $select['dados_arrivals'];
+    
+// Para descriptografar os dados
+$dados = base64_decode($dados_arrivals);
+$dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+$dados_array = explode(';', $dados_decifrados);
+
+$arrivalslist_array[] = [
+    'id' => $id,
+    'guest_name' => $dados_array[0],
+    'noites' => $dados_array[1],
+    'adultos' => $dados_array[2],
+    'criancas' => $dados_array[3],
+    'room_type' => $dados_array[4],
+    'room_ratecode' => $dados_array[5],
+    'room_msg' => $dados_array[6],
+    'room_number' => $dados_array[7],
+    'alteracao' => $dados_array[8]
+];
+
+}
+
+$filtered_arrivalslist = [];
+foreach ($arrivalslist_array as $item) {
+    if ($item['alteracao'] === 'Pendente') {
+        $filtered_arrivalslist[] = $item;
+    }
+}
+
+$chegadas_qtd = count($filtered_arrivalslist);
+
+
+//Room Types
+$roomTypes = [];
+$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_roomtypes WHERE id > 0");
+$query->execute();
+while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+    $roomTypes[] = $row['room_type'];
+}
+
 //Quantidade Total de Apartamentos
 $roomTotalQuantidades = array();
 
@@ -32,11 +124,21 @@ foreach ($resultados_Total as $resultado_Total) {
     $roomTotalQuantidades[$room_type] = $count_Total;
 }
 
-$roomTypes = ['QEC', 'QSC', 'QEE', 'TWC', 'SKC', 'D2C'];
 $roomTotalQtd = array_sum(array_intersect_key($roomTotalQuantidades, array_flip($roomTypes)));
 
 //Status de todos os quartos LIMPOS SUJO BLOQUEADOS
 $roomStatusQuantidades = array();
+
+$roomStatusQuantidades = array(
+    'AV.-CL.' => 0,
+    'Limpo' => 0,
+    'Designado' => 0,
+    'AV.-DTY' => 0,
+    'Sujo' => 0,
+    'O.O.O-CL.' => 0,
+    'O.O.O-DTY' => 0,
+    'Bloqueado' => 0,
+);
 
 $query_rooms = $conexao->prepare("SELECT room_status, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 GROUP BY room_status");
 $query_rooms->execute();
@@ -56,14 +158,9 @@ $query_rooms_type = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM 
 $query_rooms_type->execute();
 $resultados_rooms_type = $query_rooms_type->fetchAll(PDO::FETCH_ASSOC);
 
-$roomTypeQuantidades = array(
-    'QEC' => 0,
-    'QSC' => 0,
-    'QEE' => 0,
-    'TWC' => 0,
-    'SKC' => 0,
-    'D2C' => 0
-);
+foreach ($roomTypes as $room_type) {
+    $roomTypeQuantidades[$room_type] = 0;
+}
 
 foreach ($resultados_rooms_type as $resultado_rooms_type) {
     $room_type = $resultado_rooms_type['room_type'];
@@ -74,18 +171,21 @@ foreach ($resultados_rooms_type as $resultado_rooms_type) {
 //Ocupados de Acordo ao In House
 $roomInhouseQuantidades = array();
 
-$query_Inhouse = $conexao->prepare("SELECT r.room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus AS r WHERE r.room_number IN (SELECT i.room_number FROM $dir"."_excel_gestaorecepcao_inhouse AS i WHERE i.id > 0 AND i.checkout > '{$hoje}') GROUP BY r.room_type");
+$room_numbers = [];
+foreach ($presentlist_array as $item) {
+    if ($item['checkout'] > $hoje) {
+        $room_numbers[] = $item['room_number'];
+    }
+}
+
+$room_numbers_str = implode(',', $room_numbers);
+$query_Inhouse = $conexao->prepare("SELECT r.room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus AS r WHERE r.room_number IN ($room_numbers_str) GROUP BY r.room_type");
 $query_Inhouse->execute();
 $resultados_Inhouse = $query_Inhouse->fetchAll(PDO::FETCH_ASSOC);
 
-$roomInhouseQuantidades = array(
-    'QEC' => 0,
-    'QSC' => 0,
-    'QEE' => 0,
-    'TWC' => 0,
-    'SKC' => 0,
-    'D2C' => 0
-);
+foreach ($roomTypes as $room_type) {
+    $roomInhouseQuantidades[$room_type] = 0;
+}
 
 foreach ($resultados_Inhouse as $resultado_Inhouse) {
     $room_type = $resultado_Inhouse['room_type'];
@@ -93,42 +193,43 @@ foreach ($resultados_Inhouse as $resultado_Inhouse) {
     $roomInhouseQuantidades[$room_type] = $count;
 }
 
-$roomTypes = ['QEC', 'QSC', 'QEE', 'TWC', 'SKC', 'D2C'];
 $roomTotalQtd -= array_sum(array_intersect_key($roomInhouseQuantidades, array_flip($roomTypes)));
 
-//Todas as Chegadas do Dia
-$query_chegadas = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0 AND alteracao = 'Pendente'");
-$query_chegadas->execute();
-$chegadas_qtd = $query_chegadas->rowCount();
-
-$query = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0 AND alteracao = 'Pendente' GROUP BY room_type");
-$query->execute();
-$resultados = $query->fetchAll(PDO::FETCH_ASSOC);
+//Agrupar Arrivals
+$grouped_arrivals = [];
+foreach ($arrivalslist_array as $item) {
+    $room_type = $item['room_type'];
+    
+    if (!isset($grouped_arrivals[$room_type])) {
+        $grouped_arrivals[$room_type] = [];
+    }
+    $grouped_arrivals[$room_type][] = $item;
+}
 
 $quantidades = array();
 
-$quantidades = array(
-    'QEC' => 0,
-    'QSC' => 0,
-    'QEE' => 0,
-    'TWC' => 0,
-    'SKC' => 0,
-    'D2C' => 0
-);
-
-foreach ($resultados as $resultado) {
-    $room_type = $resultado['room_type'];
-    $count = $resultado['count'];
-    $quantidades[$room_type] = $count;
+foreach ($roomTypes as $room_type) {
+    $quantidades[$room_type] = 0;
 }
 
-$roomTypes = ['QEC', 'QSC', 'QEE', 'TWC', 'SKC', 'D2C'];
+foreach ($grouped_arrivals as $room_type => $items) {
+    $count = count($items);
+    // Verifique se o $room_type está presente no array $quantidades antes de atribuir a contagem.
+    if (isset($quantidades[$room_type])) {
+        $quantidades[$room_type] = $count;
+    }
+}
+
 $roomTotalQtd -= array_sum(array_intersect_key($quantidades, array_flip($roomTypes)));
 
 //Saidas do Dia
-$query_saidas = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0 AND checkout = '{$hoje}'");
-$query_saidas->execute();
-$saidas_qtd = $query_saidas->rowCount();
+$filtered_saidas = [];
+foreach ($presentlist_array as $item) {
+    if ($item['checkout'] === $hoje && $item['alteracao'] === 'Pendente') {
+        $filtered_saidas[] = $item;
+    }
+}
+$saidas_qtd = count($filtered_saidas);
 
 //In House
 $query_house = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0");
@@ -187,14 +288,34 @@ echo "<meta HTTP-EQUIV='refresh' CONTENT='1800'>";
 <legend> Resumo do dia | (<?php echo $chegadas_qtd ?>) Chegadas | (<?php echo $saidas_qtd ?>) Saidas | (<?php echo $inhouse_qtd ?>) In House | Ocupação ( <?php echo round(($inhouse_qtd + $chegadas_qtd - $saidas_qtd) / $quantidade_quartos * 100, 2) ?>% )</legend>
 <div class="appointment-resumo-1">
 Chegadas/Vagos Limpo<br>
-<span class="name">QEC</span> (<span class="time"><?php echo $quantidades['QEC'] ?>/<?php echo $roomTypeQuantidades['QEC'] ?></span>) - <span class="name">QSC</span> (<span class="time"><?php echo $quantidades['QSC'] ?>/<?php echo $roomTypeQuantidades['QSC'] ?></span>) - <span class="name">D2C</span> (<span class="time"><?php echo $quantidades['D2C'] ?>/<?php echo $roomTypeQuantidades['D2C'] ?></span>) - <span class="name">QEE</span> (<span class="time"><?php echo $quantidades['QEE'] ?>/<?php echo $roomTypeQuantidades['QEE'] ?></span>) - <span class="name">TWC</span> (<span class="time"><?php echo $quantidades['TWC'] ?>/<?php echo $roomTypeQuantidades['TWC'] ?></span>) - <span class="name">SKC</span> (<span class="time"><?php echo $quantidades['SKC'] ?>/<?php echo $roomTypeQuantidades['SKC'] ?></span>)
+<?php
+$totalRoomTypes = count($roomTypes);
+foreach ($roomTypes as $index => $room_type) {
+    echo "<span class=\"name\">".$room_type."</span> (<span class=\"time\">".$quantidades[$room_type]."/".$roomTypeQuantidades[$room_type]."</span>)";
+    
+    if ($index != $totalRoomTypes - 1) {
+        echo " |-| ";
+    }
+
+}
+?>
 </div>
 <div class="appointment-resumo-2">
 <span class="name">Vagos Limpo</span> (<span class="time"><?php echo $roomStatusQuantidades['AV.-CL.']+$roomStatusQuantidades['Limpo']+$roomStatusQuantidades['Designado'] ?></span>) - <span class="name">Vagos Sujo</span> (<span class="time"><?php echo $roomStatusQuantidades['AV.-DTY']+$roomStatusQuantidades['Sujo'] ?></span>) - <span class="name">Bloqueados</span> (<span class="time"><?php echo $roomStatusQuantidades['O.O.O-CL.']+$roomStatusQuantidades['O.O.O-DTY']+$roomStatusQuantidades['Bloqueado'] ?></span>)
 </div>
 <div class="appointment-resumo-1">
 Disponiveis ( <b><?php echo $roomTotalQtd; ?></b> )<br>
-<span class="name">QEC</span> (<span class="time"><?php echo $roomTotalQuantidades['QEC']-$roomInhouseQuantidades['QEC']-$quantidades['QEC'] ?></span>) - <span class="name">QSC</span> (<span class="time"><?php echo $roomTotalQuantidades['QSC']-$roomInhouseQuantidades['QSC']-$quantidades['QSC'] ?></span>) - <span class="name">D2C</span> (<span class="time"><?php echo $roomTotalQuantidades['D2C']-$roomInhouseQuantidades['D2C']-$quantidades['D2C'] ?></span>) - <span class="name">QEE</span> (<span class="time"><?php echo $roomTotalQuantidades['QEE']-$roomInhouseQuantidades['QEE']-$quantidades['QEE'] ?></span>) - <span class="name">TWC</span> (<span class="time"><?php echo $roomTotalQuantidades['TWC']-$roomInhouseQuantidades['TWC']-$quantidades['TWC'] ?></span>) - <span class="name">SKC</span> (<span class="time"><?php echo $roomTotalQuantidades['SKC']-$roomInhouseQuantidades['SKC']-$quantidades['SKC'] ?></span>)
+<?php
+$totalRoomTypes = count($roomTypes);
+foreach ($roomTypes as $index => $room_type) {
+    echo "<span class=\"name\">".$room_type."</span> (<span class=\"time\">".$roomTotalQuantidades[$room_type]-$roomInhouseQuantidades[$room_type]-$quantidades[$room_type]."</span>)";
+    
+    if ($index != $totalRoomTypes - 1) {
+        echo " |-| ";
+    }
+
+}
+?>
 </div>
 </fieldset>
 </div>

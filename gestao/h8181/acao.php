@@ -14,12 +14,18 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 error_reporting(0);
 
 $id = mysqli_real_escape_string($conn_mysqli, $_GET['id']);
 $id = explode(';', base64_decode($id));
 
 $acao = $id[0];
+
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
 
 ?>
 
@@ -63,8 +69,16 @@ echo   "<script>
     $query_reserva = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id = :room_id");
     $query_reserva->execute(array('room_id' => $room_id));
     while($select_reserva = $query_reserva->fetch(PDO::FETCH_ASSOC)){
-        $guest_name = $select_reserva['guest_name'];
-        $noites = $select_reserva['noites'];
+        $dados_arrivals = $select_reserva['dados_arrivals'];
+
+        // Para descriptografar os dados
+        $dados = base64_decode($dados_arrivals);
+        $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+        $dados_array = explode(';', $dados_decifrados);
+
+        $guest_name = $dados_array[0];
+        $noites = $dados_array[1];
     }
 
 //Designar quarto
@@ -96,8 +110,36 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
     $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :room_status WHERE room_number = :room_number");
     $query->execute(array('room_status' => 'Designado', 'room_number' => $room_number));
 
-    $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET room_number = :room_number WHERE id = :room_id");
-    $query->execute(array('room_number' => $room_number, 'room_id' => $room_id));
+    $query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id = :id");
+    $query->execute(array('id' => $room_id));
+
+    $arrivalslist_array = [];
+    while($select = $query->fetch(PDO::FETCH_ASSOC)){
+        $dados_arrivals = $select['dados_arrivals'];
+
+    // Para descriptografar os dados
+    $dados = base64_decode($dados_arrivals);
+    $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+    $dados_array = explode(';', $dados_decifrados);
+
+        $guest_name = $dados_array[0];
+        $noites = $dados_array[1];
+        $adultos = $dados_array[2];
+        $criancas = $dados_array[3];
+        $room_type = $dados_array[4];
+        $room_ratecode = $dados_array[5];
+        $room_msg = $dados_array[6];
+        $alteracao = $dados_array[8];
+
+    }
+
+    $dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';'.$room_number.';Pendente';
+    $dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
+    $dados_final = base64_encode($dados_criptografados);
+
+    $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET dados_arrivals = :dados_arrivals WHERE id = :id");
+    $query->execute(array('dados_arrivals' => $dados_final, 'id' => $room_id));
 
     echo   "<script>
     alert('Quarto $room_number foi designado com Sucesso')
@@ -117,9 +159,34 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
     $reserva_id = $id[2];
     }
 
+    $query_reserva = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id = :reserva_id");
+    $query_reserva->execute(array('reserva_id' => $reserva_id));
+
+    $arrivalslist_array = [];
+    while($select = $query_reserva->fetch(PDO::FETCH_ASSOC)){
+        $dados_arrivals = $select['dados_arrivals'];
+
+    // Para descriptografar os dados
+    $dados = base64_decode($dados_arrivals);
+    $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+    $dados_array = explode(';', $dados_decifrados);
+
+        $guest_name = $dados_array[0];
+        $noites = $dados_array[1];
+        $adultos = $dados_array[2];
+        $criancas = $dados_array[3];
+        $room_type = $dados_array[4];
+        $room_ratecode = $dados_array[5];
+        $room_msg = $dados_array[6];
+        $room_number = $dados_array[7];
+        $alteracao = $dados_array[8];
+
+    }
+
     if($id_job == 'Checkin'){
-    $query = $conexao->prepare("SELECT  * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE room_number >= 0 AND id = :reserva_id");
-    $query->execute(array('reserva_id' => $reserva_id));
+    $query = $conexao->prepare("SELECT  * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id = :id");
+    $query->execute(array('id' => $reserva_id));
     $resultado = $query->rowCount();
 
     if($resultado == '' || empty($reserva_id)){
@@ -129,18 +196,6 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
         </script>";
         exit();
     }else{
-
-    $query_reserva = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id = :reserva_id");
-    $query_reserva->execute(array('reserva_id' => $reserva_id));
-    while($select_reserva = $query_reserva->fetch(PDO::FETCH_ASSOC)){
-        $guest_name = $select_reserva['guest_name'];
-        $noites = $select_reserva['noites'];
-        $room_number = $select_reserva['room_number'];
-        $room_ratecode = $select_reserva['room_ratecode'];
-        $adultos = $select_reserva['adultos'];
-        $criancas = $select_reserva['criancas'];
-        $room_msg = $select_reserva['room_msg'];
-    }
 
 //Finalizar Checkin
 ?>
@@ -194,6 +249,7 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
 </div>
         <input type="hidden" name="room_ratecode" value="<?php echo $room_ratecode ?>">
         <input type="hidden" name="room_number" value="<?php echo $room_number ?>">
+        <input type="hidden" name="room_type" value="<?php echo $room_type ?>">
         <input type="hidden" name="checkin" value="<?php echo $hoje ?>">
         <input type="hidden" name="checkout" value="<?php echo date('Y-m-d', strtotime("+$noites days")) ?>">
         <input type="hidden" name="noites" value="<?php echo $noites ?>">
@@ -235,14 +291,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
             exit();
     }else{
 
-    $query_reserva = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id = :reserva_id");
-    $query_reserva->execute(array('reserva_id' => $reserva_id));
-    while($select_reserva = $query_reserva->fetch(PDO::FETCH_ASSOC)){
-        $room_number = $select_reserva['room_number'];
-    }
+    $dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';;Cancelada';
+    $dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
+    $dados_final = base64_encode($dados_criptografados);
 
-    $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET alteracao = :alteracao, room_number = '' WHERE id = :reserva_id");
-    $query->execute(array('alteracao' => 'Cancelada', 'reserva_id' => $reserva_id));
+    $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET dados_arrivals = :alteracao WHERE id = :reserva_id");
+    $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
     if(!empty($room_number)){
     $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number = :room_number");
@@ -260,8 +314,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
 
     $room_number = $id[3];
 
-    $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET alteracao = :alteracao, room_number = '' WHERE id = :reserva_id");
-    $query->execute(array('alteracao' => 'Pendente', 'reserva_id' => $reserva_id));
+    $dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';;Pendente';
+    $dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
+    $dados_final = base64_encode($dados_criptografados);
+
+    $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET dados_arrivals = :alteracao WHERE id = :reserva_id");
+    $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
     $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number = :room_number");
     $query->execute(array('alteracao' => 'Sujo', 'room_number' => $room_number));
@@ -298,20 +356,36 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
         $query2 = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id = :reserva_id");
         $query2->execute(array('reserva_id' => $reserva_id));
         while($select = $query2->fetch(PDO::FETCH_ASSOC)){
-            $room_number = $select['room_number'];
-            $guest_name = $select['guest_name'];
-            $checkin = $select['checkin'];
-            $checkout = $select['checkout'];
-            $balance = $select['room_balance'];
-            $balance = number_format($balance, 2, ',', '.');
-            $room_balance = $select['room_balance'];
+            $dados_presentlist = $select['dados_presentlist'];
+            $id = $select['id'];
+        
+        // Para descriptografar os dados
+        $dados = base64_decode($dados_presentlist);
+        $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+        
+        $dados_array = explode(';', $dados_decifrados);
+        
+            $guest_name = $dados_array[0];
+            $checkin = $dados_array[1];
+            $checkout = $dados_array[2];
+            $noites = $dados_array[3];
+            $adultos = $dados_array[4];
+            $criancas = $dados_array[5];
+            $room_ratecode = $dados_array[6];
+            $room_msg = $dados_array[9];
+            $room_number = $dados_array[8];
+            $room_company = $dados_array[10];
+            $room_balance = floatval($dados_array[7]);
+            $alteracao = $dados_array[11];
+
+            $balance = number_format($room_balance, 2, ',', '.');
         }
 
         if($id_job == 'Checkout'){
 ?>
 <form action="acao.php?id=<?php echo base64_encode("Inhouse;Checkedout") ?>" method="POST">
 <div class="appointment">
-<label>Reserva: <b><?php echo $guest_name ?></b> [ <b><?php echo $room_number ?></b> ] Balance: <b>R$<?php echo $balance ?></b>- Periodo: <b><?php echo date('d/m/Y', strtotime("$checkin")) ?></b> a <b><?php echo date('d/m/Y', strtotime("$checkout")) ?></b></label>  
+<label>[ <b><?php echo $room_number ?></b> ] <b><?php echo $guest_name ?></b><br>Balance: <b>R$<?php echo $balance ?></b> - Periodo: <b><?php echo date('d/m/Y', strtotime("$checkin")) ?></b> a <b><?php echo date('d/m/Y', strtotime("$checkout")) ?></b></label>  
 </div>
     <div class="appointment">
     <label id="pagamento_tipo">Tipo Pagamento</label>
@@ -329,7 +403,7 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
             <option value="Outros">Outros</option>
         </select><br>
         <label id="pagamento_valor">Valor</label>
-        <input class="input-field" type="text" id="pagamento_valor" name="pagamento_valor" placeholder="<?php echo $balance ?>" required><br>
+        <input class="input-field" type="text" id="pagamento_valor" name="pagamento_valor" placeholder="<?php echo $room_balance ?>" required><br>
     </div>
         <input type="hidden" name="reserva_id" value="<?php echo $reserva_id ?>">
         <input type="hidden" name="id_job" value="Checkedout">
@@ -341,8 +415,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
         $pagamento_valor = mysqli_real_escape_string($conn_mysqli, $_POST['pagamento_valor']);
         $pagamento_tipo = mysqli_real_escape_string($conn_mysqli, $_POST['pagamento_tipo']);
 
-        $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET alteracao = :alteracao WHERE id = :reserva_id");
-        $query->execute(array('alteracao' => 'Checkedout', 'reserva_id' => $reserva_id));
+        $dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$room_balance.';'.$room_number.';'.$room_msg.';'.$room_company.';Checkedout';
+        $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+        $dados_final = base64_encode($dados_criptografados);
+
+        $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET dados_presentlist = :alteracao WHERE id = :reserva_id");
+        $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
         $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number = :room_number");
         $query->execute(array('alteracao' => 'Sujo', 'room_number' => $room_number));
@@ -360,7 +438,7 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
             ?>
 <form action="acao.php?id=<?php echo base64_encode("Inhouse;Novadata") ?>" method="POST">
 <div class="appointment">
-<label>Reserva: <b><?php echo $guest_name ?></b> [ <b><?php echo $room_number ?></b> ] - Periodo Original: <b><?php echo date('d/m/Y', strtotime("$checkin")) ?></b> a <b><?php echo date('d/m/Y', strtotime("$checkout")) ?></b></label>  
+<label>[ <b><?php echo $room_number ?></b> ] <b><?php echo $guest_name ?></b><br>Periodo Original: <b><?php echo date('d/m/Y', strtotime("$checkin")) ?></b> a <b><?php echo date('d/m/Y', strtotime("$checkout")) ?></b></label>  
 </div>
     <div class="appointment">
         <label id="reserva_nova_data">Nova Data</label>
@@ -376,8 +454,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
 
         $checkout = mysqli_real_escape_string($conn_mysqli, $_POST['reserva_nova_data']);
 
-        $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET alteracao = :alteracao, checkout = :checkout WHERE id = :reserva_id");
-        $query->execute(array('alteracao' => 'Prorrogado', 'checkout' => $checkout , 'reserva_id' => $reserva_id));
+        $dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$room_balance.';'.$room_number.';'.$room_msg.';'.$room_company.';Prorrogado';
+        $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+        $dados_final = base64_encode($dados_criptografados);
+
+        $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET dados_presentlist = :alteracao WHERE id = :reserva_id");
+        $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
         echo   "<script>
         alert('Reserva Prorrogada com Sucesso')
@@ -387,8 +469,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
 
         }else if($id_job == 'Reinstate'){
 
-        $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET alteracao = :alteracao WHERE id = :reserva_id");
-        $query->execute(array('alteracao' => 'Pendente', 'reserva_id' => $reserva_id));
+        $dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$room_balance.';'.$room_number.';'.$room_msg.';'.$room_company.';Pendente';
+        $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+        $dados_final = base64_encode($dados_criptografados);
+
+        $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET dados_presentlist = :alteracao WHERE id = :reserva_id");
+        $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
         $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number = :room_number");
         $query->execute(array('alteracao' => 'Ocupado', 'room_number' => $room_number));
@@ -440,8 +526,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
             $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_cashier (username, tipo_lancamento, pagamento_tipo, pagamento_valor, reserva_id, origem) VALUES (:username, :tipo_lancamento, :pagamento_tipo, :pagamento_valor, :reserva_id, :origem)");
             $query->execute(array('username' => $_SESSION['username'], 'tipo_lancamento' => 'Pagamento', 'pagamento_tipo' => $pagamento_tipo, 'pagamento_valor' => $pagamento_valor, 'reserva_id' => $reserva_id, 'origem' => 'inhouse'));
 
-            $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET room_balance = :room_balance WHERE id = :reserva_id");
-            $query->execute(array('room_balance' => $room_balance, 'reserva_id' => $reserva_id));
+            $dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$room_balance.';'.$room_number.';'.$room_msg.';'.$room_company.';Pendente';
+            $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+            $dados_final = base64_encode($dados_criptografados);
+
+            $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET dados_presentlist = :alteracao WHERE id = :reserva_id");
+            $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
             echo   "<script>
             alert('Pagamento Lançado com Sucesso')
@@ -478,8 +568,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
             $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_cashier (username, tipo_lancamento, pagamento_tipo, pagamento_valor, reserva_id, origem) VALUES (:username, :tipo_lancamento, :pagamento_tipo, :pagamento_valor, :reserva_id, :origem)");
             $query->execute(array('username' => $_SESSION['username'], 'tipo_lancamento' => 'Produto', 'pagamento_tipo' => $pagamento_tipo, 'pagamento_valor' => $pagamento_valor, 'reserva_id' => $reserva_id, 'origem' => 'inhouse'));
 
-            $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET room_balance = :room_balance WHERE id = :reserva_id");
-            $query->execute(array('room_balance' => $room_balance, 'reserva_id' => $reserva_id));
+            $dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$room_balance.';'.$room_number.';'.$room_msg.';'.$room_company.';Pendente';
+            $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+            $dados_final = base64_encode($dados_criptografados);
+
+            $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_inhouse SET dados_presentlist = :alteracao WHERE id = :reserva_id");
+            $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
             echo   "<script>
             alert('Produto Lançado com Sucesso')
@@ -502,8 +596,12 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
     $room_msg = mysqli_real_escape_string($conn_mysqli, $_POST['room_msg']);
     $room_type = mysqli_real_escape_string($conn_mysqli, $_POST['room_type']);
 
-    $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_arrivals (guest_name, noites, adultos, criancas, room_type, room_ratecode, room_msg, room_number, alteracao) VALUES (:guest_name, :noites, :adultos, :criancas, :room_type, :room_ratecode, :room_msg, :room_number, :alteracao)");
-    $query->execute(array('guest_name' => $guest_name, 'noites' => $noites, 'adultos' => $adultos, 'criancas' => $criancas, 'room_type' => $room_type, 'room_ratecode' => $room_ratecode, 'room_msg' => $room_msg, 'room_number' => '', 'alteracao' => 'Pendente'));
+    $dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';;Pendente';
+    $dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
+    $dados_final = base64_encode($dados_criptografados);
+
+    $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_arrivals (dados_arrivals) VALUES (:dados_arrivals)");
+    $query->execute(array('dados_arrivals' => $dados_final));
 
         echo   "<script>
         alert('Reserva em nome de $guest_name Confirmada!')

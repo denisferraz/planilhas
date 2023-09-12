@@ -15,15 +15,21 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 error_reporting(0);
 
 // Check if the CSV files were uploaded successfully
-if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0) {
+if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) == 3) {
     $file_names = $_FILES["csvFile"]["name"];
     $file_tmp_names = $_FILES["csvFile"]["tmp_name"];
 
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
+
     // Define the table names
-    $tables = array("$dir"."_excel_gestaorecepcao_cashier", "$dir"."_excel_gestaorecepcao_profile");
+    $tables = array("$dir"."_excel_gestaorecepcao_cashier");
 
     // Loop through the tables
     foreach ($tables as $table) {
@@ -104,9 +110,9 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
             //Importar Arrivals
             else if (strpos($file_name, ucfirst($dir)."_ArrivalList_") !== false) {
                 // Prepare the SQL statement for inserting data into the database
-                $sql = "INSERT INTO $tabela_excel (guest_name, noites, adultos, criancas, room_type, room_ratecode, room_msg, room_number, alteracao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO $tabela_excel (dados_arrivals) VALUES (?)";
                 $stmt = $conn_mysqli->prepare($sql);
-                $stmt->bind_param("sssssssss", $colunaA, $colunaB, $colunaC, $colunaD, $colunaE, $colunaF, $colunaG, $colunaH, $colunaI);
+                $stmt->bind_param("s", $dados_final);
     
                 // Process each row in the CSV file
                 while (($data = fgetcsv($file_handle, 1000, ";")) !== FALSE) {
@@ -114,15 +120,19 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
                         $skip_first_line = false;
                         continue;
                     }
-                    $colunaA = $data[0];
-                    $colunaB = $data[1];
-                    $colunaC = $data[2];
-                    $colunaD = $data[3];
-                    $colunaE = $data[7];
-                    $colunaF = $data[9];
-                    $colunaG = strip_tags($data[23]);
-                    $colunaH = $data[25];
-                    $colunaI = 'Pendente';
+                    $colunaA = $data[0]; //guest name
+                    $colunaB = $data[1]; //noites
+                    $colunaC = $data[2]; //adultos
+                    $colunaD = $data[3]; //crianças
+                    $colunaE = $data[7]; //room type
+                    $colunaF = $data[9]; //rate code
+                    $colunaG = strip_tags($data[23]); //comentarios
+                    $colunaH = $data[25]; //room number
+                    $colunaI = 'Pendente'; //alteração
+
+                    $dados_arrivalslist = $colunaA.';'.$colunaB.';'.$colunaC.';'.$colunaD.';'.$colunaE.';'.$colunaF.';'.$colunaG.';'.$colunaH.';'.$colunaI;
+                    $dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
+                    $dados_final = base64_encode($dados_criptografados);
     
                     // Execute the SQL statement
                     $stmt->execute();
@@ -135,9 +145,9 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
             //Importar In House
             else if (strpos($file_name, ucfirst($dir)."_PresentList_") !== false) {
                 // Prepare the SQL statement for inserting data into the database
-                $sql = "INSERT INTO $tabela_excel (guest_name, checkin, checkout, noites, adultos, criancas, room_ratecode, room_balance, room_number, room_msg, room_company, alteracao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO $tabela_excel (dados_presentlist) VALUES (?)";
                 $stmt = $conn_mysqli->prepare($sql);
-                $stmt->bind_param("ssssssssssss", $colunaA, $colunaB_formatada, $colunaC_formatada, $colunaD, $colunaE, $colunaF, $colunaG, $colunaH, $colunaI, $colunaJ, $colunaK, $colunaL);
+                $stmt->bind_param("s", $dados_final);
     
                 // Process each row in the CSV file
                 while (($data = fgetcsv($file_handle, 1000, ";")) !== FALSE) {
@@ -145,23 +155,27 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
                         $skip_first_line = false;
                         continue;
                     }
-                    $colunaA = $data[1];
-                    $colunaB = str_replace('/', '-', substr($data[3], 0, 10));
-                    $colunaC = str_replace('/', '-', substr($data[4], 0, 10));
-                    $colunaD = $data[5];
-                    $colunaE = $data[6];
-                    $colunaF = $data[7];
-                    $colunaG = $data[12];
-                    $colunaH = $data[15] * (-1);
-                    $colunaI = $data[21];
-                    $colunaJ = strip_tags($data[23]);
-                    $colunaK = $data[28];
-                    $colunaL = 'Pendente';
+                    $colunaA = $data[1]; //guest_name
+                    $colunaB = str_replace('/', '-', substr($data[3], 0, 10)); //checkin
+                    $colunaC = str_replace('/', '-', substr($data[4], 0, 10)); //checkout
+                    $colunaD = $data[5]; //noites
+                    $colunaE = $data[6]; //adultos
+                    $colunaF = $data[7]; //crianças
+                    $colunaG = $data[12]; //ratecode
+                    $colunaH = $data[15] * (-1); //balance
+                    $colunaI = $data[21]; //room number
+                    $colunaJ = strip_tags($data[23]); //room msg
+                    $colunaK = $data[17].' | '.$data[28]; //room company/travel
+                    $colunaL = 'Pendente'; //alteração
 
                     $colunaB_partes = explode("-", $colunaB);
                     $colunaB_formatada = $colunaB_partes[2] . "-" . $colunaB_partes[1] . "-" . $colunaB_partes[0];
                     $colunaC_partes = explode("-", $colunaC);
                     $colunaC_formatada = $colunaC_partes[2] . "-" . $colunaC_partes[1] . "-" . $colunaC_partes[0];
+
+                    $dados_presentlist = $colunaA.';'.$colunaB_formatada.';'.$colunaC_formatada.';'.$colunaD.';'.$colunaE.';'.$colunaF.';'.$colunaG.';'.$colunaH.';'.$colunaI.';'.$colunaJ.';'.$colunaK.';'.$colunaL;
+                    $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+                    $dados_final = base64_encode($dados_criptografados);
     
 
                     if (empty($colunaI)) {
@@ -171,15 +185,6 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
                     // Execute the SQL statement
                     $stmt->execute();
                 }
-    
-                // Deleta duplicidades
-                $sql = "DELETE t1 FROM $tabela_excel t1
-                INNER JOIN $tabela_excel t2
-                WHERE t1.id < t2.id
-                  AND t1.room_number = t2.room_number
-                  AND t1.room_number = t2.room_number";
-                $stmt = $conn_mysqli->prepare($sql);
-                $stmt->execute();
     
                 // Close the file handle and statement
                 fclose($file_handle);
@@ -194,25 +199,51 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
         }
     }
 
-    $query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0 AND room_number != ''");
+    $query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0");
     $query->execute();
     $query_qtd = $query->rowCount();
 
     if($query_qtd > 0){
         while($select = $query->fetch(PDO::FETCH_ASSOC)){
-            $room_number = $select['room_number'];
+            $dados_arrivals = $select['dados_arrivals'];
 
+            // Para descriptografar os dados
+            $dados = base64_decode($dados_arrivals);
+            $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+            $dados_array = explode(';', $dados_decifrados);
+            $room_number = $dados_array[7];
+
+            if($room_number != ''){
             $query2 = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = 'Designado' WHERE room_number = '{$room_number}'");
             $query2->execute();
+            }
         }
     }
+
+        //Cadastrar Room Types
+        $query = $conexao->prepare("TRUNCATE $dir"."_excel_gestaorecepcao_roomtypes");
+        $query->execute();
+
+        $query = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 GROUP BY room_type");
+        $query->execute();
+        while($select = $query->fetch(PDO::FETCH_ASSOC)){
+
+        $query_insert = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_roomtypes (room_type, room_type_qtd) VALUES (:room_type, :room_type_qtd)");
+        $query_insert->execute(array('room_type' => $select['room_type'], 'room_type_qtd' => $select['count']));
+
+        }
 
     echo "<script>
         window.location.replace('gestao.php')
         </script>";
     exit();
 } else {
-    echo "Nenhum arquivo foi selecionado para upload.";
+    echo "<script>
+        alert('Selecione todos os arquivos para gerar o Downtime')
+        window.location.replace('gestao.php')
+        </script>";
+    exit();
 }
 
 // Close the database connection

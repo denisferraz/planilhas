@@ -15,6 +15,9 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
+
 //Reservas Checkins do Dia
 $query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_cashier WHERE id > 0 AND tipo_lancamento = 'Produto' ORDER BY username");
 $query->execute();
@@ -49,11 +52,27 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
     $origem = $select['origem'];
     $username = $select['username'];
 
+    if($origem == 'arrivals'){
+        $lista = 'arrivals';
+        $id_dados = 7;
+    }else{
+        $lista = 'presentlist';
+        $id_dados = 8;
+    }
+
 $query2 = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_$origem WHERE id = '{$reserva_id}'");
 $query2->execute();
 while($select2 = $query2->fetch(PDO::FETCH_ASSOC)){
-    $room_number = $select2['room_number'];
-    $guest_name = $select2['guest_name'];
+    $dados_cripto = $select2['dados_'.$lista];
+
+    // Para descriptografar os dados
+    $dados = base64_decode($dados_cripto);
+    $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+    $dados_array = explode(';', $dados_decifrados);
+
+    $guest_name = $dados_array[0];
+    $room_number = $dados_array[$id_dados];
 }
 
     ?>

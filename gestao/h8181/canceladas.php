@@ -16,10 +16,51 @@ if($dir != $_SESSION['hotel']){
 }
 
 //Reservas Canceladas do Dia
-$query_chegadas = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0 AND alteracao = 'Cancelada'");
+$query_chegadas = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_arrivals WHERE id > 0");
 $query_chegadas->execute();
-$chegadas_qtd = $query_chegadas->rowCount();
 
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
+
+$arrivalslist_array = [];
+while($select = $query_chegadas->fetch(PDO::FETCH_ASSOC)){
+    $dados_arrivals = $select['dados_arrivals'];
+    $id = $select['id'];
+
+// Para descriptografar os dados
+$dados = base64_decode($dados_arrivals);
+$dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+$dados_array = explode(';', $dados_decifrados);
+
+$arrivalslist_array[] = [
+    'id' => $id,
+    'guest_name' => $dados_array[0],
+    'noites' => $dados_array[1],
+    'adultos' => $dados_array[2],
+    'criancas' => $dados_array[3],
+    'room_type' => $dados_array[4],
+    'room_ratecode' => $dados_array[5],
+    'room_msg' => $dados_array[6],
+    'room_number' => $dados_array[7],
+    'alteracao' => $dados_array[8]
+];
+
+}
+
+$filtered_array = [];
+foreach ($arrivalslist_array as $item) {
+    if ($item['alteracao'] === 'Cancelada') {
+        if (!isset($item['room_number'])) {
+            $item['room_number'] = '';
+        }
+        $filtered_array[] = $item;
+    }
+}
+
+usort($filtered_array, function ($a, $b) {
+    return strcmp($a['room_number'], $b['room_number']);
+});
 ?>
 
 <!DOCTYPE html>
@@ -38,9 +79,9 @@ $chegadas_qtd = $query_chegadas->rowCount();
 <div class="container">
 <!-- Chegadas -->
 <fieldset>
-<legend> (<?php echo $chegadas_qtd ?>) Cancelamentos Realizados</legend>
+<legend> (<?php echo count($filtered_array) ?>) Cancelamentos Realizados</legend>
 <?php
-while($select_chegadas = $query_chegadas->fetch(PDO::FETCH_ASSOC)){
+foreach ($filtered_array as $select_chegadas) {
     $id = $select_chegadas['id'];
     $guest_name = $select_chegadas['guest_name'];
     $noites = $select_chegadas['noites'];

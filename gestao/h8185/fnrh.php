@@ -14,7 +14,13 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 error_reporting(0);
+
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
 
 $reserva_id = mysqli_real_escape_string($conn_mysqli, $_POST['reserva_id']);
 $reserva_pagamento_tipo = mysqli_real_escape_string($conn_mysqli, $_POST['reserva_pagamento_tipo']);
@@ -37,18 +43,27 @@ $criancas = mysqli_real_escape_string($conn_mysqli, $_POST['criancas']);
 $room_msg = mysqli_real_escape_string($conn_mysqli, $_POST['room_msg']);
 $room_ratecode = mysqli_real_escape_string($conn_mysqli, $_POST['room_ratecode']);
 $room_number = mysqli_real_escape_string($conn_mysqli, $_POST['room_number']);
+$room_type = mysqli_real_escape_string($conn_mysqli, $_POST['room_type']);
 
 $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_cashier (username, tipo_lancamento, pagamento_tipo, pagamento_valor, reserva_id, origem) VALUES (:username, :tipo_lancamento, :pagamento_tipo, :pagamento_valor, :reserva_id, :origem)");
 $query->execute(array('username' => $_SESSION['username'], 'tipo_lancamento' => 'Pagamento', 'pagamento_tipo' => $reserva_pagamento_tipo, 'pagamento_valor' => $reserva_pagamento_valor, 'reserva_id' => $reserva_id, 'origem' => 'arrivals'));
 
-$query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET alteracao = :alteracao WHERE id = :reserva_id");
-$query->execute(array('alteracao' => 'Checkedin', 'reserva_id' => $reserva_id));
+$dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';'.$room_number.';Checkedin';
+$dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
+$dados_final = base64_encode($dados_criptografados);
+
+$query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET dados_arrivals = :alteracao WHERE id = :reserva_id");
+$query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
 $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number = :room_number");
 $query->execute(array('alteracao' => 'Ocupado', 'room_number' => $room_number));
 
-$query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_inhouse (guest_name, checkin, checkout, noites, adultos, criancas, room_ratecode, room_balance, room_number, room_msg, room_company, alteracao, reserva_id) VALUES (:guest_name, :checkin, :checkout, :noites, :adultos, :criancas, :room_ratecode, :room_balance, :room_number, :room_msg, :room_company, :alteracao, :reserva_id)");
-$query->execute(array('guest_name' => $guest_name, 'checkin' => $checkin, 'checkout' => $checkout, 'noites' => $noites, 'adultos' => $adultos, 'criancas' => $criancas, 'room_ratecode' => $room_ratecode, 'room_balance' => $reserva_pagamento_diaria, 'room_number' => $room_number, 'room_msg' => $room_msg, 'room_company' => 'No Company', 'alteracao' => 'Pendente', 'reserva_id' => $reserva_id));
+$dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$reserva_pagamento_valor.';'.$room_number.';'.$room_msg.';;Pendente';
+$dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
+$dados_final = base64_encode($dados_criptografados);
+
+$query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_inhouse (dados_presentlist, reserva_id) VALUES (:dados_presentlist, :reserva_id)");
+$query->execute(array('dados_presentlist' => $dados_final, 'reserva_id' => $reserva_id));
 
 ?>
 

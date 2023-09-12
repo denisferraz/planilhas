@@ -15,13 +15,59 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+error_reporting(0);
+
 $hoje = date('Y-m-d');
 
 //Hospede na Casa do dia
-$query_inhouse = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0 AND (alteracao = 'Pendente' OR alteracao = 'Prorrogado') ORDER BY room_number ASC");
+$query_inhouse = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0");
 $query_inhouse->execute();
-$inhouse_qtd = $query_inhouse->rowCount();
 
+// Chave de criptografia
+$chave = $_SESSION['hotel'].$chave;
+
+$presentlist_array = [];
+while($select = $query_inhouse->fetch(PDO::FETCH_ASSOC)){
+    $dados_presentlist = $select['dados_presentlist'];
+    $id = $select['id'];
+
+// Para descriptografar os dados
+$dados = base64_decode($dados_presentlist);
+$dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
+
+$dados_array = explode(';', $dados_decifrados);
+
+$presentlist_array[] = [
+    'id' => $id,
+    'guest_name' => $dados_array[0],
+    'checkin' => $dados_array[1],
+    'checkout' => $dados_array[2],
+    'noites' => $dados_array[3],
+    'adultos' => $dados_array[4],
+    'criancas' => $dados_array[5],
+    'room_ratecode' => $dados_array[6],
+    'room_msg' => $dados_array[9],
+    'room_number' => $dados_array[8],
+    'room_company' => $dados_array[10],
+    'room_balance' => $dados_array[7],
+    'alteracao' => $dados_array[11]
+];
+
+}
+
+$filtered_array = [];
+foreach ($presentlist_array as $item) {
+    if ($item['alteracao'] === 'Pendente' || $item['alteracao'] === 'Prorrogado') {
+        $filtered_array[] = $item;
+    }
+}
+
+usort($filtered_array, function ($a, $b) {
+    return $a['room_number'] - $b['room_number'];
+});
 ?>
 
 <!DOCTYPE html>
@@ -38,12 +84,12 @@ $inhouse_qtd = $query_inhouse->rowCount();
 <body>
 
 <div class="container">
-<!-- Chegadas -->
+<!-- In House -->
 <fieldset>
-<legend> (<?php echo $inhouse_qtd ?>) In House </legend>
+<legend> (<?php echo count($filtered_array) ?>) In House </legend>
 <form action="acao.php?id=<?php echo base64_encode("Inhouse;123") ?>" id="Inhouse" method="post">
 <?php
-while($select_inhouse = $query_inhouse->fetch(PDO::FETCH_ASSOC)){
+foreach ($filtered_array as $select_inhouse) {
     $id = $select_inhouse['id'];
     $guest_name = $select_inhouse['guest_name'];
     $checkin = $select_inhouse['checkin'];
@@ -55,7 +101,7 @@ while($select_inhouse = $query_inhouse->fetch(PDO::FETCH_ASSOC)){
     $room_msg = $select_inhouse['room_msg'];
     $room_number = $select_inhouse['room_number'];
     $room_company = $select_inhouse['room_company'];
-    $room_balance = $select_inhouse['room_balance'];
+    $room_balance = floatval($select_inhouse['room_balance']);
     $room_balance = number_format($room_balance, 2, ',', '.');
     echo "$room_msg";
 
