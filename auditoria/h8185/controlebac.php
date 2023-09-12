@@ -160,10 +160,10 @@ foreach ($dados_filtrados as $select) {
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
     <td style="background-color: <?php echo $cor_td; ?>">R$<?php echo number_format($room_balance ,2,",","."); ?></td>
     <td>
-        <input class="input-field-auditoria" type="text" name="auditoria_diarias_<?php echo $quantidade ?>" value="<?php echo $auditoria_diarias ?>" required>
+        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_diarias_<?php echo $quantidade ?>" value="<?php echo $auditoria_diarias ?>" required>
     </td>
     <td>
-        <input class="input-field-auditoria" type="text" name="auditoria_extras_<?php echo $quantidade ?>" value="<?php echo $auditoria_extras ?>" required>
+        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_extras_<?php echo $quantidade ?>" value="<?php echo $auditoria_extras ?>" required>
     </td>
     <td>
         <select name="auditoria_garantia_<?php echo $quantidade ?>">
@@ -174,11 +174,13 @@ foreach ($dados_filtrados as $select) {
         <option value="Pgto Direto - Cartão" <?php if ($auditoria_garantia == 'Pgto Direto - Cartão') echo 'selected'; ?>>Pgto Direto - Cartão</option>
         <option value="Pgto Direto - Cash" <?php if ($auditoria_garantia == 'Pgto Direto - Cash') echo 'selected'; ?>>Pgto Direto - Cash</option>
         <option value="Cortesia | House Use" <?php if ($auditoria_garantia == 'Cortesia | House Use') echo 'selected'; ?>>Cortesia | House Use</option>
+        <option value="PIX" <?php if ($auditoria_garantia == 'PIX') echo 'selected'; ?>>PIX</option>
+        <option value="Pre Autorização" <?php if ($auditoria_garantia == 'Pre Autorização') echo 'selected'; ?>>Pre Autorização</option>
         <option value="Outros" <?php if ($auditoria_garantia == 'Outros') echo 'selected'; ?>>Outros</option>
         </select>
     </td>
     <td>
-        <input class="input-field-auditoria" type="text" name="auditoria_valor_<?php echo $quantidade ?>" value="<?php echo $auditoria_valor ?>" required>
+        <input class="input-field-auditoria replace-comma" type="number" name="auditoria_valor_<?php echo $quantidade ?>" value="<?php echo $auditoria_valor ?>" required>
     </td>
     <td>
         <select name="auditoria_pasta_limpa_<?php echo $quantidade ?>">
@@ -187,13 +189,13 @@ foreach ($dados_filtrados as $select) {
         </select>
     </td>
     <td>
-        <input class="input-field-auditoria-2" type="text" name="auditoria_pasta_pdv_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pdv ?>" required>
+        <input class="input-field-auditoria-2" type="number" name="auditoria_pasta_pdv_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pdv ?>" required>
     </td>
     <td>
-        <input class="input-field-auditoria-2" type="text" name="auditoria_pasta_pasta_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pasta ?>" required>
+        <input class="input-field-auditoria-2" type="number" name="auditoria_pasta_pasta_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_pasta ?>" required>
     </td>
     <td>
-        <input class="input-field-auditoria-2" type="text" name="auditoria_pasta_ass_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_ass ?>" required>
+        <input class="input-field-auditoria-2" type="number" name="auditoria_pasta_ass_<?php echo $quantidade ?>" value="<?php echo $auditoria_pasta_ass ?>" required>
     </td>
     <td align="center"><?php echo $adultos; ?></td>
     <td>
@@ -222,5 +224,18 @@ foreach ($dados_filtrados as $select) {
 </form>
 </fieldset>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var inputs = document.querySelectorAll('.replace-comma');
+
+    inputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            // Substituir vírgulas por pontos
+            this.value = this.value.replace(',', '.');
+        });
+    });
+});
+</script>
+
 </body>
 </html>
