@@ -4,7 +4,29 @@ session_start();
 require('conexao.php');
 require('verifica_login.php');
 
-$query = $conexao->prepare("SELECT * FROM excel_users WHERE id > 0 AND hotel LIKE :hotels AND username != :username");
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+error_reporting(0);
+
+$hierarquia = [];
+if ($_SESSION['hierarquia'] == 'Supervisor' || $_SESSION['hierarquia'] == 'Coordenador' || $_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador') {
+  $hierarquia[] = 'Colaborador';
+}
+if ($_SESSION['hierarquia'] == 'Coordenador' || $_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador') {
+  $hierarquia[] = 'Supervisor';
+}
+if ($_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador') {
+  $hierarquia[] = 'Coordenador';
+}
+if ($_SESSION['hierarquia'] == 'Administrador') {
+  $hierarquia[] = 'Gerente';
+}
+
+$hierarquiaString = "'" . implode("','", $hierarquia) . "'";
+
+
+$query = $conexao->prepare("SELECT * FROM excel_users WHERE id > 0 AND hotel LIKE :hotels AND username != :username AND hierarquia IN ($hierarquiaString)");
 $query->execute(array('hotels' => '%' . $_SESSION['hotel'] . '%', 'username' => $_SESSION['username']));
 $query_qtd = $query->rowCount();
 ?>

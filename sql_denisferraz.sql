@@ -66,7 +66,7 @@ CREATE TABLE `excel_users` (
 --
 
 INSERT INTO `excel_users` (`id`, `username`, `userpassword`, `nome`, `hotel`, `hierarquia`, `userstatus`) VALUES
-(1, 'H8185FD', '81dc9bdb52d04dc20036dbd8313ed055', 'Denis Ferraz', 'h8185;h8181;hB275;h3147', 'Gerente', 'Ativo'),
+(1, 'H8185FD', '81dc9bdb52d04dc20036dbd8313ed055', 'Denis Ferraz', 'h8185;h8181;hB275;h3147', 'Administrador', 'Ativo'),
 (5, 'H8185RE', 'e8343e3aec2a1c5e792d62a13603f19a', 'Erica Rocha', 'h8185;h8181', 'Supervisor', 'Ativo'),
 (6, 'H8185ML', 'e8343e3aec2a1c5e792d62a13603f19a', 'Luiza Marques', 'h8185;h8181', 'Supervisor', 'Ativo'),
 (8, 'H8181PA', '4afe4d3ff3ff52198a8a6075a655ad03', 'Anderson Peres', 'h8185;h8181', 'Colaborador', 'Ativo'),
@@ -85,7 +85,7 @@ INSERT INTO `excel_users` (`id`, `username`, `userpassword`, `nome`, `hotel`, `h
 (35, 'H8181BB', 'e8343e3aec2a1c5e792d62a13603f19a', 'Bruno Brugni', 'h8185;h8181', 'Colaborador', 'Ativo'),
 (36, 'H8181GE', 'e8343e3aec2a1c5e792d62a13603f19a', 'Elton Goncalves', 'h8185;h8181', 'Colaborador', 'Ativo'),
 (39, 'H8181FG', 'e8343e3aec2a1c5e792d62a13603f19a', 'Geraldo Ferreira', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(40, 'H8185JJ', '81dc9bdb52d04dc20036dbd8313ed055', 'Jose Junior', 'h8185;h8181', 'Gerente', 'Ativo'),
+(40, 'H8185JJ', '81dc9bdb52d04dc20036dbd8313ed055', 'Jose Junior', 'hB275;h8185;h8181', 'Gerente', 'Ativo'),
 (42, 'H3147LD', 'e8343e3aec2a1c5e792d62a13603f19a', 'Daiane Lima', 'h3147', 'Gerente', 'Ativo'),
 (43, 'HB275FO', '1062b93a7e82d2f467b44aee06cafc92', 'Helder Pinheiro', 'hB275', 'Gerente', 'Ativo'),
 (44, 'H8185AC', '81dc9bdb52d04dc20036dbd8313ed055', 'Camila Ayres', 'h8185;h8181', 'Gerente', 'Ativo');

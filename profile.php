@@ -64,9 +64,19 @@ if($id_job == 'Senha'){
                 <label id="hierarquia">Hierarquia</label>
                 <select name="hierarquia" id="hierarquia">
                     <option value="Colaborador">Colaborador</option>
+                <?php
+                if($_SESSION['hierarquia'] == 'Coordenador' || $_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador'){
+                ?>
                     <option value="Supervisor">Supervisor</option>
+                <?php
+                } if($_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador'){
+                ?>
                     <option value="Coordenador">Coordenador</option>
+                <?php
+                } if($_SESSION['hierarquia'] == 'Administrador'){
+                ?>
                     <option value="Gerente">Gerente</option>
+                <?php } ?>
                 </select><br><br>
                 <label id="hotels">Hoteis</label><br>
                 <?php
@@ -135,9 +145,19 @@ if($id_job == 'Senha'){
     <label for="hierarquia">Hierarquia</label>
     <select name="hierarquia" id="hierarquia">
         <option value="Colaborador" <?php echo ($id[4] === 'Colaborador') ? 'selected' : ''; ?>>Colaborador</option>
+        <?php
+        if($_SESSION['hierarquia'] == 'Coordenador' || $_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador'){
+        ?>
         <option value="Supervisor" <?php echo ($id[4] === 'Supervisor') ? 'selected' : ''; ?>>Supervisor</option>
+        <?php
+        } if($_SESSION['hierarquia'] == 'Gerente' || $_SESSION['hierarquia'] == 'Administrador'){
+        ?>
         <option value="Coordenador" <?php echo ($id[4] === 'Coordenador') ? 'selected' : ''; ?>>Coordenador</option>
+        <?php
+        } if($_SESSION['hierarquia'] == 'Administrador'){
+        ?>
         <option value="Gerente" <?php echo ($id[4] === 'Gerente') ? 'selected' : ''; ?>>Gerente</option>
+        <?php } ?>
     </select><br><br>
     <label id="hotels">Hoteis</label><br>
                 <?php
