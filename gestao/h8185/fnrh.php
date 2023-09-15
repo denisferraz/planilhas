@@ -93,7 +93,7 @@ $query->execute(array('dados_presentlist' => $dados_final, 'reserva_id' => $rese
 <Center>
 <button onclick="printPage()" class="botao">Imprimir FNRH</button><br>
 <br>
-<h1>Novotel Salvador Hangar Aeroporto - FNRH</h1>
+<h1><?php echo $_SESSION['hotel_name'] ?> - FNRH</h1>
 <br>
 <div class="appointment">
     <label>[ <b><?php echo $room_number ?></b> ] <b><?php echo $guest_name ?></b> - Periodo: <b><?php echo date('d/m/Y', strtotime("$checkin")) ?></b> a <b><?php echo date('d/m/Y', strtotime("$checkout")) ?></b></label>  
