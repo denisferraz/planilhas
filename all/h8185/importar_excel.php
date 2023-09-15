@@ -134,6 +134,13 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
 
             $pmid = explode(" ", $data_row[0]);
 
+            if($data_row[7] == 'COURTESY'){
+                $data_row[2] = $data_row[5];
+                $data_row[3] = $data_row[5];
+                $data_row[11] = 'N/A';
+                $data_row[15] = $data_row[12];
+            }
+
             $checkin_partes = substr($data_row[2], 0, 10);
             $checkout_partes = substr($data_row[3], 0, 10);
             $data_pontuacao_partes = substr($data_row[5], 0, 10);
