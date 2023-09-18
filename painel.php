@@ -40,6 +40,11 @@ if (isset($_POST['hotel'])) {
 <body>
 <span class="card-group-right"><a href="logout.php"><button>Clique aqui para Sair</button></a></span>
 <?php
+if($_SESSION['hierarquia'] == 'Administrador'){
+$id = base64_encode('Ver,123');
+?>
+<span class="card-group-right"><a href="configuracoes.php?id=<?php echo $id; ?>"><button>Configurações</button></a></span>
+<?php }
 if($_SESSION['hierarquia'] != 'Colaborador'){
 $id = base64_encode('Novo,123');
 ?>
