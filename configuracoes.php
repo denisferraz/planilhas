@@ -196,6 +196,35 @@ $query_create = $conexao->prepare("CREATE TABLE `$tabela_nome` (
 $query_create->execute();
 
 
+//Criar Pastas
+function recursiveCopy($source, $dest) {
+  if (is_dir($source)) {
+      if (!is_dir($dest)) {
+          mkdir($dest, 0777, true);
+      }
+      $files = scandir($source);
+      foreach ($files as $file) {
+          if ($file != "." && $file != "..") {
+              recursiveCopy("$source/$file", "$dest/$file");
+          }
+      }
+  } else {
+      copy($source, $dest);
+  }
+}
+
+$diretorio = str_replace('\\', '/', __DIR__);
+$rid = strtolower($hotel_rid);
+
+$pastas = ['gestao', 'comissao', 'auditoria', 'all'];
+
+foreach($pastas as $pasta){
+$sourceDir = $diretorio . '/'.$pasta.'/h8181';
+$destDir = $diretorio . '/'.$pasta.'/' . $rid;
+
+// Copiar o diretório e seu conteúdo
+recursiveCopy($sourceDir, $destDir);
+}
 
   $id = base64_encode('Ver,123');
 
@@ -247,6 +276,28 @@ $hotels = implode(';', $hoteis);
 
 $query = $conexao->prepare("UPDATE excel_users SET hotel = :hotel WHERE hierarquia = :hierarquia");
 $query->execute(array('hierarquia' => 'Administrador', 'hotel' => $hotels));
+
+//Deletar Pastas
+function recursiveDelete($dir) {
+  if (is_dir($dir)) {
+      $files = array_diff(scandir($dir), array('.', '..'));
+      foreach ($files as $file) {
+          $path = $dir . '/' . $file;
+          is_dir($path) ? recursiveDelete($path) : unlink($path);
+      }
+      rmdir($dir);
+  }
+}
+
+$diretorio = str_replace('\\', '/', __DIR__);
+
+$pastas = ['gestao', 'comissao', 'auditoria', 'all'];
+
+foreach ($pastas as $pasta) {
+    $dirToDelete = $diretorio . '/' . $pasta . '/' . $rid;
+    
+    recursiveDelete($dirToDelete);
+}
 
   $id = base64_encode('Ver,123');
   
