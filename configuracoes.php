@@ -4,10 +4,10 @@ session_start();
 require('conexao.php');
 require('verifica_login.php');
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-//error_reporting(0);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+error_reporting(0);
 
 $id_acao = explode(',', base64_decode(mysqli_real_escape_string($conn_mysqli, $_GET['id'])));
 
@@ -135,8 +135,8 @@ $id_criar = base64_encode('Criar,123');
   }
 
   $hotel = $hotel.';'.strtolower($hotel_rid);
-  $query = $conexao->prepare("UPDATE excel_users SET hotel = :hotel WHERE username = :username");
-  $query->execute(array('username' => $_SESSION['username'], 'hotel' => $hotel));
+  $query = $conexao->prepare("UPDATE excel_users SET hotel = :hotel WHERE hierarquia = :hierarquia");
+  $query->execute(array('hierarquia' => 'Administrador', 'hotel' => $hotel));
 
   $query = $conexao->prepare("INSERT INTO excel_hotels (hotel_rid, hotel_name, hotel_status, hotel_validade) VALUES (:hotel_rid, :hotel_name, :hotel_status, :hotel_validade)");
   $query->execute(array('hotel_rid' => $hotel_rid, 'hotel_name' => $hotel_name, 'hotel_status' => 'Ativo', 'hotel_validade' => $hotel_validade));
@@ -227,10 +227,31 @@ foreach ($tabelas as $tabela) {
     $query_delete->execute();
 }
 
+//Remover da Lista o RID
+$query = $conexao->prepare("SELECT * FROM excel_users WHERE username = :username");
+$query->execute(array('username' => $_SESSION['username']));
+
+$hotels = '';
+while ($select = $query->fetch(PDO::FETCH_ASSOC)) {
+    $hoteis = $select['hotel'];
+}
+
+$rid = strtolower($hotel_rid);
+$hoteis = explode(';', $hoteis);
+
+$hoteis = array_filter($hoteis, function ($item) use ($rid) {
+    return $item !== $rid;
+});
+
+$hotels = implode(';', $hoteis);
+
+$query = $conexao->prepare("UPDATE excel_users SET hotel = :hotel WHERE hierarquia = :hierarquia");
+$query->execute(array('hierarquia' => 'Administrador', 'hotel' => $hotels));
+
   $id = base64_encode('Ver,123');
   
   echo "<script>
-    alert('Hotel $hotel_name Excluido com Sucesso!')
+    alert('Hotel [$hotel_rid] $hotel_name Excluido com Sucesso!')
     window.location.replace('configuracoes.php?id=$id')
     </script>";
     exit();
