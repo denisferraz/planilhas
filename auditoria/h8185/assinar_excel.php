@@ -30,6 +30,7 @@ error_reporting(0);
 $limite_credito = 1800;
 
 if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_name"])) {
+    $uploadedFileName = $_FILES["excelFile"]["name"];
     $uploadedFile = $_FILES["excelFile"]["tmp_name"];
     $skip_first_line = true;
 
@@ -266,7 +267,9 @@ if ($linhaEncontrada !== null) {
 $spreadsheet->setActiveSheetIndexByName('Gerencial');
 
 // Create a temporary file for download
-$filename = 'Auditoria Digital - '.ucfirst($dir).' (Conferida).xls';
+//$filename = 'Auditoria Digital - '.ucfirst($dir).' (Conferida).xls';
+$nomearquivo = substr(basename($uploadedFileName), 0, -4);
+$filename = $nomearquivo.' (Conferido).xls';
 $tempFile = tempnam(sys_get_temp_dir(), $filename);
 $writer = new Xls($spreadsheet);
 $writer->save($tempFile);
