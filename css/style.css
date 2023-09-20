@@ -149,11 +149,14 @@ input[type="submit"]:hover {
 }
 
 .botao-planilha-1{
+    height: 70px;
     border-radius: 3.5px;
+    text-align: center;
     background-color: darkgreen;
     color: white;
     text-decoration: none;
     padding: 5px;
+    margin-right: 15px;
 }
 
 .botao-planilha-1:hover{
@@ -162,11 +165,14 @@ input[type="submit"]:hover {
 }
 
 .botao-planilha-2{
+    height: 70px;
     border-radius: 3.5px;
+    text-align: center;
     background-color: darkblue;
     color: white;
     text-decoration: none;
     padding: 5px;
+    margin-right: 15px;
 }
 
 .botao-planilha-2:hover{
