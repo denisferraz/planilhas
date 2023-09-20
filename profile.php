@@ -17,6 +17,7 @@ $id_job = $id[0];
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <title>Planilhas Hotelaria</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>

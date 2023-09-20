@@ -34,7 +34,7 @@ if (isset($_POST['hotel'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Planilhas Hotelaria</title>
-
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -93,11 +93,10 @@ $id = base64_encode('Senha,123');
             </div>
             <center>
             <div class="card-group">
-              <br>
-              <a href="gestao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Gestão Recepção (Downtime)</button></a><br><br>
-              <a href="comissao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Comissões</button></a><br><br>
-              <a href="auditoria/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Auditoria Digital</button></a><br><br>
-              <a href="all/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Conciliação ALL</button></a><br><br>
+              <a href="gestao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Gestão Recepção (Downtime)</button></a>
+              <a href="comissao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Comissões (Centralizadas)</button></a>
+              <a href="auditoria/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Auditoria Digital (Recepção)</button></a>
+              <a href="all/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Conciliação ALL (Auditoria)</button></a>
             </div>
             </center>
             <?php }else{ ?>
