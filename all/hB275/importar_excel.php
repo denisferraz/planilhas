@@ -124,6 +124,9 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
             $qtd++;
 
             if ($qtd <= 4) {
+                if($qtd == 3){
+                    $data_hl = explode(" ",$data_row[0]);
+                }
                 continue;
             }
 
@@ -134,10 +137,14 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
 
             $pmid = explode(" ", $data_row[0]);
 
-            if($data_row[7] == 'COURTESY'){
+            if($data_row[7] == 'COURTESY' || $data_row[7] == 'Earn Restaurant'){
                 $data_row[2] = $data_row[5];
                 $data_row[3] = $data_row[5];
                 $data_row[11] = 'N/A';
+                $data_row[18] = $data_row[7];
+            }
+
+            if($data_row[7] == 'COURTESY'){
                 $data_row[15] = $data_row[12];
             }
 
@@ -193,6 +200,11 @@ if (isset($_FILES["excelFile"]["tmp_name"]) && !empty($_FILES["excelFile"]["tmp_
             ];
 
         }
+
+        //Data do Relatorio Hotel Link
+        $data_hotellink_pt1 = explode("-", $data_hl[2]);
+        $data_hotellink_pt2 = explode("-", $data_hl[4]);
+        $data_hotellink = strtoupper($_SESSION['hotel']).' - Conferencia ALL '.$data_hotellink_pt1[2].'-'.$data_hotellink_pt1[1].' a '.$data_hotellink_pt2[2].'-'.$data_hotellink_pt2[1];
 
 }else {
     echo "Favor selecionar todos os aquivos.";
@@ -967,7 +979,7 @@ $activeWorksheet->setSelectedCell('A1');
 $spreadsheet->setActiveSheetIndexByName('Pontuações Hotel Link');
 
 // Create a temporary file for download
-$filename = 'Conciliação ALL - '.ucfirst($dir).'.xls';
+$filename = $data_hotellink.'.xls';
 $tempFile = tempnam(sys_get_temp_dir(), $filename);
 $writer = new Xls($spreadsheet);
 $writer->save($tempFile);
