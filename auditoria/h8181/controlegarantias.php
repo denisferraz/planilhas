@@ -126,6 +126,7 @@ foreach ($dados_filtrados as $select) {
         <option value="Pgto Direto - Cash" <?php if ($auditoria_garantia == 'Pgto Direto - Cash') echo 'selected'; ?>>Pgto Direto - Cash</option>
         <option value="Cortesia | House Use" <?php if ($auditoria_garantia == 'Cortesia | House Use') echo 'selected'; ?>>Cortesia | House Use</option>
         <option value="PIX" <?php if ($auditoria_garantia == 'PIX') echo 'selected'; ?>>PIX</option>
+        <option value="Voucher ALL" <?php if ($auditoria_garantia == 'Voucher ALL') echo 'selected'; ?>>Voucher ALL</option>
         <option value="Pre Autorização" <?php if ($auditoria_garantia == 'Pre Autorização') echo 'selected'; ?>>Pre Autorização</option>
         <option value="Outros" <?php if ($auditoria_garantia == 'Outros') echo 'selected'; ?>>Outros</option>
         </select>
