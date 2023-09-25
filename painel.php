@@ -97,6 +97,7 @@ $id = base64_encode('Senha,123');
               <a href="comissao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Comissões (Centralizadas)</button></a>
               <a href="auditoria/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Auditoria Digital (Recepção)</button></a>
               <a href="all/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Conciliação ALL (Auditoria)</button></a>
+              <a href="plano/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Plano de Quartos (Digital)</button></a>
             </div>
             </center>
             <?php }else{ ?>

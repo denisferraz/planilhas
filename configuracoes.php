@@ -114,6 +114,8 @@ $id_criar = base64_encode('Criar,123');
   $hotel_name = mysqli_real_escape_string($conn_mysqli, $_POST['hotel_name']);
   $hotel_validade = mysqli_real_escape_string($conn_mysqli, $_POST['hotel_validade']);
 
+  $hotel_rid = strtolower(substr($hotel_rid, 0, 1)) . strtoupper(substr($hotel_rid, 1));
+
   $query = $conexao->prepare("SELECT * FROM excel_hotels WHERE hotel_rid = :hotel_rid OR hotel_name = :hotel_name");
   $query->execute(array('hotel_rid' => $hotel_rid, 'hotel_name' => $hotel_name));
   $query_count = $query->rowCount();
@@ -134,7 +136,7 @@ $id_criar = base64_encode('Criar,123');
       $hotel = $select['hotel'];
   }
 
-  $hotel = $hotel.';'.strtolower($hotel_rid);
+  $hotel = $hotel.';'.$hotel_rid;
   $query = $conexao->prepare("UPDATE excel_users SET hotel = :hotel WHERE hierarquia = :hierarquia");
   $query->execute(array('hierarquia' => 'Administrador', 'hotel' => $hotel));
 
@@ -214,7 +216,7 @@ function recursiveCopy($source, $dest) {
 }
 
 $diretorio = str_replace('\\', '/', __DIR__);
-$rid = strtolower($hotel_rid);
+$rid = $hotel_rid;
 
 $pastas = ['gestao', 'comissao', 'auditoria', 'all'];
 
@@ -239,7 +241,7 @@ recursiveCopy($sourceDir, $destDir);
 }else if($id_job == 'Deletar'){
 
   $id_hotel = $id_acao[1];
-  $hotel_rid = $id_acao[2];
+  $hotel_rid = strtolower(substr($id_acao[2], 0, 1)) . strtoupper(substr($id_acao[2], 1));
   $hotel_name = $id_acao[3];
 
   $query = $conexao->prepare("DELETE FROM excel_hotels WHERE id = :id AND hotel_rid = :hotel_rid AND hotel_name = :hotel_name");
@@ -265,7 +267,7 @@ while ($select = $query->fetch(PDO::FETCH_ASSOC)) {
     $hoteis = $select['hotel'];
 }
 
-$rid = strtolower($hotel_rid);
+$rid = $hotel_rid;
 $hoteis = explode(';', $hoteis);
 
 $hoteis = array_filter($hoteis, function ($item) use ($rid) {
@@ -345,6 +347,8 @@ $id_editar = base64_encode('Editado,123');
   $hotel_name = mysqli_real_escape_string($conn_mysqli, $_POST['hotel_name']);
   $hotel_validade = mysqli_real_escape_string($conn_mysqli, $_POST['hotel_validade']);
   $hotel_status = mysqli_real_escape_string($conn_mysqli, $_POST['hotel_status']);
+
+  $hotel_rid = strtolower(substr($hotel_rid, 0, 1)) . strtoupper(substr($hotel_rid, 1));
 
   $query = $conexao->prepare("UPDATE excel_hotels SET hotel_name = :hotel_name, hotel_validade = :hotel_validade, hotel_status = :hotel_status WHERE hotel_rid = :hotel_rid");
   $query->execute(array('hotel_rid' => $hotel_rid, 'hotel_name' => $hotel_name, 'hotel_validade' => $hotel_validade, 'hotel_status' => $hotel_status));
