@@ -57,7 +57,7 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
     $_SESSION['hierarquia'] = $hierarquia;
     $_SESSION['entrada'] = '0';
     $_SESSION['status_auditoria'] = 'Concluida';
-    $_SESSION['status_plano'] = 'Concluido';
+    $_SESSION['id'] = '0';
 
     header('Location: painel.php');
     exit();
