@@ -15,14 +15,10 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-if($_SESSION['status_plano'] == 'Concluido'){
-    echo "<script>
-    alert('PLano de Quartos não foi Iniciado!')
-    top.location.replace('index.php');
-    </script>";
-    exit();
-}
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+//error_reporting(0);
 
 //Todas os Apartamentos
 $dados_roomstatus = $_SESSION['dados_roomstatus'];
@@ -91,10 +87,14 @@ $quantidade_dados = count($dados_roomstatus);
     <td align="center"><b>Vagos Sujos</b></td>
 </tr>
 <?php
-for($camareiras = 1; $camareiras <= $_SESSION['camareiras']; $camareiras++){
+for($camareiras = -2; $camareiras <= $_SESSION['qtd_camareira']; $camareiras++){
+
+    if($camareiras == 0){
+        continue;
+    }
 
 //Todas os Apartamentos
-$dados_roomstatus_camareira_pre = $_SESSION['dados_roomstatus'];
+$dados_roomstatus_camareira_pre = $dados_roomstatus;
 
 $dados_roomstatus_camareira = array_filter($dados_roomstatus_camareira_pre, function($item) use($camareiras) {
     return $item['id_camareira'] == $camareiras;
@@ -126,7 +126,6 @@ usort($dados_roomstatus_camareira, function($a, $b) {
 });
 
 $quantidade_dados_camareira = count($dados_roomstatus_camareira);
-
 ?>
 <tr>
     <td align="center"><input type="checkbox" name="checkbox_camareiras[]" value="<?php echo $camareiras; ?>"></td>
@@ -205,18 +204,7 @@ foreach ($dados_roomstatus as $select) {
     <td><?php echo $guest_name; ?></td>
     <td><?php echo $stay_status; ?></td>
     <td><?php echo $room_status_1; ?> - <?php echo $room_status_2; ?></td>
-    <td>
-        <select name="camareira_<?php echo $quantidade ?>">
-        <option value="0" <?php if ($id_camareira == 0) echo 'selected'; ?>>Sem Camareira</option>
-        <?php
-        for($camareiras = 1; $camareiras <= $_SESSION['camareiras']; $camareiras++){
-        ?>
-        <option value="<?php echo $_SESSION['id_camareira_'.$camareiras]; ?>" <?php if ($id_camareira == $_SESSION['id_camareira_'.$camareiras]) echo 'selected'; ?>><?php echo $_SESSION['camareira_'.$camareiras]; ?></option>
-        <?php
-        }
-        ?>
-        </select>
-    </td>
+    <td><?php echo $_SESSION['camareira_'.$id_camareira]; ?></td>
 </tr>
 <input type="hidden" name="id_<?php echo $quantidade ?>" value="<?php echo $id ?>">
 <?php } ?>
@@ -226,13 +214,5 @@ foreach ($dados_roomstatus as $select) {
 </form>
 </fieldset>
 </div>
-<script>
-$(document).ready(function() {
-    $('.replace-comma').on('input', function() {
-        // Substituir vírgulas por pontos
-        $(this).val($(this).val().replace(',', '.'));
-    });
-});
-</script>
 </body>
 </html>

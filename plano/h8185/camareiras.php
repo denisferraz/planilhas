@@ -15,14 +15,6 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-if($_SESSION['status_plano'] == 'Concluido'){
-    echo "<script>
-    alert('PLano de Quartos não foi Iniciado!')
-    top.location.replace('index.php');
-    </script>";
-    exit();
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +50,7 @@ if($_SESSION['status_plano'] == 'Concluido'){
 <?php
 $qtd = 0;
 $quantidade = 0;
-for($id_camareiras = 1; $id_camareiras <= $_SESSION['camareiras']; $id_camareiras++){
+for($id_camareiras = 1; $id_camareiras <= $_SESSION['qtd_camareira']; $id_camareiras++){
 
     $qtd++;
     $quantidade++;
@@ -77,7 +69,7 @@ for($id_camareiras = 1; $id_camareiras <= $_SESSION['camareiras']; $id_camareira
 <?php } ?>
 </table>
 <br>
-<input type="hidden" name="quantidade" value="<?php echo $_SESSION['camareiras'] ?>">
+<input type="hidden" name="quantidade" value="<?php echo $_SESSION['qtd_camareira'] ?>">
 <input type="hidden" name="id_job" value="camareiras">
 <input type="submit" class="submit" value="Confirmar">
 </form>

@@ -20,6 +20,19 @@ if($dir != $_SESSION['hotel']){
 $min_dia = date('Y-m-d', strtotime("$hoje") -3600);
 $max_dia = date('Y-m-d', strtotime("$hoje") +3600);
 
+$query = $conexao->prepare("SELECT * FROM $dir"."_excel_plano_quartos WHERE id > 0 GROUP BY data_plano LIMIT 7");
+$query->execute();
+
+if (isset($_GET['id'])) {
+$_SESSION['id'] = mysqli_real_escape_string($conn_mysqli, $_GET['id']);
+}
+
+if($_SESSION['id'] != 0){
+    echo "<script>
+    window.location.replace('plano.php')
+    </script>";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -48,10 +61,27 @@ $max_dia = date('Y-m-d', strtotime("$hoje") +3600);
         <input type="number" name="camareiras" min="0" max="100" value="10" required><br><br>
         <label><b>Room Status (Simplified).[CSV]</b></label>
         <input type="file" name="csvFile[]" accept=".csv" multiple required><br><br>
-        <input type="submit" value="Upload">
+        <input type="submit" value="Gerar Plano">
         </form>
+        <br><center><b>Planos Gerados</b><br><br>
+        <?php
+        while($select = $query->fetch(PDO::FETCH_ASSOC)){
+            $data_plano = $select['data_plano'];
+        ?>
+        <div class="botao-acao">
+            <button onclick='redirecionar("<?php echo strtotime("$data_plano"); ?>")' class="botao"><?php echo date('d/m/Y', strtotime("$data_plano")); ?></button>
+        </div>
         <br>
+        <?php
+        }
+        ?></center>
     </div>
+    <script>
+    function redirecionar(dataPlano) {
+        // Use window.location.href para redirecionar para a página desejada na mesma janela.
+        window.location.href = "index.php?id=" + dataPlano;
+    }
+    </script>
     <script>
     function exibirPopup() {
         Swal.fire({

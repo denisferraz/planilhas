@@ -14,10 +14,10 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-error_reporting(0);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+//error_reporting(0);
 
 $id_job = mysqli_real_escape_string($conn_mysqli, $_POST['id_job']);
 if (isset($_POST['id_acao'])) {
@@ -28,11 +28,13 @@ if($id_job == 'camareiras'){
 
     $quantidade = $_POST['quantidade'];
 
+    $query_camareiras = $conexao->prepare("UPDATE $dir"."_excel_plano_camareiras SET camareira = :camareira WHERE id_camareira = :camareira_id");
+
     for ($registros = 1; $registros <= $quantidade; $registros++) {
 
         $camareira = $_POST["camareira_$registros"];
 
-    $_SESSION['camareira_'.$registros] = $camareira;
+        $query_camareiras->execute(array('camareira' => $camareira, 'camareira_id' => $registros));
 
     }
 
@@ -44,24 +46,20 @@ echo   "<script>
 
 }else if($id_job == 'gerar_plano'){
 
-    $comentarios = $_POST['comentarios'];
-
     $quantidade = $_POST['quantidade'];
+
+    $query_quartos = $conexao->prepare("UPDATE $dir"."_excel_plano_quartos SET id_camareira = :id_camareira WHERE id = :id");
 
     for ($registros = 1; $registros <= $quantidade; $registros++) {
         $id = $_POST["id_$registros"];
-
-        foreach ($_SESSION['dados_roomstatus'] as &$item) {
-            if ($item['id'] == $id) {
-                $item['id_camareira'] = $_POST["camareira_$registros"];
-                break;
-            }
-        }
+        $id_camareira = $_POST["camareira_$registros"];
+        
+        $query_quartos->execute(array('id_camareira' => $id_camareira, 'id' => $id));
     }
 
 echo   "<script>
     alert('Plano Gerado com Sucesso')
-    window.location.replace('dashboard.php')
+    top.location.replace('plano.php')
         </script>";
         exit();
     

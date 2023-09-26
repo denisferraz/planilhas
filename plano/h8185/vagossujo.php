@@ -15,15 +15,6 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-if($_SESSION['status_plano'] == 'Concluido'){
-    echo "<script>
-    alert('PLano de Quartos não foi Iniciado!')
-    top.location.replace('index.php');
-    </script>";
-    exit();
-}
-
-
 //Todas os Apartamentos
 $dados_vago_sujo = $_SESSION['dados_roomstatus'];
 
@@ -126,7 +117,11 @@ foreach ($dados_roomstatus as $select) {
         <select name="camareira_<?php echo $quantidade ?>">
         <option value="0" <?php if ($id_camareira == 0) echo 'selected'; ?>>Sem Camareira</option>
         <?php
-        for($camareiras = 1; $camareiras <= $_SESSION['camareiras']; $camareiras++){
+        for($camareiras = 1; $camareiras <= $_SESSION['qtd_camareira']; $camareiras++){
+
+            if($camareiras == 0){
+                continue;
+            }
         ?>
         <option value="<?php echo $_SESSION['id_camareira_'.$camareiras]; ?>" <?php if ($id_camareira == $_SESSION['id_camareira_'.$camareiras]) echo 'selected'; ?>><?php echo $_SESSION['camareira_'.$camareiras]; ?></option>
         <?php

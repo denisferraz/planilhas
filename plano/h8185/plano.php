@@ -12,7 +12,7 @@ error_reporting(0);
 
 $dir = substr(__DIR__, -5);
 
-if($dir != $_SESSION['hotel']){
+if($dir != $_SESSION['hotel'] || $_SESSION['id'] == 0){
     echo "<script>
     alert('Você não tem permissão para acessar esta pagina!')
     top.location.replace('../../index.html');
@@ -22,13 +22,41 @@ if($dir != $_SESSION['hotel']){
 
 $hoje = date('Y-m-d');
 
-if($_SESSION['status_plano'] == 'Concluido'){
-    echo "<script>
-    alert('PLano de Quartos não foi Iniciado!')
-    top.location.replace('index.php');
-    </script>";
-    exit();
+$data_plano = date('Y-m-d', $_SESSION['id']);
+
+$query_quartos = $conexao->prepare("SELECT * FROM $dir"."_excel_plano_quartos WHERE id > 0 AND data_plano = '{$data_plano}'");
+$query_quartos->execute();
+
+$dados_roomstatus = [];
+
+while($select_quartos = $query_quartos->fetch(PDO::FETCH_ASSOC)){
+    $id  = $select_quartos['id'];
+    $qtd_camareira = $select_quartos['qtd_camareira'];
+    $id_camareira = $select_quartos['id_camareira'];
+    $room_number = $select_quartos['room_number'];
+    $guest_name = $select_quartos['guest_name'];
+    $room_stay_status = $select_quartos['room_stay_status'];
+    $room_status_1 = $select_quartos['room_status_1'];
+    $room_status_2 = $select_quartos['room_status_2'];
+    $room_type = $select_quartos['room_type'];
+
+    $dados_roomstatus[] = [
+        'id' => $id,
+        'id_camareira' => $id_camareira,
+        'room_number' => $room_number,
+        'guest_name' => $guest_name,
+        'room_stay_status' => $room_stay_status,
+        'room_status_1' => $room_status_1,
+        'room_status_2' => $room_status_2,
+        'room_type' => $room_type
+    ];
 }
+
+$_SESSION['dados_roomstatus'] = $dados_roomstatus;
+$_SESSION['qtd_camareira'] = $qtd_camareira;
+
+$query_camareiras = $conexao->prepare("SELECT * FROM $dir"."_excel_plano_camareiras WHERE id > -2 AND data_plano = '{$data_plano}'");
+$query_camareiras->execute();
 ?>
 
 <!DOCTYPE html>
@@ -44,11 +72,11 @@ if($_SESSION['status_plano'] == 'Concluido'){
     <title>Plano de Quartos</title>
 </head>
 <body>
-<a href="../../painel.php"><button class="botao-logout-left"><b>Voltar</b></button></a>
+<a href="index.php?id=0"><button class="botao-logout-left"><b>Voltar</b></button></a>
 <a href="../../logout.php"><button class="botao-logout-right"><?php echo $_SESSION['name'] ?> <b>[Logout]</b></button></a>
 
 <div id="container-topo">
-<h1>Plano de Quartos</h1>
+<h1><?php echo $_SESSION['hotel_name']; ?><br>Plano de Quartos - <?php echo date('d/m/Y', $_SESSION['id']); ?></h1>
 </div>
 
 
@@ -63,9 +91,18 @@ if($_SESSION['status_plano'] == 'Concluido'){
 <br>
 <div id="container-topo">
 <?php
-for($camareiras = 1; $camareiras <= $_SESSION['camareiras']; $camareiras++){
+
+$_SESSION['camareira_0'] = 'Sem Camareira';
+
+while($select_camareiras = $query_camareiras->fetch(PDO::FETCH_ASSOC)){
+  $id_camareira = $select_camareiras['id_camareira'];
+  $camareira = $select_camareiras['camareira'];
+
+  $_SESSION['camareira_'.$id_camareira] = $camareira;
+  $_SESSION['id_camareira_'.$id_camareira] = $id_camareira;
+
 ?>
-<div class="botao-topo-inhouse"><a href="javascript:void(0)" onclick='window.open("camareira.php?id=<?php echo $camareiras; ?>","iframe")'><button><?php echo $_SESSION['camareira_'.$camareiras]; ?></button></a></div>
+<div class="botao-topo-inhouse"><a href="javascript:void(0)" onclick='window.open("camareira.php?id=<?php echo $id_camareira; ?>","iframe")'><button><?php echo $camareira; ?></button></a></div>
 <?php
 }
 ?>
@@ -76,6 +113,7 @@ for($camareiras = 1; $camareiras <= $_SESSION['camareiras']; $camareiras++){
 <div class="botao-acao"><button onclick="executarForm('salvar_plano')" class="botao">Salvar Plano</button></div>
 <div class="botao-acao"><button onclick="executarForm('imprimir_plano')" class="botao">Imprimir Plano</button></div>
 </div>
+
 <iframe name="iframe" id="iframe" src="dashboard.php"></iframe>
 
 <script>
