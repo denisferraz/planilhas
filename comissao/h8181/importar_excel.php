@@ -22,10 +22,10 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-//error_reporting(0);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+error_reporting(0);
 
 // Check if the CSV files were uploaded successfully
 if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0) {
@@ -59,6 +59,7 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
                         $colunaC = $data[1];
                         $colunaD = str_replace('/', '-', substr($data[7], 0, 10));
                         $colunaE = str_replace('/', '-', substr($data[8], 0, 10));
+                        $colunaF = $data[3];
                     
                         $colunaE_partes = explode("-", $colunaE);
                         $colunaE_formatada = $colunaE_partes[2] . "-" . $colunaE_partes[1] . "-" . $colunaE_partes[0];
@@ -72,6 +73,7 @@ if (!empty($_FILES["csvFile"]["name"]) && count($_FILES["csvFile"]["name"]) > 0)
                             'id_guest' => $colunaC,
                             'folio_open' => $colunaD_formatada,
                             'folio_close' => $colunaE_formatada,
+                            'folio_type' => $colunaF
                         ];
                     }
             }
@@ -271,12 +273,13 @@ foreach ($excel_comissoes_data as &$comissao) {
 
             // Itera pelo array de registros do journal em busca do id_guest e datas correspondentes
             foreach ($excel_journal_data as $journal) {
-                if ($journal['id_guest'] == $id_guest && $journal['folio_open'] == $checkin && $journal['folio_close'] == $checkout) {
+                if ($journal['id_guest'] == $id_guest && $journal['folio_open'] == $checkin && $journal['folio_close'] == $checkout && $journal['folio_type'] == 'Invoice' && $journal['rps_valor'] >= $comissao['valor_rps']) {
+                    
                     $rps_num = $journal['rps_num'];
                     $rps_valor = floatval($journal['rps_valor']);
 
                 $diarias = (strtotime($checkout) - strtotime($checkin)) / 86400;
-                //$comissao = $rps_valor / 1.05 * 0.1;
+                //$valor_comissao = $rps_valor / 1.05 * 0.1;
                 $valor_comissao = $diarias * 10;
 
                 if (in_array($ratecode, $ratecodes_comissionados_mais)) {
@@ -284,7 +287,6 @@ foreach ($excel_comissoes_data as &$comissao) {
                 }
 
                 $comissao['diarias'] = $diarias;
-                $comissao['valor_total_diaria'] = $rps_valor;
                 $comissao['valor_comissao'] = $valor_comissao;
                 $comissao['rps'] = $rps_num;
                 $comissao['valor_rps'] = $rps_valor;
