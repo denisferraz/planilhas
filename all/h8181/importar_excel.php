@@ -286,11 +286,12 @@ $conditionGrey->setConditionType(Conditional::CONDITION_CELLIS)
     ->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB(Color::COLOR_MAGENTA);
 
 //Primeira Aba
-$spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
-$security = $spreadsheet->getSecurity();
-$security->setLockWindows(true);
-$security->setLockStructure(true);
-$security->setWorkbookPassword($worksheet_password);
+$protection = $spreadsheet->getActiveSheet()->getProtection();
+$protection->setPassword($worksheet_password);
+$protection->setSheet(false);
+$protection->setSort(false);
+$protection->setInsertRows(false);
+$protection->setFormatCells(false);
 
 $activeWorksheet = $spreadsheet->getActiveSheet();
 $activeWorksheet->setCellValue('C3', $hotel);
@@ -399,7 +400,14 @@ for ($col = 'C'; $col <= 'P'; $col++) {
 
 $linha_excel = 6;
 
+$header = [
+    'PMID', 'Hospede HL', 'Hospede PMS', 'Checkin', 'Checkout',
+    'Data Pontuação', 'Ratecode', 'Pontuação HL', 'Pontuação PMS',
+    'Diferença', 'Burn', 'Earnmidia', 'Usuário', 'Reason'
+];
+
 //Total Comissões
+$data = [];
 foreach ($excel_all_planilha as $select) {
     $pmid = $select['pmid'];
     $hospede_hl = $select['hospede_hl'];
@@ -429,20 +437,13 @@ foreach ($excel_all_planilha as $select) {
     $reason = $reason;
     }
 
-    $activeWorksheet->setCellValue('C'.$linha_excel, $pmid);
-    $activeWorksheet->setCellValue('D'.$linha_excel, $hospede_hl);
-    $activeWorksheet->setCellValue('E'.$linha_excel, $hospede_pms);
-    $activeWorksheet->setCellValue('F'.$linha_excel, $checkin);
-    $activeWorksheet->setCellValue('G'.$linha_excel, $checkout);
-    $activeWorksheet->setCellValue('H'.$linha_excel, $data_pontuacao);
-    $activeWorksheet->setCellValue('I'.$linha_excel, $ratecode);
-    $activeWorksheet->setCellValue('J'.$linha_excel, $pontuacao_hl);
-    $activeWorksheet->setCellValue('K'.$linha_excel, $pontuacao_pms);
-    $activeWorksheet->setCellValue('L'.$linha_excel, '=ROUND(K'.$linha_excel.' - J'.$linha_excel.', 0)');
-    $activeWorksheet->setCellValue('M'.$linha_excel, $burn);
-    $activeWorksheet->setCellValue('N'.$linha_excel, $earnmidia);
-    $activeWorksheet->setCellValue('O'.$linha_excel, $usuario);
-    $activeWorksheet->setCellValue('P'.$linha_excel, $reason);
+    $diferenca = '=ROUND(K'.$linha_excel.' - J'.$linha_excel.', 0)';
+
+    $data[] = [
+        $pmid, $hospede_hl, $hospede_pms, $checkin, $checkout,
+        $data_pontuacao, $ratecode, $pontuacao_hl, $pontuacao_pms,
+        $diferenca, $burn, $earnmidia, $usuario, $reason
+    ];
 
 }
 
@@ -467,6 +468,17 @@ if($linha_excel < 10){
     $activeWorksheet->setCellValue('P'.$linha_excel, '');
 }
 }
+
+// Defina os dados da Tabela
+$activeWorksheet->fromArray([$header], null, 'C6');
+$activeWorksheet->fromArray($data, null, 'C7');
+
+// Adicionar autofiltros à tabela
+$activeWorksheet->setAutoFilter('C6:P'.$linha_excel);
+
+// Bloqueie a planilha, mas permita autofiltros
+$activeWorksheet->getProtection()->setSheet(true);
+$activeWorksheet->getProtection()->setAutoFilter(true);
 
 $linha_excel += 4;
 $linha_signature = $linha_excel;
@@ -660,11 +672,12 @@ $activeWorksheet->setSelectedCell('A1');
 //Criar Aba
 $activeWorksheet = $spreadsheet->createSheet();
 $spreadsheet->setActiveSheetIndexByName('Worksheet');
-$spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
-$security = $spreadsheet->getSecurity();
-$security->setLockWindows(true);
-$security->setLockStructure(true);
-$security->setWorkbookPassword($worksheet_password);
+//$protection = $spreadsheet->getActiveSheet()->getProtection();
+//$protection->setPassword($worksheet_password);
+//$protection->setSheet(true);
+//$protection->setSort(false);
+//$protection->setInsertRows(false);
+//$protection->setFormatCells(false);
 
 $activeWorksheet = $spreadsheet->getActiveSheet();
 $activeWorksheet->setCellValue('C3', $hotel);
