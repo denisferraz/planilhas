@@ -135,6 +135,6 @@ _______________________________________________________<br>
         function printPage() {
             window.print();
         }
-    </script>
+</script>
 </body>
 </html>
