@@ -22,15 +22,15 @@ error_reporting(0);
 
 $hoje = date('Y-m-d');
 
-//Checkouts do Dia
-$query_inhouse = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0");
-$query_inhouse->execute();
+//Saidas do dia
+$query_saidas = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0");
+$query_saidas->execute();
 
 // Chave de criptografia
 $chave = $_SESSION['hotel'].$chave;
 
 $presentlist_array = [];
-while($select = $query_inhouse->fetch(PDO::FETCH_ASSOC)){
+while($select = $query_saidas->fetch(PDO::FETCH_ASSOC)){
     $dados_presentlist = $select['dados_presentlist'];
     $id = $select['id'];
 
@@ -60,7 +60,7 @@ $presentlist_array[] = [
 
 $filtered_array = [];
 foreach ($presentlist_array as $item) {
-    if ($item['alteracao'] === 'Checkedout') {
+    if (($item['alteracao'] === 'Pendente' || $item['alteracao'] === 'Prorrogado') && $item['checkout'] === $hoje) {
         $filtered_array[] = $item;
     }
 }
@@ -76,9 +76,9 @@ usort($filtered_array, function ($a, $b) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/style_tabela.css">
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/style_tabela.css">
     <title>Gestão Recepção - Downtime</title>
 </head>
 <body>
@@ -86,21 +86,22 @@ usort($filtered_array, function ($a, $b) {
 <div class="container">
 <!-- Chegadas -->
 <fieldset>
-<legend> (<?php echo count($filtered_array) ?>) Checkouts Realizados </legend>
+<legend> (<?php echo count($filtered_array) ?>) Saidas </legend>
+<form action="acao.php?id=<?php echo base64_encode("Inhouse;123") ?>" id="Inhouse" method="post">
 <?php
-foreach ($filtered_array as $select_inhouse) {
-    $id = $select_inhouse['id'];
-    $guest_name = $select_inhouse['guest_name'];
-    $checkin = $select_inhouse['checkin'];
-    $checkout = $select_inhouse['checkout'];
-    $noites = $select_inhouse['noites'];
-    $adultos = $select_inhouse['adultos'];
-    $criancas = $select_inhouse['criancas'];
-    $room_ratecode = $select_inhouse['room_ratecode'];
-    $room_msg = $select_inhouse['room_msg'];
-    $room_number = $select_inhouse['room_number'];
-    $room_company = $select_inhouse['room_company'];
-    $room_balance = floatval($select_inhouse['room_balance']);
+foreach ($filtered_array as $select_saidas) {
+    $id = $select_saidas['id'];
+    $guest_name = $select_saidas['guest_name'];
+    $checkin = $select_saidas['checkin'];
+    $checkout = $select_saidas['checkout'];
+    $noites = $select_saidas['noites'];
+    $adultos = $select_saidas['adultos'];
+    $criancas = $select_saidas['criancas'];
+    $room_ratecode = $select_saidas['room_ratecode'];
+    $room_msg = $select_saidas['room_msg'];
+    $room_number = $select_saidas['room_number'];
+    $room_company = $select_saidas['room_company'];
+    $room_balance = floatval($select_saidas['room_balance']);
     $room_balance = number_format($room_balance, 2, ',', '.');
     echo "$room_msg";
 
@@ -111,14 +112,21 @@ foreach ($filtered_array as $select_inhouse) {
     $room_type = $resultado_roomtype['room_type'];
 
     ?>
-<div class="appointment">
+<div class="appointment-saidas" onclick="selecionarRadio(this)">
+    <input type="radio" name="reserva_id" value="<?php echo $id ?>">
     <span class="name">[ <?php echo $room_number ?> - <?php echo $room_type ?> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y', strtotime("$checkin")) ?> a <?php echo date('d/m/Y', strtotime("$checkout")); ?> | <span class="name">Balance: R$</span><span class="time"><?php echo $room_balance ?></span> | <span class="name">Adulos [ <?php echo $adultos ?> ] Crianças [ <?php echo $criancas ?> ] | Ratecode [ <?php echo $room_ratecode ?> ] | Company [ <?php echo $room_company ?> ]</span>
-    <a href="acao.php?id=<?php echo base64_encode("Inhouse;Reinstate;$id;$room_number") ?>"><button class="botao-rs-sujar">Reinstate</button></a>
 </div>
 
 <?php
 } ?>
+</form>
 </fieldset>
 </div>
+<script>
+function selecionarRadio(element) {
+  var radio = element.querySelector('input[type="radio"]');
+  radio.checked = true;
+}
+</script>
 </body>
 </html>

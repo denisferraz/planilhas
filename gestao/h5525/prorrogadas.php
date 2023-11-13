@@ -15,14 +15,9 @@ if($dir != $_SESSION['hotel']){
     exit();
 }
 
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-error_reporting(0);
-
 $hoje = date('Y-m-d');
 
-//Checkouts do Dia
+//Hospede na Casa do dia
 $query_inhouse = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_inhouse WHERE id > 0");
 $query_inhouse->execute();
 
@@ -60,7 +55,7 @@ $presentlist_array[] = [
 
 $filtered_array = [];
 foreach ($presentlist_array as $item) {
-    if ($item['alteracao'] === 'Checkedout') {
+    if ($item['alteracao'] === 'Prorrogado') {
         $filtered_array[] = $item;
     }
 }
@@ -76,9 +71,9 @@ usort($filtered_array, function ($a, $b) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/style_tabela.css">
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/style_tabela.css">
     <title>Gestão Recepção - Downtime</title>
 </head>
 <body>
@@ -86,7 +81,7 @@ usort($filtered_array, function ($a, $b) {
 <div class="container">
 <!-- Chegadas -->
 <fieldset>
-<legend> (<?php echo count($filtered_array) ?>) Checkouts Realizados </legend>
+<legend> (<?php echo count($filtered_array) ?>) Reservas Prorrogadas </legend>
 <?php
 foreach ($filtered_array as $select_inhouse) {
     $id = $select_inhouse['id'];
@@ -113,12 +108,12 @@ foreach ($filtered_array as $select_inhouse) {
     ?>
 <div class="appointment">
     <span class="name">[ <?php echo $room_number ?> - <?php echo $room_type ?> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y', strtotime("$checkin")) ?> a <?php echo date('d/m/Y', strtotime("$checkout")); ?> | <span class="name">Balance: R$</span><span class="time"><?php echo $room_balance ?></span> | <span class="name">Adulos [ <?php echo $adultos ?> ] Crianças [ <?php echo $criancas ?> ] | Ratecode [ <?php echo $room_ratecode ?> ] | Company [ <?php echo $room_company ?> ]</span>
-    <a href="acao.php?id=<?php echo base64_encode("Inhouse;Reinstate;$id;$room_number") ?>"><button class="botao-rs-sujar">Reinstate</button></a>
 </div>
 
 <?php
 } ?>
 </fieldset>
 </div>
+
 </body>
 </html>

@@ -19,7 +19,7 @@ if($dir != $_SESSION['hotel']){
 $chave = $_SESSION['hotel'].$chave;
 
 //Reservas Checkins do Dia
-$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_cashier WHERE id > 0 AND tipo_lancamento = 'Pagamento' ORDER BY username");
+$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_cashier WHERE id > 0 AND tipo_lancamento = 'Produto' ORDER BY username");
 $query->execute();
 $query_qtd = $query->rowCount();
 
@@ -31,9 +31,9 @@ $query_qtd = $query->rowCount();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/style_tabela.css">
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/style_tabela.css">
     <title>Gestão Recepção - Downtime</title>
 </head>
 <body>
@@ -41,7 +41,7 @@ $query_qtd = $query->rowCount();
 <div class="container">
 <!-- Cashier -->
 <fieldset>
-<legend> (<?php echo $query_qtd ?>) Pagamentos Lançados</legend>
+<legend> (<?php echo $query_qtd ?>) Produtos Lançados</legend>
 <?php
 while($select = $query->fetch(PDO::FETCH_ASSOC)){
     $id = $select['id'];
