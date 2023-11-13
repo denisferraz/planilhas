@@ -16,6 +16,14 @@ if($dir != $_SESSION['hotel']){
     </script>";
     exit();
 }
+
+if($_SESSION['hierarquia'] == 'Colaborador'){
+    echo "<script>
+    alert('Você não tem permissão para acessar esta pagina!')
+    window.location.replace('index.php')
+    </script>";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,33 +39,24 @@ if($dir != $_SESSION['hotel']){
     <title>Conciliaçao ALL</title>
 </head>
 <body>
-<h1><?php echo $_SESSION['hotel_name']; ?> - Conciliação ALL</h1>
-<span class="card-group-right"><a href="../../logout.php"><button>Clique aqui para Sair</button></a></span>
-<span class="card-group-left"><a href="../../painel.php"><button>Voltar</button></a></span>
+<h1>Conciliação ALL</h1>
 
     <div class="container">
-        <h1>Anexe os Arquivos para realizar a Conferencia Automatica</h1><br>
-        <form action="importar_excel.php" method="POST" enctype="multipart/form-data" onsubmit="exibirPopup()">
-        <label><b>PRO01108</b></label>
-        <input type="file" name="xmlFile[]" accept=".xml" multiple required><br><br>
-        <label><b>Hotel Link</b></label>
-        <input type="file" name="excelFile" accept=".csv" required><br>
+        <h1>Anexe a Planilha do ALL para Assinar como N + 1</h1><br>
+        <form action="assinar_excel.php" method="POST" enctype="multipart/form-data" onsubmit="exibirPopup()">
+        <label><b>Importar Planilha de Conciliação Finalizada</b></label>
+        <input type="file" name="excelFile" accept=".xls" required><br>
         <input type="submit" value="Upload">
         </form>
-        <br>
-        <?php
-        if($_SESSION['hierarquia'] != 'Colaborador'){
-        ?>
-        <br>
-        <a href="assinatura.php"><button>Assinatura N + 1</button></a>
-        <?php } ?>
+        <br><br>
+        <a href="index.php"><button>Voltar</button></a>
     </div>
 <script>
     function exibirPopup() {
         Swal.fire({
             icon: 'warning',
-            title: 'Estamos Ajustando suas Comissões...',
-            text: 'Assim que a planilha baixar, clique em Finalizar!',
+            title: 'Estamos Assinando a Planilha...',
+            text: 'Assim que o PDF baixar, clique em Finalizar!',
             showCancelButton: false,
             showConfirmButton: false,
             allowOutsideClick: false,
