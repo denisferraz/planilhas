@@ -16,6 +16,7 @@ if($dir != $_SESSION['hotel']){
 }
 
 $status_auditoria = $_SESSION['status_auditoria'];
+$limite_credito = $_SESSION['limite_credito'];
 
 if($status_auditoria == 'Concluida'){
     echo "<script>
@@ -25,8 +26,7 @@ if($status_auditoria == 'Concluida'){
     exit();
 }
 
-$quantidade_dados = count($_SESSION['dados_ratecheck']);
-
+$limite_creditos = number_format($limite_credito, 2, ',', '.');
 ?>
 
 <!DOCTYPE html>
@@ -45,20 +45,19 @@ $quantidade_dados = count($_SESSION['dados_ratecheck']);
 <div class="container">
 <!-- Diarias -->
 <fieldset>
-<legend>Rate Check</legend>
+<legend>Saldo Elevado</legend>
 <form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
-<th colspan="7">Conferência de Diárias</th>
-<tr><td style="background-color: black" colspan="7"></td></tr>
-<tr><td align="center" colspan="7">Apartamentos Ocupados: <b><?php echo $quantidade_dados ?></b></td>
-<tr><td style="background-color: black" colspan="7"></td></tr>
+<th colspan="6">Saldo Elevado</th>
+<tr><td style="background-color: black" colspan="6"></td></tr>
+<tr><td align="center" colspan="6">Limite de Crédito: <b>R$<?php echo $limite_creditos ?></b></td>
+<tr><td style="background-color: black" colspan="6"></td></tr>
 <tr style="background-color: grey">
     <td align="center"><b>Apto.</b></td>
     <td align="center"><b>Hospede</b></td>
     <td align="center"><b>Checkin</b></td>
     <td align="center"><b>Checkout</b></td>
-    <td align="center"><b>Rate Code</b></td>
-    <td align="center"><b>Diária</b></td>
+    <td align="center"><b>Balance</b></td>
     <td align="center"><b>Comentario</b></td>
 </tr>
 
@@ -67,23 +66,19 @@ $quantidade_dados = count($_SESSION['dados_ratecheck']);
 $qtd = 0;
 $quantidade = 0;
 
-$dados_ratecheck = $_SESSION['dados_ratecheck'];
-$data_auditoria = $_SESSION['data_auditoria'];
-
-
-// Ordenar o array por 'room_number' em ordem ascendente ou descendente
-usort($dados_ratecheck, function($a, $b) use ($ordem_query) {
-        return $a['room_number'] <=> $b['room_number'];
+$dados_creditlimit = array_filter($_SESSION['dados_creditlimit'], function($select) use ($limite_credito) {
+    return $select['balance'] > $limite_credito && $select['room_number'] > 0;
 });
 
-foreach ($dados_ratecheck as $select) {
+$quantidade_dados = count($dados_creditlimit);
+
+foreach ($dados_creditlimit as $select) {
     $id = $select['id'];
     $room_number = $select['room_number'];
     $guest_name = $select['guest_name'];
     $checkin = $select['checkin'];
     $checkout = $select['checkout'];
-    $ratecode = $select['ratecode'];
-    $room_rate = $select['room_rate'];
+    $balance = $select['balance'];
     $comentario = $select['comentario'];
 
     $qtd++;
@@ -100,10 +95,9 @@ foreach ($dados_ratecheck as $select) {
     <td><?php echo $guest_name; ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkin")); ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
-    <td><?php echo $ratecode; ?></td>
-    <td>R$<?php echo number_format($room_rate ,2,",","."); ?></td>
+    <td>R$<?php echo number_format($balance ,2,",","."); ?></td>
     <td>
-    <input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>" <?php echo ($data_auditoria == $checkin) ? 'required' : ''; ?>>
+        <input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>" required>
     </td>
 </tr>
 <input type="hidden" name="id_<?php echo $quantidade ?>" value="<?php echo $id ?>">
@@ -111,7 +105,7 @@ foreach ($dados_ratecheck as $select) {
 </table>
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
-<input type="hidden" name="id_job" value="ratecheck">
+<input type="hidden" name="id_job" value="creditlimit">
 <input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>

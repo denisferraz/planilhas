@@ -17,7 +17,13 @@ if($dir != $_SESSION['hotel']){
 
 $status_auditoria = $_SESSION['status_auditoria'];
 
-if($status_auditoria == 'Concluida'){
+if($status_auditoria == 'Em Andamento Pre'){
+    echo "<script>
+    alert('Relatorios Pos Auditoria não Importados!')
+    window.location.replace('ratecheck.php')
+    </script>";
+    exit();
+}else if($status_auditoria == 'Concluida'){
     echo "<script>
     alert('Auditoria não foi Iniciada!')
     top.location.replace('index.php')
@@ -25,7 +31,8 @@ if($status_auditoria == 'Concluida'){
     exit();
 }
 
-$quantidade_dados = count($_SESSION['dados_ratecheck']);
+
+$quantidade_dados = count($_SESSION['dados_freestay']);
 
 ?>
 
@@ -45,20 +52,20 @@ $quantidade_dados = count($_SESSION['dados_ratecheck']);
 <div class="container">
 <!-- Diarias -->
 <fieldset>
-<legend>Rate Check</legend>
+<legend>Free Stays</legend>
 <form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
-<th colspan="7">Conferência de Diárias</th>
+<th colspan="7">Cortesias e Uso da Casa</th>
 <tr><td style="background-color: black" colspan="7"></td></tr>
-<tr><td align="center" colspan="7">Apartamentos Ocupados: <b><?php echo $quantidade_dados ?></b></td>
+<tr><td align="center" colspan="7">Free Stays: <b><?php echo $quantidade_dados ?></b></td>
 <tr><td style="background-color: black" colspan="7"></td></tr>
 <tr style="background-color: grey">
+    <td align="center"><b>Qtd</b></td>
     <td align="center"><b>Apto.</b></td>
     <td align="center"><b>Hospede</b></td>
     <td align="center"><b>Checkin</b></td>
     <td align="center"><b>Checkout</b></td>
-    <td align="center"><b>Rate Code</b></td>
-    <td align="center"><b>Diária</b></td>
+    <td align="center"><b>Tipo Free Stay</b></td>
     <td align="center"><b>Comentario</b></td>
 </tr>
 
@@ -66,24 +73,14 @@ $quantidade_dados = count($_SESSION['dados_ratecheck']);
 <?php
 $qtd = 0;
 $quantidade = 0;
-
-$dados_ratecheck = $_SESSION['dados_ratecheck'];
-$data_auditoria = $_SESSION['data_auditoria'];
-
-
-// Ordenar o array por 'room_number' em ordem ascendente ou descendente
-usort($dados_ratecheck, function($a, $b) use ($ordem_query) {
-        return $a['room_number'] <=> $b['room_number'];
-});
-
-foreach ($dados_ratecheck as $select) {
+foreach ($_SESSION['dados_freestay'] as $select) {
     $id = $select['id'];
-    $room_number = $select['room_number'];
     $guest_name = $select['guest_name'];
+    $reserva = $select['reserva'];
     $checkin = $select['checkin'];
     $checkout = $select['checkout'];
-    $ratecode = $select['ratecode'];
-    $room_rate = $select['room_rate'];
+    $room_number = $select['room_number'];
+    $tipo_cortesia = $select['tipo_cortesia'];
     $comentario = $select['comentario'];
 
     $qtd++;
@@ -96,22 +93,20 @@ foreach ($dados_ratecheck as $select) {
     }
     ?>
 <tr style="background-color: <?php echo $cor_tr; ?>">
+    <td align="center"><b><?php echo $qtd; ?></b></td>
     <td align="center"><?php echo $room_number; ?></td>
     <td><?php echo $guest_name; ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkin")); ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
-    <td><?php echo $ratecode; ?></td>
-    <td>R$<?php echo number_format($room_rate ,2,",","."); ?></td>
-    <td>
-    <input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>" <?php echo ($data_auditoria == $checkin) ? 'required' : ''; ?>>
-    </td>
+    <td><?php echo $tipo_cortesia; ?></td>
+    <td><input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>" required ></td>
 </tr>
 <input type="hidden" name="id_<?php echo $quantidade ?>" value="<?php echo $id ?>">
 <?php } ?>
 </table>
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
-<input type="hidden" name="id_job" value="ratecheck">
+<input type="hidden" name="id_job" value="freestay">
 <input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>
