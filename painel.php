@@ -25,6 +25,8 @@ if (isset($_POST['hotel'])) {
     header("Location: {$_SERVER['REQUEST_URI']}");
     exit();
 }
+
+$_SESSION['id'] = 0;
 ?>
 
 <!DOCTYPE html>
@@ -71,6 +73,11 @@ $id = base64_encode('Senha,123');
         while($select = $query->fetch(PDO::FETCH_ASSOC)){
             $hotel_name = $select['hotel_name'];
             $hotel_rid = $select['hotel_rid'];
+            $gestaorecepcao = $select['gestaorecepcao'];
+            $comissoes = $select['comissoes'];
+            $auditoriadigital = $select['auditoriadigital'];
+            $conciliacaorewards = $select['conciliacaorewards'];
+            $planoquartos = $select['planoquartos'];
         }
         if ($valor === $_SESSION['hotel'] && $valor == $hotel_rid) {
             echo '<option value="' . $valor . '" selected>' . $hotel_name . '</option>';
@@ -93,12 +100,39 @@ $id = base64_encode('Senha,123');
             </div>
             <center>
             <div class="card-group">
+
+            <?php
+
+        $query2 = $conexao->prepare("SELECT * FROM excel_hotels WHERE hotel_rid = :hotel_rid AND hotel_status = 'Ativo'");
+        $query2->execute(array('hotel_rid' => $_SESSION['hotel']));
+        while($select2 = $query2->fetch(PDO::FETCH_ASSOC)){
+            $gestaorecepcao = $select2['gestaorecepcao'];
+            $comissoes = $select2['comissoes'];
+            $auditoriadigital = $select2['auditoriadigital'];
+            $conciliacaorewards = $select2['conciliacaorewards'];
+            $planoquartos = $select2['planoquartos'];
+            $comboedas = $select2['comboedas'];
+        }
+            ?>
+                <?php if($gestaorecepcao == '1'){ ?>
               <a href="gestao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Gestão Recepção (Downtime)</button></a>
+                <?php } ?>
+                <?php if($comissoes == '1'){ ?>
               <a href="comissao/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Comissões (Centralizadas)</button></a>
+                <?php } ?>
+                <?php if($auditoriadigital == '1'){ ?>
               <a href="auditoria/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Auditoria Digital (Recepção)</button></a>
-              <a href="all/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Conciliação ALL (Auditoria)</button></a>
+                <?php } ?>
+              <?php if($conciliacaorewards == '1'){ ?>
+              <a href="rewards/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Conciliação Rewards (Auditoria)</button></a>
+                <?php } ?>
+              <?php if($planoquartos == '1'){ ?>
               <a href="plano/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-1">Plano de Quartos (Digital)</button></a>
-            </div>
+                <?php } ?>
+            <?php if($comboedas == '1'){ ?>
+            <a href="comboedas/<?php echo $_SESSION['hotel']; ?>/"><button class="botao-planilha-2">Comboedas (Gestão Pontos)</button></a>
+                <?php } ?>    
+        </div>
             </center>
             <?php }else{ ?>
                 <h2 class="title">Antes de Começar, selecione seu Hotel!!</h2>

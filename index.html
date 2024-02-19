@@ -1,59 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Site Denis Ferraz</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      text-align: center;
-    }
-    
-    h1 {
-      color: #333333;
-    }
-    
-    .button {
-      display: inline-block;
-      padding: 12px 24px;
-      margin: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
-    }
-    
-    .button-blue {
-      color: #ffffff;
-      background-color: #3498db;
-      border: 2px solid #3498db;
-    }
-    
-    .button-blue:hover {
-      background-color: #2184b5;
-      border-color: #2184b5;
-    }
-    
-    .button-green {
-      color: #ffffff;
-      background-color: #27ae60;
-      border: 2px solid #27ae60;
-    }
-    
-    .button-green:hover {
-      background-color: #1e8449;
-      border-color: #1e8449;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Planilhas Hotelaria</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 </head>
 <body>
-  <h1>Bem-vindo à meu Site</h1>
-  
-  <a href="hotel/index.html" class="button button-green">Ir para Hotel</a>
-  <a href="22/index.php" class="button button-blue">Ir para Jogo 22</a>
-  <a href="planilhas/index.html" class="button button-green">Ir para Planilhas</a>
+
+    <form class="form" action="login.php" method="POST">
+        <div class="card">
+            <div class="card-top">
+                <h2 class="title">Painel de Acesso</h2>
+                <p>Entrar com sua conta para Acessar as Planilhas</p><br>
+            </div>
+
+            <div class="card-group">
+                <label>Login</label>
+                <input type="text" minlength="6" maxlength="35" name="login" placeholder="Login" required>
+                <label>Senha</label>
+                <input type="password" minlength="4" maxlength="30" name="senha" placeholder="Senha" required>
+                <input type="hidden" name="id_job" value="login">
+                <div class="card-group btn"><button type="submit">Acessar</button></div>
+            </div>
+            <br>
+            <span class="card-group-span">Não tem Senha? Fale com o Administrador</span>
+        </div>
+    </form>
+
 </body>
 </html>

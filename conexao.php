@@ -10,10 +10,10 @@ if ( $_SERVER['REQUEST_METHOD']=='GET' && realpath(__FILE__) == realpath( $_SERV
 date_default_timezone_set('America/Sao_Paulo');
 
 // Chave de criptografia
-$chave = 'SUA CHAVE_1 AQUI';
+$chave = 'Accor@123';
 $metodo = 'AES-256-CBC';
 //$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($metodo));
-$iv = 'SUA CHAVE_2 AQUI'; //precisa ter exatos 16 caractere
+$iv = '8246508246508246';
 
 //Local de Configuração
 $local_configuracao = 'Casa';
@@ -26,9 +26,9 @@ $config_db = 'app_denisferraz';
 $config_user = 'root';
 $config_password = '';
 }else{
-$config_db = 'DATABASE NOME';
-$config_user = 'USUARIO';
-$config_password = 'SENHA';
+$config_db = 'u661915792_app_checkos';
+$config_user = 'u661915792_app_checkos';
+$config_password = 'Much@ch0';
 }
 
 $hoje = date('Y-m-d');
