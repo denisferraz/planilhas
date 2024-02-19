@@ -111,7 +111,15 @@ $chave = $_SESSION['hotel'].$chave;
                     $stmt->execute();
                 }}
 
-    
+                // Deleta duplicidades
+                $sql = "DELETE t1 FROM $tabela_excel t1
+                INNER JOIN $tabela_excel t2
+                WHERE t1.id < t2.id
+                  AND t1.room_number = t2.room_number
+                  AND t1.room_number = t2.room_number";
+                $stmt = $conn_mysqli->prepare($sql);
+                $stmt->execute();
+
                 // Close the file handle and statement
                 $stmt->close();
             }
@@ -185,6 +193,7 @@ $chave = $_SESSION['hotel'].$chave;
                 $colunaJ = '';
                 $colunaK = '';
                 $colunaL = '';
+                $colunaM = '';
                 $id_inhouse = 0;
 
                 // Process each row in the XML file
@@ -232,7 +241,8 @@ $chave = $_SESSION['hotel'].$chave;
                     $RATE_CODE = (string)$row->RATE_CODE;
                     $BALANCE = (string)$row->BALANCE;
                     $ROOM = (string)$row->ROOM;
-                    $Comentarios = "";
+                    $ROOM_TYPE = (string)$row->ROOM_CATEGORY_LABEL;
+                    $Comentarios = (string)$row->LIST_G_COMMENT_RESV_NAME_ID->G_COMMENT_RESV_NAME_ID->RES_COMMENT;
                     $COMPANY_NAME = (string)$row->COMPANY_NAME;
                     $Alteracao = 'Pendente'; //alteração
 
@@ -252,6 +262,7 @@ $chave = $_SESSION['hotel'].$chave;
                     $colunaJ = $Comentarios;
                     $colunaK = $COMPANY_NAME;
                     $colunaL = $Alteracao;
+                    $colunaM = $ROOM_TYPE;
 
                     $dados_presentlist = $colunaA.';'.$colunaB.';'.$colunaC.';'.$colunaD.';'.$colunaE.';'.$colunaF.';'.$colunaG.';'.$colunaH.';'.$colunaI.';'.$colunaJ.';'.$colunaK.';'.$colunaL;
                     $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
