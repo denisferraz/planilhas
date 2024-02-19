@@ -82,10 +82,10 @@ $sum_diferenca = '<b>R$</b>' . number_format($sum_diferenca, 2, ",", ".");
 <legend>Tax Base</legend>
 <form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
-<th colspan="17">Tax Base Calculaiton</th>
-<tr><td style="background-color: black" colspan="17"></td></tr>
-<tr><td align="center" colspan="17">RPS Emitadas: <b><?php echo $quantidade_dados; ?></b> | Valor Total Emitido: <?php echo $sum_valor_base_iss; ?> | Valor Total Iss: <?php echo $sum_valor_iss; ?> | Valor Total Iss Esperado: <?php echo $sum_valor_iss_esperado; ?> | Diferença: <b><?php echo $sum_diferenca; ?></b> | Valor Total Iss Retido: <?php echo $sum_valor_iss_retido; ?></td>
-<tr><td style="background-color: black" colspan="17"></td></tr>
+<th colspan="12">Tax Base Calculaiton</th>
+<tr><td style="background-color: black" colspan="12"></td></tr>
+<tr><td align="center" colspan="12">RPS Emitadas: <b><?php echo $quantidade_dados; ?></b> | Valor Total Emitido: <?php echo $sum_valor_base_iss; ?> | Valor Total Iss: <?php echo $sum_valor_iss; ?> | Valor Total Iss Esperado: <?php echo $sum_valor_iss_esperado; ?> | Diferença: <b><?php echo $sum_diferenca; ?></b></td>
+<tr><td style="background-color: black" colspan="12"></td></tr>
 <tr style="background-color: grey">
     <td align="center"><b>Qtd</b></td>
     <td align="center"><b>RPS</b></td>
@@ -98,11 +98,6 @@ $sum_diferenca = '<b>R$</b>' . number_format($sum_diferenca, 2, ",", ".");
     <td align="center"><b>Base Iss</b></td>
     <td align="center"><b>Iss</b></td>
     <td align="center" colspan="2"><b>Iss Esperado</b></td>
-    <td align="center"><b>Iss Retido</b></td>
-    <td align="center"><b>Serviço</b></td>
-    <td align="center"><b>A&B</b></td>
-    <td align="center"><b>Diversos</b></td>
-    <td align="center"><b>Evento</b></td>
 
 </tr>
 
@@ -119,11 +114,6 @@ foreach ($_SESSION['dados_taxbase'] as $select) {
     $valor_nf = floatval($select['valor_nf']);
     $valor_base_iss = round(floatval($select['valor_base_iss']), 2);
     $valor_iss = round(floatval($select['valor_iss']), 2);
-    $valor_iss_retido = floatval($select['valor_iss_retido']);
-    $valor_servico = floatval($select['valor_servico']);
-    $valor_aeb = floatval($select['valor_aeb']);
-    $valor_diversos = floatval($select['valor_diversos']);
-    $valor_evento = floatval($select['valor_evento']);
 
     $valor_iss_esperado = round($valor_base_iss * 0.05, 2);
     $diferenca_iss = round($valor_iss_esperado - $valor_iss, 2);
@@ -166,11 +156,6 @@ foreach ($_SESSION['dados_taxbase'] as $select) {
     <td>R$<?php echo number_format($valor_iss ,2,",","."); ?></td>
     <td>R$<?php echo number_format($valor_iss_esperado ,2,",","."); ?></td>
     <td style="background-color: <?php echo $cor_td_2; ?>"></td>
-    <td style="background-color: <?php echo $cor_td; ?>">R$<?php echo number_format($valor_iss_retido ,2,",","."); ?></td>
-    <td>R$<?php echo number_format($valor_servico ,2,",","."); ?></td>
-    <td>R$<?php echo number_format($valor_aeb ,2,",","."); ?></td>
-    <td>R$<?php echo number_format($valor_diversos ,2,",","."); ?></td>
-    <td>R$<?php echo number_format($valor_evento ,2,",","."); ?></td>
 </tr>
 <?php } ?>
 </table>

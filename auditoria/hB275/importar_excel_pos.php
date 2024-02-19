@@ -334,7 +334,7 @@ if (!empty($_FILES["xmlFile"]["name"]) && count($_FILES["xmlFile"]["name"]) == 6
                 $xml = simplexml_load_file($tmp_name);
                 foreach ($xml->LIST_G_CROSS->G_CROSS->LIST_G_BILL_NO->G_BILL_NO as $row) {
 
-                    if((string)$row->RESORT != strtoupper($dir)){
+                    if((string)$row->RESORT != strtoupper($dir) || (string)$row->FOLIO_TYPE != 'S_FOLIO'){
                         continue;
                     }
 
