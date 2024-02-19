@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Tempo de geração: 12/09/2023 às 12:52
--- Versão do servidor: 10.6.14-MariaDB-cll-lve
--- Versão do PHP: 7.2.34
+-- Host: 127.0.0.1
+-- Tempo de geração: 19/02/2024 às 01:09
+-- Versão do servidor: 10.4.28-MariaDB
+-- Versão do PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,8 +18,37 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `u661915792_app_checkos`
+-- Banco de dados: `app_denisferraz`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `configuracoes`
+--
+
+CREATE TABLE `configuracoes` (
+  `id` int(1) NOT NULL,
+  `configuracao` varchar(4) DEFAULT NULL,
+  `config_empresa` varchar(30) NOT NULL,
+  `config_email` varchar(35) NOT NULL,
+  `config_telefone` varchar(18) NOT NULL,
+  `config_cnpj` varchar(18) NOT NULL,
+  `config_endereco` varchar(100) NOT NULL,
+  `config_msg_confirmacao` mediumtext NOT NULL,
+  `config_msg_cancelamento` mediumtext NOT NULL,
+  `config_msg_finalizar` mediumtext NOT NULL,
+  `reserva_dia_max` date NOT NULL,
+  `envio_whatsapp` varchar(15) NOT NULL,
+  `envio_email` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Despejando dados para a tabela `configuracoes`
+--
+
+INSERT INTO `configuracoes` (`id`, `configuracao`, `config_empresa`, `config_email`, `config_telefone`, `config_cnpj`, `config_endereco`, `config_msg_confirmacao`, `config_msg_cancelamento`, `config_msg_finalizar`, `reserva_dia_max`, `envio_whatsapp`, `envio_email`) VALUES
+(-2, NULL, 'Denis Ferraz', 'contato@denisferraz.com.br', '71992604877', 'N/A', 'Endereço Atual', 'É indispensável a apresentação dos documentos oficiais com foto de todos os ocupantes do quarto.<br>Caso haja menor de idade, precisa da autorização dos pais assim como dos documentos dos menores<br>Qualquer duvida, sinta-se a vontade para entrar em contato conosco.', 'Lembre-se que o cancelamento é irreversível e com isso você ira precisar realizar um novo horário no futuro', 'Foi muito bom ter você conosco<br>Esperamos ver você em breve!!<br>Não esqueça de nos avaliar, é muito importante e nos ajuda a crescer cada vez mais', '2023-12-31', 'desativado', 'ativado');
 
 -- --------------------------------------------------------
 
@@ -28,22 +57,27 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `excel_hotels` (
-  `1` int(11) NOT NULL,
-  `hotel_rid` varchar(5) NOT NULL,
+  `id` int(11) NOT NULL,
+  `hotel_rid` varchar(10) NOT NULL,
   `hotel_name` varchar(100) NOT NULL,
   `hotel_status` varchar(50) NOT NULL,
-  `hotel_validade` date NOT NULL
+  `hotel_validade` date NOT NULL,
+  `gestaorecepcao` int(11) NOT NULL,
+  `comissoes` int(11) NOT NULL,
+  `auditoriadigital` int(11) NOT NULL,
+  `conciliacaorewards` int(11) NOT NULL,
+  `planoquartos` int(11) NOT NULL,
+  `comboedas` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `excel_hotels`
 --
 
-INSERT INTO `excel_hotels` (`1`, `hotel_rid`, `hotel_name`, `hotel_status`, `hotel_validade`) VALUES
-(1, 'h8185', 'Novotel Salvador Hangar Aeroporto', 'Ativo', '2023-12-31'),
-(2, 'h8181', 'Ibis Salvador Hangar Aeroporto', 'Ativo', '2023-12-31'),
-(3, 'hB275', 'Novotel Salvador Rio Vermelho', 'Ativo', '2023-12-31'),
-(4, 'h3147', 'Mercure SP Pinheiros', 'Ativo', '2023-12-31');
+INSERT INTO `excel_hotels` (`id`, `hotel_rid`, `hotel_name`, `hotel_status`, `hotel_validade`, `gestaorecepcao`, `comissoes`, `auditoriadigital`, `conciliacaorewards`, `planoquartos`, `comboedas`) VALUES
+(1, 'hssa_wy', 'Wyndham Salvador Hangar Aeroporto', 'Ativo', '2023-12-31', 1, 0, 1, 0, 1, 1),
+(2, 'hssa_bw', 'Best Western Salvador Hangar Aeroporto', 'Ativo', '2023-12-31', 1, 0, 1, 0, 1, 1),
+(3, 'hB275', 'Novotel Salvador Rio Vermelho', 'Ativo', '2023-12-31', 1, 1, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -66,116 +100,234 @@ CREATE TABLE `excel_users` (
 --
 
 INSERT INTO `excel_users` (`id`, `username`, `userpassword`, `nome`, `hotel`, `hierarquia`, `userstatus`) VALUES
-(1, 'H8185FD', '81dc9bdb52d04dc20036dbd8313ed055', 'Denis Ferraz', 'h8185;h8181;hB275;h3147', 'Administrador', 'Ativo'),
-(5, 'H8185RE', 'e8343e3aec2a1c5e792d62a13603f19a', 'Erica Rocha', 'h8185;h8181', 'Supervisor', 'Ativo'),
-(6, 'H8185ML', 'e8343e3aec2a1c5e792d62a13603f19a', 'Luiza Marques', 'h8185;h8181', 'Supervisor', 'Ativo'),
-(8, 'H8181PA', '4afe4d3ff3ff52198a8a6075a655ad03', 'Anderson Peres', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(10, 'H8185RG', 'e8343e3aec2a1c5e792d62a13603f19a', 'Gabriela Ribeiro', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(12, 'H8181SA', 'e8343e3aec2a1c5e792d62a13603f19a', 'Amanda Silva', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(15, 'H8181FM', 'e8343e3aec2a1c5e792d62a13603f19a', 'Matheus Fontes', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(16, 'H8181SC', 'e8343e3aec2a1c5e792d62a13603f19a', 'Cleomar Santos', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(18, 'H8185CA', 'ed7785bc00bded4742db58635d572455', 'Aimee Carvalho', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(20, 'H8181SE', 'e8343e3aec2a1c5e792d62a13603f19a', 'Eva Silva', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(23, 'H8181AS', 'e8343e3aec2a1c5e792d62a13603f19a', 'Aislan Silva', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(24, 'H8181SD', 'e8343e3aec2a1c5e792d62a13603f19a', 'Daniel Silva', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(27, 'H8181ER', 'e8343e3aec2a1c5e792d62a13603f19a', 'Eric Reis', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(29, 'H8185PL', '2de7d34d0f99efe2ebfc90a063053f87', 'Lucas Pinto', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(30, 'H8185LM', 'e8343e3aec2a1c5e792d62a13603f19a', 'Leandra Magalhaes', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(33, 'H8185MM', 'e8343e3aec2a1c5e792d62a13603f19a', 'Moises Melo', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(35, 'H8181BB', 'e8343e3aec2a1c5e792d62a13603f19a', 'Bruno Brugni', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(36, 'H8181GE', 'e8343e3aec2a1c5e792d62a13603f19a', 'Elton Goncalves', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(39, 'H8181FG', 'e8343e3aec2a1c5e792d62a13603f19a', 'Geraldo Ferreira', 'h8185;h8181', 'Colaborador', 'Ativo'),
-(40, 'H8185JJ', '81dc9bdb52d04dc20036dbd8313ed055', 'Jose Junior', 'hB275;h8185;h8181', 'Gerente', 'Ativo'),
-(42, 'H3147LD', 'e8343e3aec2a1c5e792d62a13603f19a', 'Daiane Lima', 'h3147', 'Gerente', 'Ativo'),
-(43, 'HB275FO', '1062b93a7e82d2f467b44aee06cafc92', 'Helder Pinheiro', 'hB275', 'Gerente', 'Ativo'),
-(44, 'H8185AC', '81dc9bdb52d04dc20036dbd8313ed055', 'Camila Ayres', 'h8185;h8181', 'Gerente', 'Ativo');
+(1, 'DFERRAZ', '81dc9bdb52d04dc20036dbd8313ed055', 'Denis Ferraz', 'hssa_wy;hssa_bw;hB275', 'Administrador', 'Ativo'),
+(40, 'HB275JJ', '81dc9bdb52d04dc20036dbd8313ed055', 'Jose Junior', 'hB275', 'Gerente', 'Ativo'),
+(43, 'HB275FO', '81dc9bdb52d04dc20036dbd8313ed055', 'Helder Pinheiro', 'hB275', 'Gerente', 'Ativo'),
+(49, 'GFERREIRA', '81dc9bdb52d04dc20036dbd8313ed055', 'Geraldo Ferreira', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(50, 'VALCIOLIVEIRA', '3b02eec24cf6e284fbd1628600a636a7', 'Valciane Oliveira', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(51, 'DARAUJO', '28fac4a4211d693d631c431287a5889a', 'Daniel Araujo', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(52, 'BPIRES', '6a4803edaffbc4b81e1423c87a622fc6', 'Bruno Brugni', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(53, 'VSEIXAS', '7daf849a245836c0487220d108b685be', 'Valesca Seixas', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(54, 'MMELO1', '82b140e1070f74b91332fe5b8c4945a7', 'Moises Melo', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(55, 'GEJUNIOR', 'ef9d5aa16b2abac71dbcc3f518b7993f', 'Geraldo Junior', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(56, 'EROMA1', '08293e1899bcb753358aaa5ca4588eb3', 'Elton Roma', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo'),
+(57, 'LPINTO', '526c8d503774a4d53c99ac576886d71f', 'Lucas Pinto', 'hssa_wy;hssa_bw', 'Supervisor', 'Ativo'),
+(58, 'BRJESUS', 'bfe1cb146518f7cabe2447cb3738bc41', 'Bruno Jesus', 'hssa_wy;hssa_bw', 'Colaborador', 'Ativo');
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `h8181_excel_gestaorecepcao_arrivals`
+-- Estrutura para tabela `hssa_bw_excel_auditoria`
 --
 
-CREATE TABLE `h8181_excel_gestaorecepcao_arrivals` (
+CREATE TABLE `hssa_bw_excel_auditoria` (
   `id` int(11) NOT NULL,
-  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
-  `dados_arrivals` mediumtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `h8181_excel_gestaorecepcao_cashier`
---
-
-CREATE TABLE `h8181_excel_gestaorecepcao_cashier` (
-  `id` int(11) NOT NULL,
-  `username` varchar(35) NOT NULL,
-  `tipo_lancamento` varchar(35) NOT NULL,
-  `pagamento_tipo` varchar(55) NOT NULL,
-  `pagamento_valor` varchar(55) NOT NULL,
-  `reserva_id` int(11) NOT NULL,
-  `origem` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `h8181_excel_gestaorecepcao_inhouse`
---
-
-CREATE TABLE `h8181_excel_gestaorecepcao_inhouse` (
-  `id` int(11) NOT NULL,
-  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
-  `dados_presentlist` mediumtext NOT NULL,
-  `reserva_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `h8181_excel_gestaorecepcao_roomstatus`
---
-
-CREATE TABLE `h8181_excel_gestaorecepcao_roomstatus` (
-  `id` int(11) NOT NULL,
-  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
-  `room_number` mediumtext NOT NULL,
-  `room_status` mediumtext NOT NULL,
-  `room_type` mediumtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `h8181_excel_gestaorecepcao_roomtypes`
---
-
-CREATE TABLE `h8181_excel_gestaorecepcao_roomtypes` (
-  `id` int(11) NOT NULL,
-  `room_type` varchar(50) NOT NULL,
-  `room_type_qtd` int(11) NOT NULL
+  `data_auditoria` date NOT NULL,
+  `dados_auditoria` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `h8185_excel_gestaorecepcao_arrivals`
+-- Estrutura para tabela `hssa_bw_excel_auditoria_auditorias`
 --
 
-CREATE TABLE `h8185_excel_gestaorecepcao_arrivals` (
+CREATE TABLE `hssa_bw_excel_auditoria_auditorias` (
+  `id` int(11) NOT NULL,
+  `data_auditoria` date NOT NULL,
+  `auditoria_status` varchar(30) NOT NULL,
+  `colaborador` varchar(100) DEFAULT NULL,
+  `data_finalizada` datetime DEFAULT NULL,
+  `comentario_garantias` mediumtext DEFAULT NULL,
+  `comentario_gerencial` mediumtext DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_bw_excel_auditoria_auditorias`
+--
+
+INSERT INTO `hssa_bw_excel_auditoria_auditorias` (`id`, `data_auditoria`, `auditoria_status`, `colaborador`, `data_finalizada`, `comentario_garantias`, `comentario_gerencial`) VALUES
+(3, '2024-02-17', 'Pendente', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_auditoria_poa`
+--
+
+CREATE TABLE `hssa_bw_excel_auditoria_poa` (
+  `id` int(11) NOT NULL,
+  `data_poa` int(11) NOT NULL,
+  `dados_poa` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_bw_excel_auditoria_poa`
+--
+
+INSERT INTO `hssa_bw_excel_auditoria_poa` (`id`, `data_poa`, `dados_poa`) VALUES
+(1, 2024, 'YU5qdmYyZjZpKzBsaitHcHN2MnR1dHp3QjRJWTZock5BS1lrY2d5em9pQUF6bHBTKzlXTWFnclU2VkllcDVOTTlUaEE0N1R3bUJ5UFhMeHJmREUrZnFxQ3cvZTYvaTJtc0NLNkJ6akNrNVNNMlNZQ1kxQ2ovbThIMXdHZGowRDAxRy8ySUtQbXhEMVdEdXo2MlI2WTFYQXdaSGh2clpNNHYwQ3hWMS9zL0NrVXU4MVhzNTljbERWODJtdXpOL2JIb2VnTHBaZlZyOE5Za29jeW9haHh1WTA1WEJIeWFNZGpxcTlORXRQUWlQTGlxM2NaZzFzOUxtaW0zTlJLemRnL1pSL0pNcWR4NHBtNDJremdJS0wyWEZtYWJBa2ZvU1I2ajlKZVRjSisvMmc9');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_comboedas`
+--
+
+CREATE TABLE `hssa_bw_excel_comboedas` (
+  `id` int(11) NOT NULL,
+  `colaborador` varchar(50) NOT NULL,
+  `pontos` int(11) NOT NULL,
+  `pontos_tipo` varchar(30) NOT NULL,
+  `pontos_data` datetime NOT NULL DEFAULT current_timestamp(),
+  `pontos_obs` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_comboedas_lojinha`
+--
+
+CREATE TABLE `hssa_bw_excel_comboedas_lojinha` (
+  `id` int(11) NOT NULL,
+  `item` varchar(50) NOT NULL,
+  `pontos` int(11) NOT NULL,
+  `status_item` varchar(30) NOT NULL,
+  `limite_mensal` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_bw_excel_comboedas_lojinha`
+--
+
+INSERT INTO `hssa_bw_excel_comboedas_lojinha` (`id`, `item`, `pontos`, `status_item`, `limite_mensal`) VALUES
+(1, 'Dobradinha', 50, 'Ativo', 8),
+(3, 'Dobradinha FDS', 200, 'Ativo', 1),
+(4, 'Hospedagem BW/WY com Acompanhante', 500, 'Ativo', 1),
+(5, 'Jantar com Acompanhante BW/WY', 100, 'Ativo', 1),
+(6, 'Almoço com Acompanhante BW/WY', 100, 'Ativo', 1),
+(7, 'Café da Manhã com Acompanhante BW/WY', 80, 'Ativo', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_gestaorecepcao_arrivals`
+--
+
+CREATE TABLE `hssa_bw_excel_gestaorecepcao_arrivals` (
   `id` int(11) NOT NULL,
   `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
   `dados_arrivals` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+--
+-- Despejando dados para a tabela `hssa_bw_excel_gestaorecepcao_arrivals`
+--
+
+INSERT INTO `hssa_bw_excel_gestaorecepcao_arrivals` (`id`, `data_importacao`, `dados_arrivals`) VALUES
+(1, '2023-12-31 17:42:05', 'SE8raWxxc3M1ckRJR28rYXFJT3RjV0xEWm5Ua0F3QnNqMU5hYTgrRDNNNTdVejl0VU84Z2VUaU1DaTUycWlIblBwcWk1YTljd01mU1J2OXVxaThiaDNKT1ZMMktPRVFzZWJONW4wSTBJNURjMGpJR3VibGpZQUZweE4wdEtFWXM='),
+(2, '2023-12-31 17:42:05', 'YzgyZ0theHp0K2FQQWhOOFhtVjEwVUlHbC90Ukp3VldZZytua1lwOHdsRmpSVTFtZmRad25pcnY5aE9sOUROSlZLN0NQSVpMN0wvK3FqOExtbHd3OHR0QTNFbytTM1R2Y2dTSzZMOGlpQjVma0h0bXYxamNaaFY0d0xyQzVTSkg1dEJnZER5WHU3d0lsSjdDOHY3UE53PT0='),
+(3, '2023-12-31 17:42:05', 'ODNNMVZPVjZSaEZkd2srT1BiODFyNm9ZK25nd2pxUzR6MzdIOVFORUlvN1krallNc2RUWTNycndnWWN4VHVJdkpwdGZ4eXd5eERGejhqTFNOWi9jc0llSkc4VnVsQWVrMVpXWlRIczlnUmdJbmY0UExBNkhqb1h5WW5iZEtVU3BWVnVPdzg1Y1U1Uno0Um1aR09JK0hBPT0='),
+(4, '2023-12-31 17:42:05', 'QWJOQzhqM053UkhjMUJOSDd4OWxBRUNNR0ZkYWk0WDdxOFRPYldJTHRZMlRkbXpHclV1SHRlMTFIaFNoWHhsMFhabzVzZnkvSWl0VTVPWGp5Z2JpVGN5VDRBdjRrYlhnVHRyQmg5eHN6cDN6VU1sWDBDRTQ1dmRvaERBak5SekE1ZWZVbEsyQUFBWXVyNlkzTGwyZGxnPT0='),
+(5, '2023-12-31 17:42:05', 'Rlo3aDVwVmtRMHdpT3NCUytXVnM1MjdUaEViTWNCNjdyZWY3Q0tTWWtFL3Jha1FRbjVYdTl0aEtDUUlaLzVNMnl3WGRFWWxWT1cyc1lZSG9KYUVvNEtuQm84MzAyendLcklnWWROeVBES3puR3hydENmd1FUNHZyVlNUcmtEUWFIdWpsd092N1JPajNzRU5GZmNHSU5nPT0='),
+(6, '2023-12-31 17:42:05', 'Q0FCNURneXkzSFA0WTZPaWpvM0M4Mit4Q243VVZFcDVPTkF5VjNBdHo4aVloa3U4Y2ZWbVR2QWxiNmlRU2laTDM0SmZ3bFdLV1hjcW1zRHdsTFFUUVliZHBHaE10L09POGR3OEZKMGlxak5ENTAxZ2VDbkF2Rlk5YXM5bmhPTGpHdGpPMWRzWWtyR3lzOThHTVJlWjJBPT0='),
+(7, '2023-12-31 17:42:05', 'Yi9ieGc5Q2hWNnFqWVpZR01VcTVCSUUzcU55c2ltUCt2Zlp6K3V3U2JleU05ZDhBclVjMUZjaHJTTUpxNzU2T0tuVEV6bjlkUUE0RzFSVmVEM0k4TjJGeXQrOEdsbjFGdFJLcGJLTmFJZmtJNVdHMEorS0NWTlppREVKZTFwVUtyZGN5VVBhd09ZR05ubjl4dFVJWldBPT0='),
+(8, '2023-12-31 17:42:05', 'S0hkK0ZvM3RYeEFBbUtRSFFhbVM1ZE5KV2ZhcDRUazFyT2I0NE0vaWE5QTQ4Ulh3Sm0yOWU5VDk1bTRFL2Y5SWt1U2k0YndGWEl1M0xhRHJQNGg2QWJkanhkWDhnZDN5dHZPYWZjeDdYNGtNMFpGZTNQNndvQUc1Z3NtMXFuOWE1S0NpNXRLeVZtUDM0Ty9qUDRsYzlBPT0='),
+(9, '2023-12-31 17:42:05', 'bldYai9hRW9RWUw5UjJNbUJibHpYTUFRdDdMaW91QUJEMU0zUFZKVWxORFpIWDhCQnh1SExEQnhISTFiTTB4QklFU3d5dlpNUTVtampndlEyaFhQWUo5SktEcEJSUXA0Nk52cVFsNjZxNCtLd05rNlo3WStCV2hLOWdCRUM1dUk5anFNMEUzWkM1d2NtK0JZVlZIK3pRPT0='),
+(10, '2023-12-31 17:42:05', 'eWNBdjNaUW5YNURkTnBSblN2OENXWnVPZWxEa1Z5aElnb1FqVXRjdFdTNE85UUNZM1M0SVZ3MFFjRjA4cmZkK0MzT2xKVVJjWHZESGxHRmpteG5yaEhrUm5RdnNwVkl5di83NFJOZFluaFBrU29XMUdiZytiSEcwbWtxOUpweWhPZkFyRnFCOHAvZDV1T3VaTEhwVTJBPT0='),
+(11, '2023-12-31 17:42:05', 'SnkzVFZYNk0vL3NjLzh3YXhESit5N1lEWno0TWZ4Mk15c29OOXNocHhRcUQzbW9xN2dZNkkyZytneTIvUC9UT0RLUzI5bVVnR3F5UGtZcjRkYkdGK2c4T1l0QitXNVZpbm5KN1J2c1lPU3lzOTYzWkRHWm5lNHpneXZVRCtqMUFtbHkxczhQOElnejlqUWhPRDI3VTV3PT0='),
+(12, '2023-12-31 17:42:05', 'VXFCQUQ1V0JMVlR4TUZMek80SkNhOUFFRXFhVklUKytMSHhEM09FK0hhNHVvRC96eEI3aTA5WXNMcm1RSkdvenlZVTlqb05WNXB0WGpmZEZNMlZBaENGOFZGUE0rWFh3eFNlSFhLc2ZWZm5PdURwZnkvZVAwWWxPTWdHKzg2QVRibW52K3k3SXN4WTdxTTJCVDZQNXB3PT0='),
+(13, '2023-12-31 17:42:05', 'QVZWN3ZGeHBmMGNKbmRLcnJIT2dDSVEwQzI4dHc3UlppdFR6OWkrYzM3eUE1enIva3BXT1NSVmRSOFByNndxSERmd1VyRUw4YnZueFFZL3FaNG9wOEZkNXE3WE5QUkg5dGtKVzFJaFF4RjNuZ1prQ1lXOERNNFEyc3hJTVpoUzhWREpyMEpEaDlVY3cxNFczYUgxZlpnPT0='),
+(14, '2023-12-31 17:42:05', 'dUcyZ3ZrL2tiSStRa1VlVDhySnFDZXlaZmNibnpNeEVYMWxJclc4UzRkckxTaENKNWErdXltWXhTWlV4b3EyZDMvSWMrMmNMUXM1R3o1ME9rMVBTS2JvUkZROThKbGNzWHFqd1JybnVsYzZhSzBLbjRJWFk0TmxGYWR3Rmd6QS81ek56Yk1OYytHUHJ1bTJBUWFmRVh3PT0='),
+(15, '2023-12-31 17:42:05', 'YTBSYXpIRnk3MUE0YWVCR2xDTXQvM3VJeG1jYlluUmVzaEllalRKZSt5Q3JUc2cvbVU5Tk44eWNVZHZwRU5nZGU1UzFZMFgrV2Jwa1owYzlPeG1iSXllOVBRZWZ0Z3VDb0VTS0prN2d4YStnUG9hMzBLWXE1cTFYcDNkcEdQMDluOXFBMVRGTEt1SzhScjdvenhvSWxBPT0='),
+(16, '2023-12-31 17:42:05', 'bVREU25YSVFrVi9SR2Q2UTEwY2IvN3RVYmFQZFk5ZVY0N3RxVzkrajc2Sjc4V2h0YXBYNEFpNnhzZk1rYys0SnVGcThVYVlWelNCYllXQlVTTGtXa0NyMHlPUm8rR1VzUTFKSWs5R1BvQ3VmeVp0Miswa3g2aUFNVXZnM0FWWXRZSzVxQ0xrOGRjeHpING14Z1NkV3BBPT0='),
+(17, '2023-12-31 17:42:05', 'bGxhVE5kcE5QU3RqS0hZMTFmR1YwcnR3MG5HenRQV2hraDd2bHhqOU1ITFpJTHRCemNnQW1vSi8yUXVyM200czVzS3UvbTRlN1ZhODY4bGg1YTFWZlBYWjRuYWFsOFFCTGFBbkgzQ05HcDZsUGUvNnBHQ2Z1MjgzaC82cFphclk0VjN3UmlmOUFERC9HL0c2OXdFRXN3PT0='),
+(18, '2023-12-31 17:42:05', 'OWhFdWtHZjJLcVIrQUU1WHNjdjFlNFZ5d2VaNGpKdW1GWlAxZkNnWUxwSDVlMkw2MDJHOEkzM2x4a3lCeUJheFNZdjlUWHQ2WmxKSXQvcjQvcVJPa3dsWFpUTTAvT2MwbGFVSkJzcjZjNFhSMmZmQkFMemZDOHh1eFIyZ1NXaWpQYnB3UjNrUHZ5WWNTNWdaWVQ0bW5BPT0='),
+(19, '2023-12-31 17:42:05', 'NmNHWVZoWllqUFEvNlVQTDlKWkpzOUoyaEd4WWsvSkxwaVFlVVFSY0tNQ281ODVFcmY1eGhia2xpYW83RnE3YlVkVjRxNkkvb0ZFVWxGdnhkMzdUN0tTRnpLR0pGczhGMmVMTTVqQzIyaUhEbCtOaUhTZGU1NHdnVmRoTmVBRGZGWFM1eWZMMEhONW9TTkk1NWlIVmhBPT0='),
+(20, '2023-12-31 17:42:05', 'NjNXZjJvckZWZDV6K2pmNGs0UnlRcGM5TjR2dEFLRGM5dUdtR3ZMTEl1R1dQWEZlMlhTTWJzTVpPTFJMc2VIekM0cVRNUElrNjFYc1BMcXd5YXQ0MUlPcHRURFp4dWg0K0lXSWgrZ0JMUmZMS3lQcThrWVEyM01yZllTWXh4MjFDWXVmWnNXSWd2eVJSVmZDa3kyUUpRPT0='),
+(21, '2023-12-31 17:42:05', 'b0dISk5ZbHRLaTFCcTY0dldGWERxeEhjS2JKK0JRZUg2ZmJzRmxhVXRvc1RNNVNJS2pQcjlKRGZrMnBxcHVDNmYrb0xkTkU1YXV3a0l0cG9udjVFMFdXbmMrWlpQaGVMUVZqc1dQMlM3c255dE9rUDdDL1BpSHp0QXoyU3BGcm03REx6Tmd3VWNoZXdNVklGc1lTS3RBPT0='),
+(22, '2023-12-31 17:42:05', 'UHRFcU5uYk94bVlTOUM5NGVxMGx0b0tlc2NVKzhjbWRTdUQvOWorUkJkeFNISEY2OU1ta2xwdnlHMGtRdU5UY25BaWZBQ1pudDkyYXBKbElBek5WcE1mZ3hFYzJtbDNLTXA0bitlK1hSMUtPVm1mekFDY0VrVkprc1poQVJPYy8='),
+(23, '2023-12-31 17:42:05', 'MVZJaTUvaFJteXdEUlZIS3hRdTJLOHpCT0VDQmd6czZ6OUJXUXh2R2lOMUllNDgrcnJORVlIUU1QM1ZlZ3lseDdxMDhOZDZtS2ZSU21nd0loNXI4MUt2eEtqQUo4SnVpR2NYdUlEUnhBQWlJZmlyMW1sYWxjMldhV0tVZmR5Z0Y4VUlKNFBjeFVqYmJZMUg2UlhDOEdEN0FwTlF2UWNKb28vN2ZkSXhGOEV3PQ=='),
+(24, '2023-12-31 17:42:05', 'eWtRbU9Mbm82R0V4R2g2U1hYQ093SUlwZ3V1TGN2K0Z1ZUZJOTRxNGl5TGRyaVAxUFAzN0JZcHRGQUM1a1R6VUxKSi91VWhuSUY1QnlkTnhxaFBzRkRLOUw1aWM2Vjl1SmFkRGIzN0lLaHA4UXdCTEtsTm9acCtoUmJtclBKckd6K05jeGx2eksxWngvL2JjTjdiMWZBPT0='),
+(25, '2023-12-31 17:42:05', 'YjNvS3dMaWI1U1BLeGwrd3EwL1lkc3JwZHVOV3JoVE90VGJBVE02ZmRNcjFuSEJ5b242bWxrWEl0Z200MngzTHJBeFI2R1piYW93SlJYN3BzVjNvUWh5NkdYZmpDWlNYUDY0RWJEUlJ2RlU9'),
+(26, '2023-12-31 17:42:05', 'N0tqd0VtY2tGL0xBRkJnMThYTVJMYWJzVlhLbDFTT2xwaHlyK2g2RGtmYWJhU2ovUHEzdXpvQ3d1U3h1QTY5NllYNUNrc1ZQZ2J5V3pSdlRPbFRsM3Z4OFpzTGJwVkZJSnpGQUNIZWtVc1oyaFRrQjNiZVYxU2JiYlFoTmh5eDk='),
+(27, '2023-12-31 17:42:05', 'ajlaOE5CN0gyNVNYQ0czZUlNb2xlbkFuck1sejQ2bzhMaVZOWS8vYjBaM2tGU3R0S0x0TkRHcUkrOUJ6dldoRXB2U1hjWVFrOHBpR3hGdEM0VmQvejh0eEVJR3RzUmdVb2JOdVIycFhPZUxaMm1pMHJhaXJXSlBnVlNpRkZkSHo='),
+(28, '2023-12-31 17:42:05', 'cDdqT3ErRTFFK3M5bFRaVGxpODFUT3h6Uk1TVndPQU4raVZaV2RSKzFjUk5LZ0UvQVh0cXM5VVUrQXJpdE4wenREYnh2cWRLb3VvRWdKUzJOOWROaEpPem16emdaaXhzb1JxbkpoamV1aTNyeS9HWkdjT0Fxa1I2cVlmamgvU2Q='),
+(29, '2023-12-31 17:42:05', 'VXFDbWNncDZWbURiWE8zMUJwUDliNzU4aFhnaUYvOU52SDZOOVBSQmxKamxFdllzdENyY1dqS2xTcjF0MmZ6aWJPWmJvM0Q4Rk5KSnBCdFBVYmp1UG4wWEFCM1hlOHh4ZjgxcjNKY3o2Z2pTcWpPR2s4aHc3eXdsaVRFMktDNFU='),
+(30, '2023-12-31 17:42:05', 'Ykk0VG9tOGlSbmczNDkwR0FLZFp4QTNUcHpxV0JraXAwVDExWUZBQUtzb2dVUk4zUlZYbFpWQlI5ZHdOSUZXblpqbXFjUkxMMDh6UllmamtjRDlheXVqcUcyRnNOU3dOWXQ3cFFZUTc3cy9qRklubnJTZWl2VHpMaEpGRGs4c0R6TVh2S1RWTlJzNEE3N2F4UXRraStRPT0='),
+(31, '2023-12-31 17:42:05', 'OWJKZlBkdnVFcVp4UU1VRkJqVE95eVptdU8wb2ZVYUdwYzlIam96UUpFK3ViVXpBUGpRU3lqdG44bjQ4VUgxeFdiaVZZMEd3dnp0QXhISmkxREtkS2FRdjJQeGtPYUN1alJETWh5MHJJWlZEbFRvWWtlV0pUYmloaldiU3JHSEM='),
+(32, '2023-12-31 17:42:05', 'VlF2NEhxSDNiMnpYTXFlTmsvZDI1dHF2d2xrS2g1SkdUM0l1Y2FCVXhJSGJCT3lJbnhPZzRQRmc5U2QwdUYwcUpCZ0Uyem5IMEJWWUpRVXZna1EveGZyeUovZjdMRDBjREJ5UWxtbTRjdUZRWmUweXp6NUpsdVZOOVU5N3c3TEQ='),
+(33, '2023-12-31 17:42:05', 'ZVRkK2pwejA0SjhublI2a2daVy9BcFZaVjQ2TGFkRXBORHRSVFBzWVA2WjFzVDA0VDEvVGNTM0RoMHBxOENvWDZ5dWNWbzdoZlk4S3paSjlOcjZ0cDdrSHdMc0V6cDFlZ0NkRFBjeWlIREZMSzJVSTZ1REtwaW51SkNVRjFMNWtJUmVRK09KSHUxQkx2ZEk1Y1ZrMTlRPT0='),
+(34, '2023-12-31 17:42:05', 'MnFMVGZsSldJeGNhZHlpVFlKY3k4bEYwektwc3RZUXk3WEV5U1RsR3pIRGNUTEdDNHFCUHRTQWp4L3l2dTNwaG50S2JuQmdRQmpaQTBQZGkvQktmU0ZocTZoNnRYT1gvVjR5WGVoYVBVeTA9'),
+(35, '2023-12-31 17:42:05', 'KzJSbnZobmpEZkZZYmNRVUxJMFNqbDIremk2K2YvdXdGcm1oOHhDVlIyYUl6UW92Q1UwOTlOc1JrQVhwanhxM3grVWdhME84MWlGOERiVEFPa1ZybHhGMWdFc0xyYVgvdmwvczlTUDc4UHkwKytrQXFiTG9HZVdJanc0T1dOa0Q='),
+(36, '2023-12-31 17:42:05', 'RUtkTjFXT3JpZ1FiVTVPSDZKYjdnWGc3T0NvbjNLZW04R3pjQk5LNlVQVEJYYjRPNkM0dGszVzUwZlQ1VkdtOFRraXhiVXBrWDRwaG1nZDNLVkVwMDZwZUJmdzVvaEFnbUk1NmlhLzB2eFEzSzd2dzdXMEpueGJFSW1WVUVDd0Y2WC9CYk80YStZL0NDRDhjcWtaWmdwbFJTSjFxdFYrQWU1OUZBdzZJRS9ZPQ=='),
+(37, '2023-12-31 17:42:05', 'Ukk1MWtIbE1lbFgxNlFRQWpGR2dFUzMxR1A4ZkhHbkxqckxzRzdwTU4rTjlJY0ZFZUYzU2gxNkdtVnNTOWFOUHdYNUV0VHNhVlB6Y3lzRysvbW5TNjJLNTBsSVliRlZjRkU2b2FweGxydU5DdzdKYk1paWhGalB1dFZxRzR0Y2tRbWU3UFFZTS9NMzRzekJQRlV2RjA0Mk9VNnJOcmtVNTlkS0VCdFQ1eGlZPQ=='),
+(38, '2023-12-31 17:42:05', 'LzZBRE02YmdnNUtUOVJkMXZ1am5Gb2RzNkxrQXNtOVBPSW1oWjNUL1BhN3JPejFoMFdJVkh5WWtNcVpsdVJVTGJaL2V6dWFtdUxJaGduelJzTXZLK1QrTW5CTnJJdXgvMHhSNmpBdTRNMGM9'),
+(39, '2023-12-31 17:42:05', 'WnJSWjg1YWdwM29pd1paV2pFSy93WmlZamt6eEtFbC9ibEdvZHBuOFFnWG0wNU5xRmk4ckgwM3NlaXI5SWlYNzYyUXN3c2hwVWdCUEE5cGxCTFdOU2FFRndFQXk1OVRNQk95VEdPMGZjRTg3cUVOcWJvTnU4YXRlTFRhQTdkNjBOdzlWditFVjBxbzVHczBJQ1pKcVpEdzFhTEo4ZjB4SS9JQ0xQV3gzUGRZPQ=='),
+(40, '2023-12-31 17:42:05', 'SFA1b3hBZ3licWp5NTZkM2E2aW11ZnVXN2N5S3pVSWpwN3kzTm4xV3JYaTBDSG9vWHhtK0R4N2t3TGEwdGIxLzg3dGpFU2IwU3hlUW9IZnl1ckRWQk9ybEhWdm9HVXhBOFVsNjZQdWtuSEhTc3BIV2ZxK3k2YzRsY1dieFp6Q290TWNOQytzN0NKVEdlVUJObmoyMHByVHNSS04wSS81eG1CU1F5dWNKd0JUVUJjaFB2M2xVZ29YaGFSZWFJQWds'),
+(41, '2023-12-31 17:42:05', 'clJsZ0pRZ0lDQUVOKzQvOUNuTlRlK2RmOE0vNGtLZDJkdU1UaitXc2lBZE9uUndFeURQanhteDFMVnBaQ2E2RStpenJrNDVGcm5yckdnWUtJaDd4Z3FRL0NXZmJhektUcFhoYjY3UDlhTVVEWVFqMUdPUXJRaFN4VzJWbWVXVFc='),
+(42, '2023-12-31 17:42:05', 'WlhQOXRBcC83dTZ5UjRFOWlyWWt3a1BnSXh5REtUV1UyOURDdHRtQXEzZG9SeXJmMTlSb1dVQUo4NDV1UWNFT0dXMnVIZk9mMjZ2T21XWHpEbFZhRUJBSHl3bExtYm9tc3VTdG0yT2pQNUJUWXFWVkhvc3ZjNkdBa2J1eWdwZk8='),
+(43, '2023-12-31 17:42:05', 'ZVh6QXh6UmZMYVkzaDRmeVZiVG0xQ3pDZ2hVTURnKzNsZmVZeis2b2NFbjNaS2wyYnhkUndYcG1QWHJOY0dYNVM0Vm1LVitENGhUNG43ZTJXZmVUZExSc3ZIUW43MVo0enVGcUZlbUZBV0hkaXdNVnVoQ2FvMW50NHpzWitJeFU='),
+(44, '2023-12-31 17:42:05', 'cWxoaDR5cEpycjZNczAzeDVNU09tMVJJVEpWOENKSHI2RU81eWdHNEFqNGU1SlVGVUUwVlVFZ2trMERCQ0V1NTJ0QXZPa2p2SlprQnBNUEt4OExDYkgwODF4cGtsS3VCZDR3ZXYvRFVDQTRoTm54TU83WS9VWVNnaXoySFhmWTMvOFJuUEFLRGxpYkdad0ROTEtMYXVBPT0='),
+(45, '2023-12-31 17:42:05', 'TXg4aitGN0RhZnEwRGkrektwNVk2T1NlTnlTbnZxYmd6Sk5FQkVnMGlQVk5nQXFzSnRTUEtkT3NEWW9Uc3pnZlhlZC9nRWRPcklDWHZWMTBCQ2EyTTVnaWtwVDBnNHh3SDMvT3JtWHZYdjF6aE5vd2VOMmtEQzJuK1ByOGxMWXpkdzFkSExBdlNLNGVtbWE0eHdrR1dhUnRGMDBQTmZvUTk5NVA3R1ZHdHlJPQ=='),
+(46, '2023-12-31 17:42:05', 'amdXL3VxQ2hCTVNscnp5Nk1mR2VaTnRjUGY5UXppdnA4S3RxdnJWcTRDVURyaUN2NFYrZFYrYUdGNHBQNWJxOCt2K0FLR2tHVDQzV0QyMVVsMlpyMlJKdnVhNkJDei9nZ0RZUWxQSTRGRzRWTnJMaFBVNHQ4UXFZOEtZSC9ubnc='),
+(47, '2023-12-31 17:42:05', 'WkpFN2EwUU1wY2xXSm56WnFOSU1INm9qRFJPeUc0eDJqVTdZZDBYOXpkR0F1czc3RlhTaklGbit0WGc5Z2NObHVibFBtZGxxV2V1YkVsaWxZMVlDZWRkMUtMaDZJeVZDdEpKU1A4aDdkVzNoNHVYbXRwVXdsc1AvWWNrZUdzMkN6NkFoVm9TZUpQWnloanpCNkZoZ2R3PT0='),
+(48, '2023-12-31 17:42:05', 'bHBGUjVGN1NxYllaYUlVaHYwRVMrTGNkWVNqNUhFekU0NUxpY05zcG13MW5FR1Z1RTVsVkhhZC8za0ZHNit3d2gxS3ZVLzhVaE5SMTVPVE85U2lHcmF6Y3Q5SThzZVZEY3F1QkdaT0MvbEtlV1hZT21SNHRVRXFvMDNUR043MkxQQ1ZKZ3pSSjIrdEZaVEZVYkUzbGtHeWVvRDJya1ZsVDdqdno5ODJsUVJvPQ=='),
+(49, '2023-12-31 17:42:05', 'VHN2b2JuSStjc1BBMHVxRW9oK3JKRk1NSUpMS2lmRTVtaHgwMkFPUTNUT2FLL1ZqUzhMd0d1eXJERXBQWDBTNGtOZjdSeVgvVitYYlFSc2M2SkFnTUp2OVNtdEtjRkpKUDdtaHcvUkJjVWlKQXY1UURtalVEdmVJZUFKbktJT0V3NFdCMlZLNU9qOWZYY081eTh0TEZqek1TUW4vOHhQV3Y0aHp6N2xZVDUwPQ=='),
+(50, '2023-12-31 17:42:05', 'VHN2b2JuSStjc1BBMHVxRW9oK3JKRk1NSUpMS2lmRTVtaHgwMkFPUTNUT2FLL1ZqUzhMd0d1eXJERXBQWDBTNGtOZjdSeVgvVitYYlFSc2M2SkFnTUp2OVNtdEtjRkpKUDdtaHcvUkJjVWlKQXY1UURtalVEdmVJZUFKbktJT0V3NFdCMlZLNU9qOWZYY081eTh0TEZqek1TUW4vOHhQV3Y0aHp6N2xZVDUwPQ=='),
+(51, '2023-12-31 17:42:05', 'VHN2b2JuSStjc1BBMHVxRW9oK3JKRk1NSUpMS2lmRTVtaHgwMkFPUTNUT2FLL1ZqUzhMd0d1eXJERXBQWDBTNGtOZjdSeVgvVitYYlFSc2M2SkFnTUp2OVNtdEtjRkpKUDdtaHcvUkJjVWlKQXY1UURtalVEdmVJZUFKbktJT0V3NFdCMlZLNU9qOWZYY081eTh0TEZqek1TUW4vOHhQV3Y0aHp6N2xZVDUwPQ=='),
+(52, '2023-12-31 17:42:05', 'Ym9JRnA3NWs4bVhXOVpmS2ZaOFRCMVNMcklQUWxkY3ZXTU5yMXdoZGdCTFZWT0ZncE1uZEdTaG9DMnBYQUdVbHVjNmJiNUVwS0JacVlwUy9QT2NadVhIWjVpRWxiOXdYMDlYWlVWSXVZU2NEY2J3azNZdFIwRGFFandyOU91KzU='),
+(53, '2023-12-31 17:42:05', 'cXpwYVU1L1Nmb244RDBOTVlKZThoWEdGeWdQVWRoRlA5aER3Ym53a0ZEQmQ0UWI1MjVlOElDYWJObDNRTEpPTzAzUkxkSjJOM1pUdXBXTVdReStaWk1SOFlKNlhyY3hiS2JPbFhTS2hVazhBRmpKbzV4Rkc5VUIyd2lWMEtHcjNlSVFzUldBdnhlcEdGbkZSL1Zib1B3PT0='),
+(54, '2023-12-31 17:42:05', 'NnlWZ0l0YUt2M2FIamtESWdZMUpSK3dtZ2N5eVV6MkJXWitQL25ZV1Bia0JrN1dFUGxCdVR1VTR3ZGJJNUNTcHpBK1FMZlhOdWNOSytOUTZkTjJxOFdzMzF2MXU2MWx6bkhid1JnS3hyVk9YZ1ZlQVdyMUZESS9aTzJQNW9DdkhncVRlVXlWdmRiSjkwWjRDWU0vNkpudDFySUpUajF6T2pkTjFqZkFDUXBZPQ=='),
+(55, '2023-12-31 17:42:05', 'Y1VYd0tEMDY3a0hPUHBRVTFaamJjcmlpT3pjYzkzNUsrNGFvanp6NUg3Ync5TTJuVGhicGR2MVpvQjdNbG1rRXg5andHWGtWcHY5a2p1eFVDNjlBQ3NOMkVZNTBSMXB3ODFEUUlubkMyaVE9'),
+(56, '2023-12-31 17:42:05', 'VHhyL1pZa1AwUmR5cUhvU2pMUHRBN1piVVdrYkVSTEc4cjhpQ3pWNmNMTVB4SDdXcFJic2prUzRqM3kyQnl0ZmpaZTNhSGRwM1R5aUI0dXA4VjBPSWhpOG5xbkI3T21jdnVkbnBSb1JDNXVmeVcyeFBYKzhHczNVS2MzMUtQcnArdE1HQTBLVVpUV0IwY245Ynl3OU1RPT0='),
+(57, '2023-12-31 17:42:05', 'MnJ6MmlmNFZuQVJoT0F2V3JWNVEwbitpY2dtamZ6d0FMK1J1MTYxK3kvblh2QnVIQ2ZXMDRESjlJWDd2QWFnYWNKWThJdDFBVFp0V2x0Qk1OWlNTMnAzMTJ0YTMraVRWUUo0ZXN2S2RsbnZzZVpaUnVHYkEvMFEyMGdBTUxVeTY='),
+(58, '2023-12-31 17:42:05', 'UVZKRDF2UEIxRGU2UHNESEJNSU52WlFkTU9pWU1OeThrY1V4YlBPb0plbmRlK3ZBVjdyQWwzL0RWeHpQM2RlOFA4YUp2c3pSb0pjd0RQMFlKRytOV0MzdlJFL3pYVGhUTnVwUXhlWEFKUWxUd0RkWk5PUVZNQmprZkQwaEJxZkRzOTdseE9BOEZKQVJacDJnSzJEcEowSkh1MkJMdEZmcHRNWHRMRVR3cWgwPQ=='),
+(59, '2023-12-31 17:42:05', 'cTUxSGtla3dWUGxCSlBKZ0poWTRIdHFzSDFoN00vNEN6c01KSlV3Z2JneG5ocmJZb012OUlWMjhnNlVJUmJ5c0ZyT3U0bmlTanp1N0xlV0prNVNTZkhkMlM0ZDdHaU8rUGRQVWUzQW4rTmRvemhOWWpRNGZ4VFFnbGhzOGVhMTQ='),
+(60, '2023-12-31 17:42:05', 'aTZYbTEyVVUzTGNNTGdwM3ovaHdQR1Bncy9acWY0eUdwL1g4alVXdk9wY0hFZ3R6N0RKRFQzM3E5OFlvQ1ViTDZCRFpXT1liSTIrT2tBWUZJdDR1ckU5U3lBY2JWSzExRG1oMmZjUEg5d0ljVkRibHM1MHAwS2FpSStJRHFOYmdtWlQ4WW56U2lHM3J0bDZNY2lYWFpMd3BUeUlqckNtT0NJOEVEc2ZEUEFBPQ=='),
+(61, '2023-12-31 17:42:05', 'aTZYbTEyVVUzTGNNTGdwM3ovaHdQR1Bncy9acWY0eUdwL1g4alVXdk9wY0hFZ3R6N0RKRFQzM3E5OFlvQ1ViTDZCRFpXT1liSTIrT2tBWUZJdDR1ckU5U3lBY2JWSzExRG1oMmZjUEg5d0ljVkRibHM1MHAwS2FpSStJRHFOYmdtWlQ4WW56U2lHM3J0bDZNY2lYWFpMd3BUeUlqckNtT0NJOEVEc2ZEUEFBPQ=='),
+(62, '2023-12-31 17:42:05', 'bHFvWGQ1VEVWMFU4ZzFYbE5hbFdyWXAwaENxNy8zdUNIemJqc0JNRWVicjIwYU1QamJVQjVreUZTbWhKVXVtZ2ZGUDFYMjZzazlRd0lYRWd5UFVVR2lxazVEMWVHNzdwbGRKRHlxaHZKYUtSMHlXTm85aDdoQllubTJRQXIwVmx3RDFIUWMvdVIzZWJ4Ui9GSmZmY2NKbTB6OHZGdzZjQThCN0RwSEg5cjFBPQ=='),
+(63, '2023-12-31 17:42:05', 'TW4vZ1FjcTZPbWJYNkoyQUF3N29WZUxmdHdVMjFydFBIeFdNK3B0VjVJVjl4NUVmMk9Ga1YvVHJOU3IvM3ZxaUhpcThBWnA2MjdyTXI2elpPQUJjR0RkdHJ0dlZoUStCOGhKUTRYb3ZGV1FkL1grc0NJZ3kxaWs5c21xc1BKZldPdHVzVlhTOU9ZOElqdWRLMWxoMXJUWlR1Z0JkdFhYVWsrVHB3cjdPMnAwPQ=='),
+(64, '2023-12-31 17:42:05', 'cHc0V3FOampiYnhKUDdIdkhHYk45Ump6b0dmT3RReHVSL3RMUXdqWmFmNzFEN1VhU2VvL1hzUTJyVEJMSnFsUVBNSkhYZkN1eExQUjl0eFJMVGhmYitWNE91eld2cXIzdG5RTC9KaEdUZUk9'),
+(65, '2023-12-31 17:42:05', 'ZnVDdXM3YncyZU1HbU43VUhXazdkeDJLS2VRZnAvL3lXdXpHWDJ5RVhLQlZlNUNqT3EwQkUwa0FFSnJxMFUydU9raVQraDFWb2tOeGFVdjA0Q05CMmFna2c4RHlJTGRqTjRiTmZXRlNFOXZTS0ROeFRxMTl0YkNtMFVIWm4vQklPOHc2bzNvTkRxVWlrVWxHM3dSWGhTTkxadVZ2c3RHR3BsU3lBbURHdkFBb1IvVGJTOGI3UkxSNXRnR0thc00w'),
+(66, '2023-12-31 17:42:05', 'UUlvOTVaek9rcUZVOEVJS2R1aDhuNVFORHRrb1NFRWg4TDNpMlV3S01iTnJScmF4cjdueGlmWU5mcjdLMlkzY1AyZVlCc0pHVHFNNmpkeC9sZEhBdHFxWGNFNmozOVpnbzAvWENUNmdBMlFJUkhUdFhZelUweDY3UFVoZjZqZnVKaUNHcVdyb0hCSENsaDczc0pOWUJVTUlxV2x6VGsvSC80NEI0VFZheEZFPQ=='),
+(67, '2023-12-31 17:42:05', 'V0RQU2k2TmFKaDhaaFhqY1kyUDdCNUoxK09VWGhvcjBFOUFCbzB1bWlJaXZ2bmtoTUtTQVhoTmpNMW94NFVvL1pNdTF0NlBUSGR0djh0b0V4T2pnRmcxenk1N2hZeDN6cjIzTUM1cnR6dTNzQXlMd2l2cFJacGQ2NTR5L2hxVkU='),
+(68, '2023-12-31 17:42:05', 'aGxISkl3ejZ2djNER0UzRWpKblRmRnEwZG5oUVBjc0NKb2ExenVVQXVyMlE4dnpxRGFhVmd1T2hnalRTTEhDb20rTDMyUldoTEdlY0RVTXV4dlBsa2FLSHRjaCtoT3ZjV3VSY3h2TDNUbmQ0blZwU0UycDNBY1MvNEx3TXAxYmxiMU0xa3kvS1VCcjhONDB6ZjY0TDJRPT0='),
+(69, '2023-12-31 17:42:05', 'cnRjdW9Pb3NXRjVKeVRNbWZEZjVSQnpsbU0rdkRWR2U0SmFLcGxMUGhEbUkwa0hUQ2wxYzVrZFI2SThqQzU2N3RTVFZ0TlBQbEdxZlZvdnFSRDk5Umd4UTZJQXI4QTlSeFZKNmJ5aFNnYTA9'),
+(70, '2023-12-31 17:42:05', 'bWwxek5Sc1RlOTNuQkpuOFoyQ2gzcGs3eXl1ZEd3bzdXa0JKMVR2ZFdHVnJrOEFCbCszNUNjckJ2aFdOTEVIT3NzRHlDVVFpTFArYWE3QkwwWHpiejNjbllaNzR2cDloVU9ISXhwRmRNZUE9'),
+(71, '2023-12-31 17:42:05', 'ZlpxY3pWdU9iMUZDQkN0RlNka0ZyU0UxbG1mdHpCUUFGbWdlWnJpV2Vha0tLbmMwdzE1SzlqZjRvWTgwMUNWbEZPOHl0eVFyTFNLSlA1TXJDSnZrMENQWS9iZDg2bU0rcENjMWtTYVFHSVg2TjA0RHVRQkRYbm5uQW9nRXB2QU4wbC8yWTJISEUxSm5SZVhQMGxxYTBPd1RYdFp3Z0dwUmVMeGRMYWRZZk13PQ=='),
+(72, '2023-12-31 17:42:05', 'ODlRa3F3NVJsa0oweitMbkN2aU15aW1iN2tuOVFISzlQMnRRZUtod2NuOU5RWTRKVTB2OUlvaG1sb1dVTkI2VnhqbHc3VHM5RWdEMEMwaDRTb1JHTXB1aG9ZcVlEU05GeE5oN2gvWnMwUjh2N2FNa29MQWpzWE5tQ05FWDNJRGZWUVZEL0g4djZhMjVEemN3R1ZJbUlBPT0='),
+(73, '2023-12-31 17:42:05', 'STg4MFF1cGlNVmJJN0QzYjUzWGN3Njk4WlNEVFoyc0ZpY1RBVytVcUw4VU1sOXlXVi9MekVacm96d292T3o5eGdhcnhsVFBmL3oxN2lSa0dSaGU3Qzg0RTZJWlZnSEVJS0JDQVUrZHJMUWtJQ0NDKzFPMGdLOEo2SzVjaHVaSlQ='),
+(74, '2023-12-31 17:42:05', 'aGV3aWczVlRnSU8rcFYwSmh3ZWsyOVZyU2hyWWRZbm4xUFBtSmR0RGg0c2crWkt4OGtpbG1zdm83TndGV29kV0xXQktHRnNBUDhjQ2RLaXpSa0dJVThQb0lKaExYVEtQOFNFam96Rm1VbmhuUloxM1ZMZGNvOHFUb1pQOS96Wk8='),
+(75, '2023-12-31 17:42:05', 'SmhSRmdGUGowMXdvK3ErV1JPNEFnTGM4NGdRWkRlUWFUN0pSTFFWTnZ1cTh3WU1kbEZqNmRLb1JIeVZzTFAyVGVwbUd2eTB3Q2VwYUpxb3R3Znk1SThyOTQ5cW13RUpSTGs3a01UQmhXOVgzSXh4a21OcjJ0eG1wWU95bUJFbnMwTDZmZFRSTWhmWXFxUm9XcGxTeVZ3PT0='),
+(76, '2023-12-31 17:42:05', 'SmhSRmdGUGowMXdvK3ErV1JPNEFnTGM4NGdRWkRlUWFUN0pSTFFWTnZ1cTh3WU1kbEZqNmRLb1JIeVZzTFAyVGVwbUd2eTB3Q2VwYUpxb3R3Znk1SThyOTQ5cW13RUpSTGs3a01UQmhXOVgzSXh4a21OcjJ0eG1wWU95bUJFbnMwTDZmZFRSTWhmWXFxUm9XcGxTeVZ3PT0='),
+(77, '2023-12-31 17:42:05', 'dGU0VUorbHREVnkybnBlaWpxOGVTU3ZwUjUyZzJ3am1CS3c1cks4R2pJcWdJQ2Z1MTVMd1h5UmJkUS9EOFhpMVRTQjNVUjUwT1pKQlo1NTJONUMrVS9kTmtweEhHbnFhcWxHWXRvYk5wNXFLb292aVJtVE1TeVdCR2lZZk05ZnVUOGYyOTBSdWdGZjRRNnA4VVBaR0hnPT0='),
+(78, '2023-12-31 17:42:05', 'cVdMWEtDWXFlOU0vLzhkOHd0dTdvVCsvUnZLNDJZOXh3R2Q3N1FPSktMMzNIdVl5eCtDMGZFK1FXMDQ5R09HQ1hEY3VFY1BRNjZ6VGlWVzY4UVlrc2J1TVREd1RrVFNTeHEvUURJbE5jMzFpRlIrOGdWcERUcWNNbGJYaFhmM3I='),
+(79, '2023-12-31 17:42:05', 'aDdBM3h4YnlWRkZ6UXNQN3dGTWthcWk1aGg0RHN5Q0lSYTZONGFjbHMxLy9Jb1lqYUlCSlp0L3V6eDhJTDkxcDAzRkZVTWZpb2RSb0NheG5MbGhWZW9GdTJxZnEydS9FRUhCbEtTVGpHWE4wVmhTZlpFZUJPRVFIQTRUTmlGVS8xRDhQQkZUUDFSY2hnNWlDNW10WEV3PT0='),
+(80, '2023-12-31 17:42:05', 'VXlxNGF4a015Ly9JMVdlR0VYVlNwWER0SHJoVnpXaTVqdzRDSnB2Nmx3Ri91V2dZc09qTGJFcENicWtuVCtEaFB0N2JudDJ0RmVjNEk0ZG5sa3FaREQzU1grcUFqc1d1ZGlBQU9RZTBiakU9'),
+(81, '2023-12-31 17:42:05', 'QVZtek5hTmFZeXViai82ejdWZGJvVGVTZENuLzJNL3hQeTNmRmJEcVR3bEhFUGp1YWJZUjNXSkpXYzFDaW1wQlVXanpiSnBjK1o4cTRJTFlOQ1VzVWNpcmdtOGVWWk85QUQ2QkxMem9seEhQVEE2Zmp1c3hNQW9GaE4xbDhKLytwbm15d200b3dZd3BZQlppTXVzcHZ3PT0='),
+(82, '2023-12-31 17:42:05', 'bEV6Yzc2S3VoVmxwd2p1MHlmMTMwVW1Oc1NpTDFSUHFWZTJDVHd6amxQU08wRWRycnVQeHdQd2VwdG9ZUWRiOHg5eXpKWThMei91eEg5d09xSXQwTlBITXpLQUtMeVFlLzJyVms2LzYzekFQSEdWcUpPcWpXUm92QmFOc0VmYk4='),
+(83, '2023-12-31 17:42:05', 'MmttNEtuWWMweklOc0hZUmZNZGJ4QUFwNlRZTW1QQjBzS2NUV2Q5eEUvTTA4eFYyaWJkNjlmc2g2RkhET00yV2pORG5KQ2I1N21KS0NVTFFxRld3Yk95SXhITit4dkM5dnFyZnF0ZTRnZTQ9'),
+(84, '2023-12-31 17:42:05', 'aE9OZkJiUS93andTaVZsejhZZ2pHRjlPZTZ4eFV2TG5PYzUwUzRWM3dWaDBTUmpuUDZsalRwTnJqejFUamNDRFc3R2oxTmhpVGc3eCtjZlZsREhGOEQ5OXc0bklBWjJ2VDhFUk5VZVBqM3NyOFk0d05qRHVZUWFXeEZSNHAzeDFzK1l5UTNrRWVsUGYrVXpkNm1OSW9VVTl3YU9hWm1IODJ5TGFqVjI5K0ZFPQ=='),
+(85, '2023-12-31 17:42:05', 'ckFwQmY1ekZyeVcwbDIyK2JmRk5EK0pFNngvMVpQRTYxZnZ5T1Y3cGl6QWYvQ3dSdkNzOE9WLzdHQlh4Z3dISk12T3d0ekx5VEdzN2NueURQNkRKWW1KREdNM01adlRkN1ZwQXBQckJSbk09'),
+(86, '2023-12-31 17:42:05', 'QUNiOHkzNmNJQ2ZIVWZyZGswMG9RNy9EMVFQazFvM3J6ckQvRlYrMnRZTUI1QlZmT2MzaTJtK3Zrc1lSQlY3ODZuV21ab090cVJ4b1B1aGdIQzVjanRnY1FhQWJVYjVWZUhVVEQwS3RrN3U3eGJmMlB4MVFuMk9QZHVnT2xqQnlLTjJOdytWUEloendTdkdHMkVxQnZ6SGlFS0tMZUdqaVY4WWZIazJTZ3ZSV3VBM2s0bWlKaXlBOWlGQ2hxU2g3'),
+(87, '2023-12-31 17:42:05', 'bUNKbmRDYlEyMkNUTmZYNkx1cEw5NXhhZi8zeDhOTzJMM041cnhTUVhTaGNNRkM1Rjl2R1lSR24zZFRtdUpWYW5YcUZWOVJtQ2VvVURpeElLRlBIbXFHa0FKckVTTHI2Y0t2ZG5TSDJnM0dncFhweXJNalNXc2phQlV4UUZrUEc5Q2RPQ1RLOWFCREhSRlhrRXEzZ0RPNFFZYzVQRHZLSzFiOS9WQnU4VVd3PQ=='),
+(88, '2023-12-31 17:42:05', 'TGpMVlNJZDFpdzc5Sll2Vmd0TG9vdUkzY3grM0pYd1hZd1J1SkRTZWVPeStvRnp5U3RSeGg0OGpMZWYxMWMxdmZ2TzBybWFvaUNlckFtUUt0c3VLU2wyWmhMRVlRZmViV280Sndncys3NnZTK3hKem5qZXBmL2JJZmRCUktRL0xtTWhjNkVkeFg3c2xId1BYQ0dndjBBPT0='),
+(89, '2023-12-31 17:42:05', 'OWp0T2I1NWVXOSsxY3pPczhSUjc3bjNvL3BOYVpCRWh1MnVYYW5lTmVlT0Y2aFk3ZzhjTU1NbHl6TFJuS3BvcmNaTG5yaExIWE1JMmpTaXUxQXRmaDUxOVpBZ3FMTjFaajVHZFpZUUFEaVVhY1RjNFBOdTNOa3ZJVE1EdnZUNmM='),
+(90, '2023-12-31 17:42:05', 'YWoxMDRxOWxENEdlM1hTRHc2ZFUyaXFMSFRqeHQvSGM0bnpjSjhYeFJ2NGhqbTNmZVF6ZzlpVXVNZjY4QjRicnlGemhpUm44OXI2Q0RFWnppWVZYRFFFU243MEhTcEovUTYrYmlWVmlVZDU5MUNBd1p6azEwdmp3MThkSXRhY0s='),
+(91, '2023-12-31 17:42:05', 'bHZDQUdwODlKSGVRa0NBV3JnMlBOMkRrelBFRE9ZYm1URjZlcTBETUJ3Vk1QSVZHVFg1UDFRbXEzSHdJWVZ1NVpGaFN2UVhkVHFTSThOOWRta0lPVTgreEk3KzUzWXY4T2JzTTFkMVlXaXVTY2I2YWpuZzhIbWQyNnp3bjZJTjRlZ2MyTi9YUzdUNzE1ZEk5WlVIMHJabFplcHRVVkU1bWRZRzduVDR3TEc0TklaWW9QVElUcWlLZkhlaVBKR0Vq'),
+(92, '2023-12-31 17:42:05', 'Qnc2YVhGY0thYUVlYURpSUViRzhyTDRWQUhHb0JZbzFrMFdBRmE0d2xObXFoUmZZMTJDaS8rRWduVFdXYmhIUE5vR1htNFBPaW0yQmJldFEva2dKcEU0S28zb25tTHVuTS9WdnpHVXRBMEhUa3pKYzJXWGdkdmwvb2hyYW1QaitmcjdnZTQ2WUZjNHQvVU1YT2dVdlF3PT0='),
+(93, '2023-12-31 17:42:05', 'Qmxaa05HQm5CZHI4RXYvTGVmdExjanR0bzl3em80N1FwTHh2UW42V3k0OEYzcGFFZ3QxR1pCY0dLSm5mQTEwb0p6R1BBbkRRUTE2T1dINGRJaWpDNzFReUpibmdYR0RLQWlwQXlsaURwWDg9'),
+(94, '2023-12-31 17:42:05', 'R2tTT3VNbGN5bllNOFVya3B4d21YaGdTenNGTUJ5MEpNQ3kzc2hYU0Z6RHNvSHVmZmtQcDQrUG9ZRWNZR2p4V21xT1dyWWcyak04UHBwVHlxTFFtOVBwc3h0OHRHd2VyVGFFVjJKT3pNaHg4NytqUWppTUlFTFQ1b1doNUtpbWs3T295eUFMU2J3SmxtWlRtT0dpSEZEVXZwc0Zwb0JBL0NvY3pLQ29rV0lnPQ==');
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `h8185_excel_gestaorecepcao_cashier`
+-- Estrutura para tabela `hssa_bw_excel_gestaorecepcao_cashier`
 --
 
-CREATE TABLE `h8185_excel_gestaorecepcao_cashier` (
+CREATE TABLE `hssa_bw_excel_gestaorecepcao_cashier` (
   `id` int(11) NOT NULL,
   `username` varchar(35) NOT NULL,
   `tipo_lancamento` varchar(35) NOT NULL,
@@ -185,26 +337,152 @@ CREATE TABLE `h8185_excel_gestaorecepcao_cashier` (
   `origem` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+--
+-- Despejando dados para a tabela `hssa_bw_excel_gestaorecepcao_cashier`
+--
+
+INSERT INTO `hssa_bw_excel_gestaorecepcao_cashier` (`id`, `username`, `tipo_lancamento`, `pagamento_tipo`, `pagamento_valor`, `reserva_id`, `origem`) VALUES
+(1, 'DFERRAZ', 'Pagamento', 'Dinheiro', '10', 52, 'inhouse');
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `h8185_excel_gestaorecepcao_inhouse`
+-- Estrutura para tabela `hssa_bw_excel_gestaorecepcao_inhouse`
 --
 
-CREATE TABLE `h8185_excel_gestaorecepcao_inhouse` (
+CREATE TABLE `hssa_bw_excel_gestaorecepcao_inhouse` (
   `id` int(11) NOT NULL,
   `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
   `dados_presentlist` mediumtext NOT NULL,
   `reserva_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+--
+-- Despejando dados para a tabela `hssa_bw_excel_gestaorecepcao_inhouse`
+--
+
+INSERT INTO `hssa_bw_excel_gestaorecepcao_inhouse` (`id`, `data_importacao`, `dados_presentlist`, `reserva_id`) VALUES
+(3, '2023-12-31 17:42:04', 'aS9vYzJqNVl6RUg5SE9kdUczdGwvUHpFWEs1MEtkOFVPZFVTdGFJaDl5VGhZUit2SHhDSUdXbFdzeDN4cVA5Sm1qL3FHbm8yTGsrVDI3R2ZjbWFJMzloakVVUUFkN2VmZHp4aDBmM3JpNk5KZFRHNWNLVnlEODdVRVZyNklleS9NbjR0UnZYQjNTUmx1bHoxTTZYOWw5RE9VNlVDSDNsVU85MXdPdlBtSGFwRXFweHFFZ3NrL2FsMmt4RHNGOVhEajVPdzNabFV5NzBON1BhZzljUkZSWEQxdW9SUkdOT3MrRW1LQS8zYmhNeXNwZndKbVBNcUlDY0NCNER4dVhuYw==', NULL),
+(6, '2023-12-31 17:42:04', 'dkdUUkJxeHBUZ2NSdGJjM0krRi9HblRlSGVhWlk1VVhZTkwxbTd1YmV0VFpwL0dSNnN5WXRNK0JxRVpoVWJmdHJzRU1KaXFOR0lJb202UXhWcTdXZHFwVmpneXRZK1ZxYzhDUXY4MUREK2oyL0JVMXRJUHRzQnJBNE9UQzVTekgxK01wMmt6emVtS3hacU1ieXFrcWVhQlZMNmxoTHFNSnYvcWZPd2xMVlluYXpxNlp3dHp0eWVIdy81cWdCWHdl', NULL),
+(9, '2023-12-31 17:42:04', 'RmgzQXFEZkFURTZWeG5WNFFCaW5vWnp1Q001ODRJWW5udWc5N0c4b09mS1RrWG9qUUYwSXA1azB6TGFkUVVONFF0VGJGUEd5UVl5czU4bmVuV0xheTNaQ2NManVFTUVHOFB3OXNIcHZ2eWNRTWcvcWNaOGNFVEtZSXEwMmRjMFMyMGdwVVorWTE1SXRVNlg2eC9vVDhwL0h6dkpTdnY5RVN1MGUyNkZZZ1lQT1Y0KzdVcktxTFdtRkw0ZG42c0ZDakppUUxwa2Z5d2gwYzhjazg1dmhBQW5ObmJySTRyWDZVM0tmWTkzNzEvdz0=', NULL),
+(11, '2023-12-31 17:42:04', 'cmVPeDE0Y2xJeDJadmVvdXcvTnVVMTB0STJMV0xlcFkwdDhEZDFOMTgzTjFyVGgxbEExV3o5SVZjNEEzL2JBU3NZVHBYa3gxRk5rbnc4YVFuNlFBYkkrOXBkWDlCaTMwYVpmRnQyblBFaTJUdkZ3UzJQYUVUeE1zZktVaDZqcXJKWjcwYkVhNjhtbHRCS01zYmFEYmdPUlRONGk5dWpZNWJwMmdUSjZBQkpyVG9Ucjh5WEVyQlVFMXlnOTQ3ZTBu', NULL),
+(13, '2023-12-31 17:42:04', 'cExiNlZGeUtDUHRGNEpYNmJDdjdxSTAzUmJoekEybGxFbjVabmdSZ0o2ckpYOHJWdi9zNkF1aXFaNmhzUzJPWXA5M0JxYXlZckpuOWhPWlJaOXNvdFJhY0JqVGNZVy9ZWEhPNUNhWXYyMUJPeGNmbVl1RDJDVndDTDg0MmtHbTE4bDBwUjg4RXYxcTdab0RWemRFbEs5YkNITjFscUE4dHNnYWx4S21yajZHajlsdGQ3WUZ6cERyNHN2SThCcFM5TkFDU2phTFI3K05pZFdla0Y5dUFNZz09', NULL),
+(15, '2023-12-31 17:42:04', 'VWJ6QVRiMy85Z3d3Y2pkeWpMMzQ3WGVWVkRUZjFhRmo5bGtENmdsbXNFaUk0c0pEQnRXdHkzVnVXNFhyS3JkVWRFbUtpb0xGR2NEL1BBL0JwQmdlYmt2aTkrVmUzaWh2aThmYWtPZEY2RkxZajQ3bFFGVHNMa1JBVWcyTngyd3NHQ3dHMjl2dExLVWlsQnBQY2wyVStubm9Ja1NrMzFSWkVyQzlRVnhRQU9RPQ==', NULL),
+(16, '2023-12-31 17:42:04', 'UkNIWjBFUkl2cVU2Zlo4VXcrT3F3ODAxVjl0YlJDbTgyOXhCMkxkQTd1NWFxczRta2hab2JMNE83TU1tSzduN0gveFRia0RUd3FnT1JsTHlLU0tZVmNTbEVkaHgzZStEZTQ5emNIK0RLOWwyd2JaYzUwM3hOUHc0TDhieGpBeEU4c3hscktIRmtyTGUxdmRFN0lBSVFZSW1OUU1Bd0tKL2VJRCtXSExBZWo4UTNhTlJickt6OTFPVkxENkxram1iYVU2K2wyZXJEdGNQLzRpMGhWbklDZz09', NULL),
+(18, '2023-12-31 17:42:04', 'USsrakpJd0wvQXpZWG9QNk12KzZuMkhmbjNmemhsSENvSXZRUk5kdWFjbnhJYXRUV09SMHlsVHA0OGlQdDlhaDVoMXpkYlN3TllpR3cxTHJqZW5YdUFNQWM2WjhCWE9YRmJYQ29SY2dDK2FEanpLQzlqR2ppZnJrb2RJbFBrbjI4SFBGZTVpKzFoU05NMkR6TDJsYzgvM3c1NmNWQ2Q4QTliY0lrZGFYU1hnKzBpNzFrUVU5eU9PN0JqZkRpS051S3Fpd01KaG5lVlhRUG1OWnBlRFREaUMyVWF4T2JoQ2I2aCtFcXZyUW5laz0=', NULL),
+(19, '2023-12-31 17:42:04', 'MzBqQUdjaVlYS1grQkxzTG9qWHV4aFZjbW5VQUIvWlFtTWFUNDhwcWthT2dhSDV3V3dLcEN2L3NOZ3JFRkc1MTdpaVE2dHBiTkJibTRCZ2pMUzQyakRTYUxEVm9OVDlORWg2UjJMMlBtZ0ljbDl4SlJlVm1aTFRRTUVJUDYvVzdJTkhNRFo5cnk0ZTJwMXVnd1BVd3g4dlhFUHpYOUtLV1ljSmNtS3dtdzBDME53RDY0NUdJdDRBZUxmcG9lcFcy', NULL),
+(21, '2023-12-31 17:42:04', 'M2ttcGx5LzhuQVcrZGlpMXdyY1RIOXhraUl0cUd2VVg4TWFCZkliZUtHZmg3VTNuT0xnSXEvbjJJS1RjUHorRWFSMVJaT0VBTzBNZkR6eGcwNWFEUlJGUE93N3NYcXU4NGpKdHcwT2RZc0QzWVl1VVZqdXpSZ09ZSDFibFQwaEdZVlZra3lPVmh6QVVmVUNMSnoyMXVWWmhBNXpJT2tvT1Z2b3Y0TkxZeitFPQ==', NULL),
+(23, '2023-12-31 17:42:04', 'bUxtdVhYcmxMZFVPVTluNHZwVS9hNkc3dlFzVitrUnVid2NIOWxicGdnNHUvYmhYYWZUNThXR2l1a3VQV0x2R3Q1Q1BRdzFtbEQ1cnFhNytjZDVNNE5XTEUzOEN3blMrVy9PZjlqRnVRcHFmVnU2Y1VEUDhEOWdLUXNBNjQ2a3EzeFFSWU5GbE1qU0ZmUW52cFJ2TUcva014QnJzcnJYVWt5ZUorN2RuQmM0TklRYjdEbFQwKzFyU05VblVlSmRkS09DS1FHU0V4RE9tOWZBcWZ4MnM0QnA1ZHBjbkF5bTRCb1p4NXhVNUk3MD0=', NULL),
+(25, '2023-12-31 17:42:04', 'aEpsVE1FL3ZTM2tmMVNzaENFQngzUnVsb1JITlg1MnpFWnZ5TE1OaDd5TVFHQnlYaUd3QWNIYkM2SGJXWHoydVZLN2tGRTNyNVIwQ1FhTDZBM2FMMjUvaVF3VWVUZlloR2RIclllTjRoTVdzTi9TMGdRTDA1RUtjUUVQR1lDM01UVFZpSjVqYkZEVmdvWEpFaUpZN3ZtemFocmo0SHpjMjU5QVoraUdyQ2lSTFhpME1CK1hUSmNLMmp0UXJXbEJP', NULL),
+(26, '2023-12-31 17:42:04', 'U2I1M25IRjVpOGxaZFJ6TStGZk1DQXcyMTFGQmRvS1JJdnlmT2lJdG51UDZyOUFZTTdIYzJ2ZTRFaDJjQkJjcklBWVRNMFBKcHdsMXhjeXRNbS9DNFFYUUFwdVRJOVgyL2pOaDVQUTJYcUI3dXR3c2RWbVd0RnZoZ0VhNFE1ZkV0STJvbld2aEFoNk1lYnFBNnZSanowL3pRM0JPejZkeWF1aUcxNms4U0FxMmN2TGxOTGVjbDh0WmdJYldTSlgyZHU5Myt0Z3c0dnBFU1ViVTFmQUdqUT09', NULL),
+(27, '2023-12-31 17:42:04', 'VFhvSkdDVmFSbEZ5em1oalFac3RJeHdycHNudVlVYm5mSklPR1ZPMVRSUEUvd3YwYVlWOWRPZnoybWo0R0o2cFkreUlsUnhwSWxxZzRzU2NzRmVLU1Q5cWVrODNxTVJlOGFETldnZ2drekg5S21vbVlpbCtMSWh0WW00Wm5OSHd5TXREQ0V4K0ZDUW9CdmVvU1VBaW53PT0=', NULL),
+(28, '2023-12-31 17:42:04', 'VTA3Y3VBVTFxQlVFN0xtUHRVRUJ3dG5XUzdIUmhUU3FCVFQ4Vjk5V0tweE1waVZJcU9kYzJJNHQvRnlyZThRZkdrRjNvQ1BDYzFSeFp2V1JVL2hRS2g1ak1xQ2F4NDBBMUtlSzVuK3ErYkVxOTFMNW5ibmZKajFXNGdaeVNZVFJtc2dMcllOc1FuR2piWXkyVTBWa213TUJDZXQ2NUhmT1AzVE5Rc0JHc1Jma3REc1Z1aDFzaHNCVHZNRGgrYUZtTFhuUGd5QWV1YTNqU3YxNmpaWUp4UT09', NULL),
+(30, '2023-12-31 17:42:04', 'VTdmWHpKRUhBeDZkK0lPcnhKQWR2RysyYXZWbkw3YVhZUXpqZCt3eGRqRGovSmRxR29ZeWNsY0N0cjh2TmJuME90VTFZSmdGNWhOT1lNOU44bUFVbUM1NTBDeHNOcTBFTjJySlR4SDc3NVptU1VIczM0WTg5Qkp2TTZmZ2xIT0U0ZDh6SWNPYUw4NllsbEVDWHljdURNdW14L1hwZlNSeE9UQWQ1QlcyWjFpeHlTTWtlZThQMUFGUGFsVzk2SnAx', NULL),
+(31, '2023-12-31 17:42:04', 'T01mY25jMERpVGY2UFVJQXowQmZOWWtCam5ZWU9JMkhJY211TlRDZzNDLytmaCtza1k2YmF6RkxsMXNWbXFJRitERTd4MlVBZG5GRkU2bmJ0ak96VWFqNjNUNmw2L1E1dHNZRHdNT1hnbVdUN2lyY25URTU0d1p4N1RHdG9aMVNvcTErNnFtcWlDcFM4UFNUWVk4V2JBPT0=', NULL),
+(33, '2023-12-31 17:42:04', 'bkgwYVV2amVOc2dabTBUbTFCcHZjUWIwei9nSlpHWFNrZnB0MmNmd3ozemtFOWpDYStGUHUwWGJWeldnaFNlcjN5RE96WUV3TFJGR1Z6SDlsVjgrSW1hc01qQThsbW9XOVlaOFR6d21ESVhNWTRzWStmYjI3Q3dLbGVLNzJLbDNUYzI2TjV5dko1S0Q1eEtHOUJ3eGdyQVFrZUI4MVAvU0ZNMkprelMrcmJZM0VGaVRySWpuWWtxbmxqRHJybTQzNVJCUE4xTU9YL3dNd1VGVkNwWVZqNnJ1MUpWS24wMW5DaDdIdmZyZkxHWT0=', NULL),
+(35, '2023-12-31 17:42:04', 'R2NLSTRrZVBhbEJVNm1RS2t5eUF1aUtybDJYMndnVmlacVU0eW4zNGFWdlIxa1g3QWhTOFVNbzlaMXkwaFBSVVloejNGa1M1dmltUUV3UzNxdlplRUEycGhLSnhQbzZHNktweG11L0RsbDY0Ykorc2tISGdRV05mT1VueEtPdzJJYStxRFdEZGsrUFhqTVpUUEUxZTdTdFVTWWlEZjNQWUxybEpoY2FUN0xWUVVtVy8yK2lMNU8weTNvTVExQlVRWlRXRzQ5R3hoblFvZ1hHRnd2Ymh0RzFUdXN0VDdqUDQrSGF5ZEZVeXVUST0=', NULL),
+(37, '2023-12-31 17:42:04', 'clkva056ejlxbXBDTFdDaHpJSUxScVUvR2FMTnF4WUdIK1hrRmxlRlVqL1hQKzNlTVlIcmdpelZlN2NnNkM4My9PbVlTanZ2d3dtUGQwcVNqZFNRSjRFV2taamc4a1c0SjRZb2pvQllob3pRKzZFdlRmUDVsbUhsQ0cxQlg0dFdNc29DRVpCWmZNN0drL01lN21WYzk1RXc4SDVIRGtZM0UxdW1YRmN4U3JxZ1RYUnZMcVVJK2EwcHFwTmRWcTFvSGZqb2JwWDhjNWo5bmdkNmVYMVU0cnJPbnArWFAvUkdaWVF3M1FDWHdHNjhRODdMd0F4U1RLaENlUVVFbnN1bQ==', NULL),
+(40, '2023-12-31 17:42:04', 'ZTRneDlnYUlNTjZiRU5mWUZNNlBqR2JuNm5DV2NZODFvK29zMFVuRVdYN2s5c1NHZVNPQkowWE56Q3U5czdpQmdzVnRQbi84OGRYek51OGIwUmhzREZJRHBIdDI2M2I5LzVkQS9mSHlvZ1piaGFGdTcyZFYxajM3blBiT05EbGRUYmN0cnVHQUpXZmpGVk9QaDlNVGJkOFNyL2JzM293c0ZlaE1HZVE1d3k1Zi9PRjNxWFpJeFQyTkk3a2U2eURiTTlXSTlqQXAwV0dFTkhLaExWdHFJb0JRdnZCdlBxU01PQ2ZYWUY0Q0NvOWNLYStabjBmTHQxQVlhT0lEU0g3cWl5eWpKMDl0TDg0RzBnb2QvSkxOQlo5MWJmZ29hL1g1MnFQUElrQUpnZ3c9', NULL),
+(42, '2023-12-31 17:42:04', 'ZTRneDlnYUlNTjZiRU5mWUZNNlBqR2JuNm5DV2NZODFvK29zMFVuRVdYN2s5c1NHZVNPQkowWE56Q3U5czdpQlBhdzJsNkptbUNUSUpkMEhDSzFJbS9aa21oWmlmdkhlN2dhTGEzOWdFaDEva2Q4RlFIK2NSZ0ZJcThVOHdsSHJybitWY2NRWU5jOG1FVlYwU3FxN2plSGluVlVUVzNGRDlhWitTRlVkZ0k4V1RKbnhNUk9aNmk4L3VNTURnNkZUZkJvb2FXSTVZUmgrNWlIUEM2cjJ6clBBajZtL05vdCtheVdVZTZjcStLc0Jmb1Bhd2JPc2RYREgyTksza2hEeQ==', NULL),
+(45, '2023-12-31 17:42:04', 'V0puZEFLY0dlZTNCM2xMVXE3TExaQ015MkxsZmYvalAzSitXNzhQOWZSajQ4cmYzTTNpQU9lOW5ScGY0bnUzMHdkb2NnR0hsd2l6Q1pEQVJQT0VKR1ptamVlSnpZdG1nd3JkT1BUUW0rL0d5YmdzTWdKK3I0TVhtKzBjeEQvc0RPbnMzMG56UFFMTWZCdTcwcmFtVGE1Y3hUODY4WVVQNy9UTHMrb01nRU5kWDEzSkV3dDFuUE04ZFFLVnYyVUtjSEczKyt3Wm45K1IwaXBTMzBaYmNzZTEzR1VqYzBWekYyR0dEYXlndGdlMD0=', NULL),
+(47, '2023-12-31 17:42:04', 'T3lEbktsemV3YW5JSVBRZm1kbWJ6T3NpeUlMdklTSHBKWnJYWHdiT2UyTmdVaTlTZDdVVjE1NzllaTBkME1PVUVvK0xvTWxtRWFUZmJ6ZW4yWW1nNVUrcTZyOEpGTzU4Ump1NEdEcGlEeThRYllkSkloWUxFbWVRViswaHBRRC96dmNVQ3RhbXduWjlXRkZROWpUaGdYMVZ1Z21tL0lKZi80ZlhYOUM2cFhLdExmbTUzMVpYRGU1Y0tJT0xrNDdJNFVBMEFjK2RmK0xxZHNsRHU4Yk1INTYrSTA3bjVScm1rOHIrM25tUmdNZz0=', NULL),
+(49, '2023-12-31 17:42:04', 'cFdvUWZxQnhTVFFUU1BpNlNlQVBGK0M3aEpRZGtvUHJPM3Z3SWVNZnVSUldyNURHWERVQVVyMDAyODBDdXdlOVFZdXlMdUcyRnVYZkFMeWh3Z1FrWW12OWYrenI4eERibzVJZldzbjVqQ1lyUU5DZ3hnR2pBeFhGVHBtMy9aSkRXajdLQlBFM3l4bXRDejBhb25MdTZxZlE0Ukt5ejBwMnNjQ0ErbjdPNzRkbFF3bE5hMVVGMFFTeGxmcHg0UGRq', NULL),
+(51, '2023-12-31 17:42:04', 'T0ZkWlJJQkpZdjB4OTF3cXRkbEJjWW5FMXJua0J2M0dJOUVKbEJtTHAyYUY0V3FaQWhkQzZhSVpWY09LOFUrM3dUbWs3OHZQNXk5TGVGRjgzNXA2T0FVa3AwZi9VeEx0NDhRRGRkbm1CdzBGSDhSNTVDQUc5eWw0MjJEb3lTSVg2S1VoNHNJQUFzUWZ1WHNNNmhaMVByTFEvS3NDUzRFK0pxLzRlR1dqMXdVPQ==', NULL),
+(52, '2023-12-31 17:42:04', 'L21UV094RHliOVFiUnhmRnVtdGk5M09UVTArZlJnQjBrMFN3SUc2c1VrUkhzd2M2R3JpRmJINml6b1BaNHZEZktxUlIycnRyYi9HZk1UZml5VUF1cVNMQnF0a0U2MnhKZy9mak9BZlhZYTRmNmplV2p0MGF0UUZkSWtwR0JNUUQ5ZzJ3eVdDeXAwNUllZGhGcFl3YUQ3QnIrYUk2Tm1uM1JBV1IzaGhJUzRNM0RoNTVZNlhDbWIrMVV3QXJGUjl5', NULL),
+(54, '2023-12-31 17:42:04', 'R0ZrbmxNSWV3K1JUZDlXV1U3ZjRlN04zTDFCb2FTcnZscTB2RmxtWDljT1c0a0t2UTBnVGRrNjBzdDNvSjRUbTNObDArZUJMRzJQdy8xak51RGliazh6czkwTHR1cEJTYTM2djkwL0JrTWE0Skl1L2pmdGFHdnZUS3ZhWkpDMmQyS1NJdHpiWVZzZnV3Q28xUENkVGE1bWpZRllpcTMrd2pLM1Z1ckdZVDZnPQ==', NULL),
+(55, '2023-12-31 17:42:04', 'WGRXUS9HSVM1UVpaUm5xamhlUENMb0lyTXc0MFJpODNkRUlqT1BRcnRUa1d4aW85VlhwMVk0ZE83bG02clMrcE9iUS9ZZnpjYU13R0RDY2k5VlE1VEhJSmNlVXIxNzdzNkZGVGNCb1FNYmpDMlg5Wm4vendaTUxhQ0w1UVlOM2E=', NULL),
+(56, '2023-12-31 17:42:04', 'azJReEUyd2gwemxIaWdiSXNxQ2dRRUo4QlM3NE5tTXcySXQ0bEg1M3VGMFBMQkI0anRNRGxCdS9jMXA0b1diQ0M5UEpBL2lhRHJ2dkQ5ZUtnTzBjazVkQkdkMHduVWxmbDk5ZHp4angwN2RQRjVaN3ZjNVRXMzJVb21WeUVWcXFhUXR4TmV0UHpLaTlDY1cxUDViS2h6Q0t5b1lSSFBzS252b1ZDZkF6QS9kNzN0MU1NNWROcGpQTzRISUptbm5TMFJlOFdhRDhoakxaU0J5VDJUWXZWUT09', NULL),
+(58, '2023-12-31 17:42:04', 'RXRvbHRFa0xYSUdJblhvRGxkT0ZrQkdtdUxQelc1eDhJZUVTalV5dmRpeTQ5Yk80aWl5TGp5czBZOUtQQ2Q3dlNJazcrMU8wU0hDLzMzMHM5elBwRG1xTnBqbEFKNUpWYTF6MnN4MG5SMThqeUg5dDkvV1Jyb0hGY3hpZDZuU3l2Njk4TWh5MzNocjNkWkNvcG1KdjRzWU5SbHZHWm9hRHhpdnpVdnhFQ09iVjMxYUdCei9hQWMwV2Y4RjkrTS9BaFB3RHNNVXVKVjVuek9JQmJjbm54UT09', NULL),
+(59, '2023-12-31 17:42:04', 'MytDcUdNdTJNdlpsaFNlblQvOGhMejRWSnhncGZ1SURwdWxBcURISTg5ZGQwMjlIcFc0Uzh1OCtIUFFNT0hGRVk0Uy9pQTJQcnlDUjdlMEtmV0pEcGVLdUI5OHI5L3kram5BYVVBeFcrL3A2WGwrQTBxbkhodmtzUDBsMXhZd1lxTWRRNHlPM0l4ZlowalZYaCtQbC9qc1hVQ0lCeVZEckE5RWFJZ0s0UVhKWmYzUWI2d2lvWGk4Y1N3V3pjOEZPMUF5SFN4SFZ4ZXRTOFE5RnlYSUZ3UT09', NULL),
+(61, '2023-12-31 17:42:04', 'bnJzU0k2RUVIeGdFejZmT1ZMNWQ5NDJGaTZsMkE2QTNkN1licHRTdEVOcG5vMlVlbGI1RC9aT1FNVkhMaDFXQTZRRVNoYXRXYVdCZlR4YVhySnlXTXRtcVdZcnFLR05TRUM1QVF3ZU1tMHB2bk1Zb1RyMXRvYXhnQWl6VmxqcGVyU2toSDlZUnMzOGgxTzlkZnY3c0VnT2VPWjZTWFA1d0NMYnZRdi9SNTNKNDRnSHZvNFZFK3pscU1ZcTZUT0xmQzBKTzNleldqQ1YvY3ExYU5tRHZ5UT09', NULL),
+(63, '2023-12-31 17:42:04', 'UlB4NnIwUTJ4SHcvcC9VTmhsMi9lRWRjbkhoSVc3Nmp6Z1U5SWpzcURTQTErNFdIczJ4aTdhellMa3ZsKzhNMGs5QzZvR0pHNWN5WnpPWkxvZHpqRFBWdk94d1BWMThWb2ZCY0JBR3VjTkMzOWl4a2NBWnFiRHpiNE9DOUtJSVRvSkIyYkdxVm9JeGVBNnRRS0Y0MTJPQWtEVmpXb0pua3VmSko2emVFWE9ON1BSLzhGeUVIbjYrdTFsNk1iaThReVVDRG41OGdaZlRlNml0VjNVZm1RTU5zSTd5eDBwZDZFd1JGQ0pReVg3RT0=', NULL),
+(65, '2023-12-31 17:42:04', 'Z3FOZ01iRUYyc01kVGp6YzhmZHQzTFZhem5tUWFkQWNKc0cxL3ZUZDVHTDdpZU5xckZoRkJtWjZ3OFhMemxRTCt2VmhLd0hMMk5wbUJsdTMxNzltZ243VkNCNzJPWlhJNXNIZ0hhRDZ4MXVBcnEwZFBLZjBIYTNKS2FLZUU2aVdvY3EvZnhYeXJOTWt3QTVqNURDQitDMVZhMFlDL2FJZnBoQy9PbStId1lUemxWbVloUGFvTTZsdW1TR0pIb3Jh', NULL),
+(66, '2023-12-31 17:42:04', 'aElIc083bkFuOGNLbGFxTTk1QjRvZGFYc2E2NDlRRmlaNWdiVCtWQ0lPSy9hVWdPR2FhbTZHaUJlMDVpajIyT3c1OUN5RXRSRTlmU0dzSGNhN1lhckNwNWwrMC9Zbi9wcC9Nb3pJQ2RsajJHdm9lNXlBMU5kRFhsWFZUK0FoRFNYd1FtQ3FUdW0rb1BkUitDU0h2bU1JYThWMWdDTWwrMkRlRWsrazh5Yk5sN1Bmc2hleEk2SUdNZWZyTXRzMGxD', NULL),
+(69, '2023-12-31 17:42:04', 'T3hwN1Z3WHJUU2dCWlQwMFVMQzFBU2kwa0szV2ZCbU56ZkpvSGtab1JYcE9ocU9CQndJODF4TjFNTVlNdHgzQU1yT3IzVzZ2dnE5ZThyeGpXUlJObjA4M0ZyblB6UTJxOWVOcm0zTHFXODJBQWVzSmsvdmRpRVlwSWtoeEtqYUJmbnNnRUwwUHU1K3NWditjZ2hoZ05TSDd1N0tIdXZndUk5bWdNcXc1Z2ZmS2EwRGl0NnBnTXVlempJV0RGY3pTb1BSUVVERllLQ3FWZ3VnL3c1UzdMM2d6ZDIzS0VGcW1rbDlTWHZJTzBSUC9LN085VmZpUEtLUVI0Wi9jT3VIa2xBdjNqa2RUcE9QNDJWd0ZLczR1WkE9PQ==', NULL),
+(71, '2023-12-31 17:42:04', 'SFZXdnNZVDJScmR5eFNiZitZUjdDQTloQzRPMWxVcE9NblBieHdtRURtM1I4Vm1pbUszcmQyaGVZZWViNWFIT1lldjFwaks3VWIrdDFQOHVzRGpzY1ZpYzlsaC9HVkxEZ0tINFk4cE1UbEFFcVJhK3EvL2FrcXhPMlBpWWdVMTZXOStlUmJQVXovakdUZW9pSFJwVnJCRzBGV1ZseUVLRFRWN2JHVWVSaWxNVjVHQzU4a3FhcmdQRytIN3V2NDIyOFhZZG1Ua1RTV1A5dTNzSlo1cUJXaHE5RUZEVDhJWDM5MitTN1VaYmU2Yz0=', NULL),
+(74, '2023-12-31 17:42:04', 'dlhNb01ya3ZVTS9ZcGJYQVcwRVRvQXU5UjVDMjRzSEtrSEk0ZmtjWUtVRzM0MmNZeU1qVEtJR1VaQ3R1aGZIbFgvaVBYN2JCa1EwM1dmR1l5WWl5QXhpdTZYZWdJTytmNHUxK3NRZ1VCZzUra2Z1ZHBJVzZWbDJESWlBeG1oM1RqdElZQnZPZlM0QmlnSkFiT2UzVXlRcmNwZjNqS05DRFdpZC9ibnFRTXNJclJyMXRhRDVqMm1BSlRYZjh3S3F0Q0NDeE9zMkVJa2FHYzc5anpwUzVYeHRRNEUyQm5aWTRFYk9rbkl4T2ppcz0=', NULL),
+(75, '2023-12-31 17:42:04', 'QzJMazFkOHZNT1BWWWxtWldFNTBVZW14eE9XR1lyVjNaR0JjUXhwNDdOaEhoaDExWnludDJTQzJoSUdlRTlvTVFsVmY2NWtFZFpKMGYvZ2pLc1BPTmlVTjJwSSt3WWlrOUptY2xlRDg4WU1Xd0lSeTg5VWFZR2lPTnZFTWFIRUZDMnQ0VHlGM2ZJSS9qUWhZdUs4TElIZDdqWGhNRzVmVzZoaXVlaDAxNmhSbUhEME5mVWJtL2FlTFFsSStiUDUx', NULL),
+(76, '2023-12-31 17:42:04', 'cHNqQ0VITFMzSTQ1S01LTzZ2TWwxNXN4TzczT0JmTGRmSGU2QSsxdHJSZUpNaVZYQU9OWklXc1ROS1JxWjRYQS9hOVMxREs5T3dWaWQyU3QvSmZPRC9vbmF0U1pLazRaenZpejRMWU9rbVB1bkVvaHZRNW5ya0JzNm4xVG1oOWpWbEhqMEZvUU9SNHc0SExBT0xaSnloN01MbTFXVU1oQmNhYS9PVUVWWGxVPQ==', NULL),
+(77, '2023-12-31 17:42:04', 'NVdGY2JvSGh1bWVKQWw1TUZGMFVhTjdZby8wZTJPaEE3ZmxoWHMwQk9tRVlvdnBTZ2FkeS9IMXc5MThvUWh1cDVudmZBcThKT0U0SWkzWVFSNnhTT1kzSGZHOUh5S3FFK256MmRLQnVZS0QxSWFyMTArcEJmY3JacUhFRVAvaTNJOEZwaEFVOEhjMWZwT3ZkOVFrcTY2dEpMc3lYM3YwQ05NRVdQMTBLam95US9ZYkptYlZsempnMGtUYURPTmZu', NULL),
+(78, '2023-12-31 17:42:04', 'Q0gyRkhRa0FRamt1VjZCSkJyZkJZNFI3K0FFV1Npcngxd3lmWUpSUEIxeWlnazVISW1JTkQwUjdrcm1mb2FvZy95eUh6M3c5Tkk0WjdzMkM4bEZleHppY0kyQ3FvYlFqaVd6WmVTR2x1VnhyNzRwQ3NoMVBKK3lTb2VyZ2cybjRxTFpPejZDaXZxUGRoZ0ZPL0Nuazk5RU5TdlFLR0JWZ3EvNXpuK3JwNTVFeTYzbXBYeEZvTENVNWxuMVg1NDN6', NULL),
+(79, '2023-12-31 17:42:04', 'Z3lrbEdrTXIxbWZ1dTN6bWUzWTZIcE42YTBWTDJFRFVDNC9VTzF4SjhrQXRkTkFBNTJSTC8rNUNGcjlQeFFVVnd1NjBXeXFIeEwxQ0hLZlZDRzE3SlVIMkpyNVg2YVE2YmlqVmFYNXBPc0E5Qjg1MXFnZ0Rpb2dET1ROVWVCb0JNSkpWU1k0enpQRHYvcjVML1NhcjZhUGRxY1JZL2JRMjQ0TS9hdUJYT1RVPQ==', NULL),
+(81, '2023-12-31 17:42:04', 'aDdEZ0Zxc0tvdk9tTXJSVEJTYnQ0UWN4cmZvc1luaFdQY29CTmJwbTNUTXgwNW5OK0JPdGltRE00VEhSQUhnK3J3Mk9sQ1RObXJmaUJJOE1halZqcDArdlhYb3ZlZHlCQW1WdWV0M01VMnlacjhTaytZeUtPclJkQkhpQnZDMTllbTVoUjJKK0NoWXJ5WlQ1d2M4ZUNuQ3FHWTdJeFRjdWdQNDNjRmlnbXloWjQ4MWNQUUJoSzVRSUR0VjBHc295', NULL),
+(82, '2023-12-31 17:42:04', 'ekY3MU5XVFFWcmtqcm16WVJJV2grUXVuRzRiMjZ6dmVyMGU4eU5WMHBROVlKOWR2S2xGcURwQmlQVzdQbitlU013dWlzUHZ5TTRTM0NKcUlIV3A5NUhjbi9uZUFtUXZLUFAvWlhNS3FhdDdJa3N3WFFiUEdodjBOaldxMnYzS3FOR3hTMDR2Z3FTNlZFKzdoUVAzdnoyV2dPRWhrMU56b2lTd0luUVBIVE4wPQ==', NULL),
+(83, '2023-12-31 17:42:04', 'VjlEbVlGNVpIRzE2QTgzQStmaGZjZndUZXZXQktkM0dwWE44djBEZTF5SU4yOEcrUExiUEhScjlEaGlvOTFubVM2dmxkTE9YK3NSRlpNZVBBWXhhWVRFSG1RUkpkMXp1aEhEYThodlliY3hydUZqR0dndDB4NEF3WEtocm9SaTZsWm85a1ArdEFnd1dLUFRyTURXN21ET2t6V1VwdFk5L0RRd3RnSWExdHRJPQ==', NULL),
+(86, '2023-12-31 17:42:04', 'dXRxdlJhUjVvZUl4dlIyanZiZ01GNzRMOWxmRVZPL3MvbXUyblUrc1pYb1ByWWJvNlBocno1UURVOWhFWDI5cWpwbTZDNUdoZ2JCRldEcWhUdzZ2Z090UjBHcTRIU2hKVDg3cXNTVmdRNmtISFU3MTRYbzJHdXFEeU9BTnVqWVJickRjNFVhWG5jVEdyRkdVT081dHhIWERyck5YZ0VQRUlLSGtRcTQ4VklKSms3YkdTWnZwMmF2Wmd0NkdUVzJIcDJJdWxPeWxjamNjeHJ2SEdGQ1NKSjBJaHBaNUo4N2Ewd3RiMUtKU2dYdXE2ZFh1QlZTN3I5dGgwUW50OVROR1h6cVhpWXFRWnJSMWRtVjNyUzYwbVE9PQ==', NULL),
+(87, '2023-12-31 17:42:04', 'L1ZteVN3TDdTTFNQN2xYRk1iVDZlWkVjZmNUbTdlazBDZjZRZm1ldENkcDZuSUFPODlrRzdkY2pILzJnQjQ0K2xyZ2p5eUJrTWc3bzk4bFJJZVRrN3NhdHRnYlZPUi9OR2d5NXcwUU9WTTlKbkcyUHIvWVVCMlV6bUp0OHpMNUdRRUhJWDJoTFhudnF0SUlsa1Frc21KVFJNWHFVamVia0FZWU91L3Q4T3RVPQ==', NULL),
+(90, '2023-12-31 17:42:04', 'aDdsdk5MWGtvMmw1dFZCY2FicEt2Y1ZPamQ0Tlk4SDRyTFVyUzlWZE1leUh0bVZJVEVoY3pzeHZLWW80c1RrRXNrcXBGS1kvMHNFUU1DQnpqR0RUKzFncUtIcHZCUDByMzVtZzExRmxnQU1aZHNxMFJwZkJuSkZuZTNxaVdVY3k0SXUzYXd1WHkvYXE3L092enJXWXFIOEJWQ2tCSWQzRjZTalFkVDZtYWhCSVBEbEdZRkJ0SG5GQ3RPT254SUZmcWZzYUt3YjVhQ0d2VHh2dXlyNXQxNythR0ZxNlVPbkxJSWlUVlRhU0ZDeFhyL3BRRE5EM0FpQjJjRVZ5ZGRLRQ==', NULL),
+(91, '2023-12-31 17:42:04', 'YmVhcCs5MXN0aDRFYlUvc3hUT2tVcGpXYTVIbW9QL0FoQlNKeFphbTBrem9RVDZqcFhRVFlQQVJrTHdBN2VGOWpJRkdyNXVyK29ia3NrZnE5WUpMRldISjNuUVRoaUMwZlRqbnZmNkZ5NVorKzFKM1FZZWQ3U3pEMExoMUdiSjQ3VC9pUDBvYmFLQmZ1MWpYaDlOTWljY2Ewc0o0THpFVXpCZE5adDdWRXYwPQ==', NULL),
+(92, '2023-12-31 17:42:04', 'YkZxNmFEQ0U0Q1lNWVJLWnVpczVOWFliQ0pyS2dYWEkvU1BjN2NxN0hWTEgwcHkwKzVhNHpDZitpRVh0c1YwWVRjSTRVQnFOdExQOVRodTI1NmE4dEhPUU1UMG01cGRCZ1RodEdiYUF5ZTVhNWgrQVM2Q0hIbVJySU55QlY3MWJDSW56VnVaNSttdm9pVEFkVm95dVV2M0lXRzNUSWJMQVFtaG52SFhlNVhBPQ==', NULL),
+(93, '2023-12-31 17:42:04', 'UkpsNGtDWkRYQmlMZTVlM0FTOGRrTHlvaVBoOTdMNEJ3SURPSndNMkttTGpiblhRQ2sxVk9sbEVDRVdQRG1DUGhwdkw5MW54dlN2QjNoRkI1Rm9jNmdseDkyM2l1bTREM1JsSjh6ejlzU0wrenRmTGlVODFGdktaK0x0UXQ0cm0waFVXaHJQUWNETlUrVUMvOHlOaHMwTjFWVUJ6ZlAvNXd0Rktra0VHVnRvPQ==', NULL),
+(94, '2023-12-31 17:42:04', 'dmtZbndhQkZkc3RxNmJwMzdjMVdJMkhoZXdOSSsvZk9VSnQ2am1vMHU0M3BkcVlrQ0prWGI2cG9jdEFFcnJldm80N21uWThMNHJtQUQvZVVDWkM3emV4c1paZHBiY0I1cG5VS3IrLzRQVm5ZSGRmcG9rNkFtKzNxbS9JcHI2RStmcHZZZWpKYkI2cHVGdy9qTG11YUVZd0psdUNieUFLbWphR28xb1B3Lys4PQ==', NULL),
+(95, '2023-12-31 17:42:04', 'RWRSYlRlTU80WG1XUk04SFozZ0JJVGczM1BibUluZ015U1NvQStWQUNsRHUyRkdsTThJZTk4RndoTk0rakJCeEh3Qm9oOWIxc0xuMVRsRHZpb0x2Q1J5WHRlZEo0UjN1T1BUWnpiNU1jZFR5LzJJOVBqYkdJbUlyV3VZVUVBSkN3VGVsN2RHZ0J6YkR3cmVLb2tvV3RWMGZJc3paMU5ybTdCL0grZ2hXdmpZPQ==', NULL),
+(96, '2023-12-31 17:42:04', 'T2JjOTNwU2NPbnJHaUpYdENtbEo2WnpkOGJocDBVMWdZdExmdTFPeVVISkxDVi84Y21wTWFPYjZrT1ZZaEY0endMRTBnL283bSt1elN2R2hYOVJHZGRKQTUwckZvemxYZ3ZDL2lBZUlGa0dJeUxIQUxYcTI2ZnRGS3ZTemFuRllRUUdpczhqZnRQNHZlenJoWmsvbXZiTHdTOW1hVGpmczBzZnlqSVR5YUtVPQ==', NULL),
+(97, '2023-12-31 17:42:04', 'UllsdlJFKzRlSS90QklVdkdVYmFjaUFEdjY1WVB5bVl3Y3N0aEFQeGZzVXJZUXpLWUVsbUVHa3BZK3B4VkRKdWZVbktCMkttc1VDUldKMUgxT05jUml1STJuV0p3UXJmK3JxTXVhRXhib1grYUdpYVlKbTNwbmdxbllXN1lUdCt6Z2UvalZNWUJGbHBXLzFMZWw5OHFqNXhob2t1ZGlPVm52T0swZzNCb0RFPQ==', NULL),
+(98, '2023-12-31 17:42:04', 'QmM4TERjT25ORlNlMmFUR0RMQ1lKTlJuVHAwZmdIS3ZpYnF0Y0QwdXJSWFgwYWY1bXE0ZWtxZ3k4UGdCTXhsVXR0MFNwN0tLcjBBdWxKM1dVQUxZdnEvSVZDV3BpYVBLK3B4clRjUFZpTXBnOXg3a1lISGJsZGljUnBhTDR3akRpSWs4dUhVbzJicVZnM2o0TENtcWgrNXc5Q2EvMXlrcDRCYm5DQ0Ryb0RZPQ==', NULL),
+(101, '2023-12-31 17:42:04', 'OUNsdTRITE5XUWN1ckdWQmZzcGpmd1pRK096SkxCbktoVng3R1orblR4R0xPUDNLUjZIUHdia2pCVU5UYlowQU4wUXI1L3RObDV0WTRXbXFWV3VHUnh2ODdXVGppWllwZFJSWnhMNUsvT2FRTDVKTHpxTkUrU3cvR1lXTVNxeG1pVjF4NllGc0pOa0VPMVUxdFNiU2NEcmZuT2NwWE14NjFSRzJvS2FpT2hSbDJPZnJzUUZqV2E4U3pRc1QyNDRmVG92eEM1WUR2c3FjWG1VVE0yd2JSTXd0RFgyRld5SXExVlZldTZYSmMxMD0=', NULL),
+(102, '2023-12-31 17:42:04', 'LzVybjJxaEdrbXJXQTZQWnJoVG9RanlFZmptMTJkTFJaRWpaUEM2RjZrdVRqL0VldGU3RkYxODF3cWZxajVuRFJyek9kL2tpcGwyeWFjWmc0YTBRT2FTTjRDN0lmWVZWYlVyVkNKRkFKbjM5UEVZWkxLclZKaElNcU01WC8zNzNPbk9uMTYydXNUNEMwVm9HWENDV3d6YWY2eW5ISUJGQUgxR3RoejMyK0FBPQ==', NULL),
+(103, '2023-12-31 17:42:04', 'dTFGdGZBYUJOQlBralptckZLUEt6SDdJSWFReXk5WEtFTWliVFMrRUM3MGVHQW5iNlF3UWNubmp4ZFk5b1g2ejVoU2EyTUpjODZnRW9mZmNnL3FXbjdUa2ZvS3IxaElqMkFjcUFlSWR1Zi9UcXhxckVoMUdrRHBaSFFmSTZZYitiR0JNM3QzZ3RmRjdNWm9mcnBOQnAzdzhLUnB2QXZEQkU1eHQ4R1VPRTE3Z0pBQjNjYXRRWVdhWEJnKzVWSkdn', NULL),
+(104, '2023-12-31 17:42:04', 'dTY2S3hrMnJkYWQ2MXJrcW15Z3dhYUJRM2V6dFdLbFZCREh1bDlYeUxCS0xMbjE0U2VtcG54VFF3eFlQbVhndDNBSUxCRTRPTTZWK3ZmeHhtR2lQOEg5cWtyY3N2ZUF2Y2tvS2hBTG4yMmxLYWZDNlRxK1Qrbm40VW1ld05rbE1haWJBTVVvTE9SaW9FTzkzMWFlWFlZR2l6b0RoN3BvL1dPNUJlWnlkdVF2SzBpT0ZPa0ROL0M4ZllzcTdLNEov', NULL),
+(106, '2023-12-31 17:42:04', 'RzBUbWhneU12bGFrVWo2VFRvZzgzS083emNiZVVRVGZOT2ZJQ1ZaYUFEMGR3c1ZiNnplY2lQUzREVktpdVFjK25BNHIwRnh0UTJqWWNoOFR5R2dCSUVadU4zc1RUczlOYVA1Tk0zbTMxZGVuUVVrMEJvUGpzdkY2UzlDVE0rSlBrRkYyczUxaUNZODJZclA5UlFUd3BBV1YyaFFqaSt1Nms4OEhnMUU4akl1T21lUm0rTVNwUXJSdnl1UTZUcjR0TkRIYUExOVpNY29PanVUYzJsaDVhQT09', NULL),
+(107, '2023-12-31 17:42:04', 'Tmk4NGFwRDJrVTMxM3A4Z0hDdXBqT2ZCMjNGL3dJM0xpOVpsQWgycWdTT011RThvemFKTG4wTy9hUlRhTHMzWlBnMFp6TFRQQnRkYXdaMnZ6Y2lNZFhaaE9QdXJ1RWJwM3Zxellid2xhaWRqL2xnUmdoMDR1RlN6T1BTdHhydjVoT09VZlZad2RWZXRLVGdPTkQ1cnI3dnRreW9MVjV0dk1QZldYemdJeStic29yc1dFaEFOM01iSXFhZllGeGda', NULL),
+(108, '2023-12-31 17:42:04', 'eHVtMW9pcm4wNGxLd3lJSU1qT0I4QUY2SDk3WHFzM2ZscUJRdWR4eEd0NVlLYXFyL2Y2N29VV2Z1emdRTU13b3kwZzROL3p5RzQxYmhNREk5ZUljNnhoN3RYYmJpS2QwWnlhdmJSdFdXcGxLRVhYUlZyTy8yeVlEaUNqV3diQnlTSnpla0M0VWwrNUVyUHYrOWRhKzE5RUNveHdPMjBqVzZsTnh1K2lLeDBJPQ==', NULL),
+(109, '2023-12-31 17:42:04', 'NWlYUVlXZG4xZ2FRQVMvZG9BTUFhMTc0TDVIL29rMTFvR2tyVllHOWg0Zlp2U0dFd1cvVVJ4VUZTdFJWdnplUk5FdjlTbTN6R1hveXJkeWg5Y0JHcG1Zcmo3d1FYSnkrUWhwM05UYndnVWo1Yjh5VS9BRGt5QnA0cTlnOVc4ZDhJUWRSSU04VjBBTXRkMkpmZW56Z0cvNnVxekVwaFR6QkdLRkxXS0F2eCs4cmpLSkJST24ydFg3c2NNbytyZ1VR', NULL),
+(110, '2023-12-31 17:42:04', 'L1lHSTZ5RDFyYjVNL2pQQ1hYSldMYmw1NXZCSy9HaWlPd252NFluMHJUZ3BvWGF3eXovRStRdDBTRCtpd3MxOUViNExVSzZDajZla28wM20xbHpHWWtxblovMVBEcjB1Nk10Y28zbWRaTExEUE1XZmtuMm9vZDFlUWkrWmszMTZNekFqVVBmMVRnSXByOGg2bXVpNUwxTmhNc2tEek15TmRSZENBRGtpQ1NzPQ==', NULL),
+(112, '2023-12-31 17:42:04', 'OUszblY4c2tIcHBxNTVRSDZFeUVUNGxyQzRJRVNhUEQrcXBya0FpN3VsSFlPaERXY0NzRWR5Q0Z4WmxreEtTK1NJdWIxZzNualFZRS90WDY5MVYyN0NObGJzT2dBMGVOaFJ1MjE4QzJveHkvRzR4QnFPVjVnM2hsQ0d3NHZHTnJvVHJjWGpXYVh2dUd6bVMrYm56U251MFF6R25EN0xZV1hiWDd6T0hVTk9JeWhvZDZwVC9VSnROWkVHSU11eVlqelloQkdIbmkreEpiR1BsOVpRTCszZz09', NULL),
+(113, '2023-12-31 17:42:04', 'ZE4xOS9jQys4a291ck5OY1M2MWJSa1I3bG1OZ0Q4S3ozN3VFZUtIK0tJUmh2SDFHWG92cmNGanZvaFpqMWJuZjhWak9PR1E1SVgxUksrOW5xaEZYMXlwcys3Y0VjUmJvWlpiMkR5OWh2clJYTGFuWFB6K2JTaGJVQW9YYjZudUZJcDFVaFNEazRwZlRqT1ZnWjVwNCtEWEhrQ2tGQlU0c0N4Vi9rcUtQQlpBPQ==', NULL),
+(114, '2023-12-31 17:42:04', 'MXoxQzBiTXQ2anVHbEVBQk5lYlVWenNOLzUrTCtNMGFtL3ROdmxRbjhIZUwrM0s3QjFtdFNkMjRpTjlyQ3VMajNrdS9EUm9xWG5XRitVZ0JiMEhlZjFVN0V6b0ZYUUlBYmVBbFhRK2FCbFFBRklDM2Vib2JTTk5hd0t0a0dnWGUxMmVXNjhqVHAwZ2JYcE5HK3A5YURvQ2tHZFlUeTF4b0F2c0JLMHI1a0NFPQ==', NULL),
+(115, '2023-12-31 17:42:04', 'ZWlpWGpyNGM5T2lEZXNMWWgrTnVGZWhBK3hMeXNVbENzL1c1WFh0cmM5eFAwNlhNVUx2UkVia25xNkg1bkR1VjRBSXNlSlR6SVRnVmFSNWRBc2lDaEQ2VlB0aEtkbTdlTlF4OVFTb3JRQTRxWnF6WW9WdU1TU2tPd2x6VVRmOTMwZ0p2YTBaUDBtWm9wVnF4eS85MFpnVFNJSGRzTnNPTEIzVDJRenhkbDRQM2xWWHlwQXVmQ2Q2M0FzV0pGcjRJN0Z2c0tzbVhYcmNKdE1HWVRPVHFQdz09', NULL),
+(117, '2023-12-31 17:42:04', 'ckI4M09tL09BWklEdEdBdHd3WmFlVHVZRFR4dHh0M0NwSDFoek5CdUo5WXJNVU11QnZCL2NyeTYzT3hYTW4xdWZzVWJ4aDEzRlNhWWxUZnNLUHNLYTBCQXR6cVJkR2k2SjJCdFp2MnVjVG5hR3hjOHpkWkJGWEJFbkZ3T2dEQmlEZUhkR0c1dGNWTTNnTS9rUWNuMDI4RDJDSzM4QXlPRVFKdnpva0ozRWJ6cGs1SWk5bVAra1pXS2FWN2p1M0FyY2VJa2ZORTlqc09qK1VlUm4wSmUydz09', NULL),
+(119, '2023-12-31 17:42:04', 'ZWNNMjJzOXdod3U4QkVtZUFEaXRGbnlNUWFBOWg1dlFXUThMSUIxbHhaOE1DVlRORjlFSlp4Z0VJcDBFZXBaU0pzRlY5RjVxd0tyREx4aDhic1I3TU1WeDBrTlBUd0VMNXVxakNoSExpcGJaYXNZM3FXTGlHaUEreWFaY1RVczlwbVkrWExCL3VqVmplZzNHbmFpZVJqZHJmK0JoalYvRk0wRU9BYVBEcFh6b1p4WCtDWmN0UG5zd0JvRDQzYWQwZkJZbzRzZVl2bUlYc0M3SDYyd0tDUT09', NULL),
+(120, '2023-12-31 17:42:04', 'eGdqWktKVUJwR1pXL1J2TGZWbjdockR1b3V6UGhDUTJmM2FwVnRueTZjdk1xclVONjNqSkNueGdIZUxWL1ZWZERiTTdMcVlNKzF3c01FaHg0dmtGeC83MDE3cU5lZEpuM0lkeWpCT0t5SVBST0lBZE5wSGVkN2FKa29vL1FqNzFXdTNzejdkcFpBNzNCWXYrMzQ5YWtkR0F5MXNnVU84WHJveWNFUU5RRG03bFYrT296U2dyNG55YnpoYm9ybkFG', NULL),
+(122, '2023-12-31 17:42:04', 'QkFzcEdqbWlpTjdpN3hUNXQ1MC8vcTRLUWladlpoWDkrUGZZUjczOWtNZkFFb0xiK2VTU1d6M0xNdUEzbFZSTk5GQkloRDFVZW5LNTFXbWVsTjdTTnljU00vYm0rNzBheWZ4Z1BURGpLYTZnZmZhL09RUE9FZlhhZ1FHaW4yR3BNRmJLK0hwenV0WlZ6emFweHNLK05iV0NGUGZZaUd5OThNdFhUelhXbWxTYnRsNklqZEtpZHFBd1dYdTRJNUhMTE5vM3FQSEQzWitIQ2tIVkpML3NKZz09', NULL),
+(124, '2023-12-31 17:42:04', 'ZzgyUS8vMHhCTmd2NGczdUk1c0QzUElkMWNEVjkwMHpLejdFazM0d3N0Y3k3T1o0elZGWFFFbjJiWDVheVF3SXdVdXczRWRweW9qeHJveXZiNHFMNDNEejcyRHJ6Q3hkczdoVklCUlFpOUpVNTErY1BraHZqNkV4MmpNOHBrR2hwblNySGpsZThUV2RrRTNMMkRweFJyRk5HWjd0OTRjK1E3SFU2amxsaHgvUXNaU2RuRXRRRHVHQk9KcmM0ZlloSDZMQmtQR3U2dDhYU25mNS91MWtvUT09', NULL),
+(126, '2023-12-31 17:42:04', 'WHdEOWJDbzdVT0Qwc1RDeENFRnhwRjlTM1FibExtOE9aMUIrWEIrdThCUTdPMU9Iamo0ZGpZZmVSSmJEcHZxRnRSakVUZFA4aVlYSGtRVnFLQ3FqLzQwc1ZWNTFwbHpZNHF6V1JaNkxKMDQxdGg4eG0vbVVPR2NLU3JwaE93bFdsRHYweU12RGZZbUlzdmViR2pUdm5qcUlpMXEvUHh6V2U0M1A1WUZaK3pNPQ==', NULL),
+(127, '2023-12-31 17:42:04', 'VkpYUEFIZ0NuaFpZYzkzMVRFY2l2QzE0YkwwajVUSWZFSkVIU3c4M05URXBQbW1RNEovdDVIc3hzVi90Y0hPWlRnL0pJTk13dmNRMlQ4TU1mdXBLSnJsbE1rTFlZaTdEUGs0TVJJdDhab2gvNU8xeWxadkpyWm95WmNjU1h0Y1pzLzk0NEt5NjNSQzZFbU9SQlE3MGRSZVQwdHF5UTVENHYxWEQvSkIrNkw5eEFsQzZPRUo1aEN1YU12N3hKd1V3', NULL),
+(129, '2023-12-31 17:42:04', 'R2ZBQ1I2Ny9PaWlTbkZyYTgzMmN4UW5tVDcvUnpXV1N6ZjAxWlhibkQ5WlRTaHZUNVpoNDI4VlNMeE1lbk1aa2hNYk9xRDYyeFFDOHltVW5MTXlyVnB4eWpXRGM5T0U4dUdzblE3L0FwTzVnR2xQM2JlUnQ3aEM2c2lFdUVKVHdjLzB5L1dqTGtxZ2lncXBhUUhNVVJRM25MTHYweXVYOExNL0ZHRUl2YUxvPQ==', NULL),
+(131, '2023-12-31 17:42:04', 'aG9XcGNFTGNFMUtqQ1Rvb0kvK2Q5SU55aUt0ME9Id2JBSU9Ub2VsbktDb2FaV1NpYUNDVnpjZEdYWEFiQ0dLSVhVMGQ2TXV2YmU5ekxJd1ZPQWpYMkh0SjRBeS9rSzdUUWJON0dsMUVsYkJVWm1SMU8wMjhSdUVUWnNvbFRvcGNMM054ZS95bi9idEtuNG4rSW1kWkV1a2cxMC9rTld5bk9MaDVsYnRQMGprPQ==', NULL),
+(132, '2023-12-31 17:42:04', 'am1wekxjYmptbXlNZEVGRFg5M05PNStWL2ZNQXFZZ0xRTVJleGRDTVVrM2dLZWZRZ0taZDRkTHJ1czlUTzVWclp5b3poQ1BENEVWd2JWL3RpQmR6cEduS0VJYmpuMlhkKzAvbmZNMEVNUXBFeDkvVHdySFJqUWRKOW5yeHNQUjBiQ0R5R0VKMkNqckZZR2UxcjkxRk5lNW5uTFlrK2xBRHh1TW9mRFJnQldJdjFUQlIrNHFjOVF1ci9JQlZVdmJCOWJyMTdJMngyUU5IaGNFNFJLZlo3UT09', NULL),
+(133, '2023-12-31 17:42:04', 'bEdvSDkxSWM1eXZmc2oyWVhzN2ZHYWJvb0tXRmhUTjBOSndESTd4cDEwb0prTEgvU1Q5QzNieDV5YXdhYW01eE5lSGcycXB5TjFuTkg3a1pLY2x1SFh0TGJsTHd1N2ZhYWUzcXlhRlhMd01UQk8vMFNXemlQckNHY2JtL005T1UxK0dlR3I4UjRxTkdSMmJPdVlxajZBPT0=', NULL),
+(135, '2023-12-31 17:42:04', 'V25hQ01GbmZLN0VZK2lXUzl0VzdyM3M0OVV3N1hMOWc0eGpiOG5obWhmREpnbEE5NlJONUc2dnBIbGN6MERnODBscHFtUmdSYkNydXJmZU84dSs2NWt6WHh6VERJY09QMEZDUGpoUHMrR1hPS2Q3Vi91bHE0R2NuRUJCV1RmZkxhdzFUSkFQZGdZb1dOVjFxeDlySFZ0UHBFeC9pNjlIV3l0bjhwbEdKbndNPQ==', NULL),
+(137, '2023-12-31 17:42:04', 'L0NNVUZ1WFpiWEZSSE44bUwwcGxDTWF5UG5WdDM1YzJMOXZGS3RLRXhIY0xlbllSVm9XM2NVNy9iYlNNVjUxZ0tQQUlhbElOaCtmL1hBV0d1cFhieGpnajVRc013OHlaZ2lDV1B5VXBJTTgrVU4xdkZIOU9JYkxKR3NsbDFMa2FOcGlvcUdnK05GVEo1SCtZK0pxbzZLRjdMc0RiVUhBdGlTRDdQUFVSTDh5SnZpb1JqaGJ6elMvUElZcjdqU2tF', NULL),
+(138, '2023-12-31 17:42:04', 'eUVqcGxzeVRLUDJrcFJ5MktXaFZIUjZ1aDRBQUszU01vSXRZSGl1cDl3SkdWL2RlN2Iwb2FtejdZbDVHcTRnRmJhY2hiUXFoWjZJU3pSTnJNUy93Rm5MQWhwWnlEN2tkSjMvQUtHSjE1ZklsVGZldWVSSUZjNjllY1NHMDU0WXZNL0ZYUHdlN2FRSjAwSUZ6L2g4L2JQZWZBT01RRnNXbGpjQUhTa1ZxZmtjPQ==', NULL),
+(139, '2023-12-31 17:42:04', 'TTNJb3RNbm9CaTg5c01LODF0Y0dyTUl0b2UxM1oya1Vac2wwSW1aT004VGVxWlU3R1pkbnF6dFFUdG04Rm9MWERSaDZXakhKL3B6ZDR0OE1ndnlpTG5YcDBIZFE5QXRTOTRYaFVUdzkrM2pkaWtTMjRvUGdLWi90SU5lZmhoWVh6ZWxkVUNscVkybU5rVEx6UEJlOFBERGprQmEvaVBFTkplVkNsS3ZyemRnTTZwU08rSzdZL0o2cWNZbi96aFVqcENCY25MM3VMa0tEQnEvM2tLd2VkZz09', NULL),
+(141, '2023-12-31 17:42:04', 'UXJOTUJudDhvOWI5ZDFvVElpR1pnUFZjMXp1QVJtZ0QvckJ3MlVRcVFkZzJ4Q0R5b0FVV29FcmpUQ0VubWdlMDdTZ2JIa0NQdzZHWitYNmpLZWpRR3lxTUJLNEg5SXRtRXZFVDhxK0p6VFk0WFRkd2VqTWNxd1JaV2g3U2xCU3JGSFhaMWphWW44OERrYTY2cytKQ3hjWDEzU2NDUW9QaVlGMU9EUlkyclE4M3BkMGVxKytGMm5wOWw5RFVzOFZpbjJnNHI5eVY0MGdia25rT3FrMEVEUT09', NULL),
+(142, '2023-12-31 17:42:04', 'cWFqN1dIQ2xrN1ErVUU1dml4TjFIK0ZNZjJUcktsWFk0N3RGT3ZtUGU4VEkrYUlwVk9FV3A1NkZNN1FLUVFKamdFa0JmV0Rha2VDblNHbEtlbkl0Q2IzcDZVZS9OOGFEajNOdGllMjFWcWF4NEozVXJSNEhVb3NVY1krN3hxc2F6aVd4bW05bHRTd2t6WndBZFd1OWdBPT0=', NULL),
+(144, '2023-12-31 17:42:04', 'cnhLUDZuOUUxOEpYaXJGbEY1d0tjZUtGRkt2RS9seWpZaGJ1VUQzUFNqS2FrbXp1VjdIb2RjTmlKenNMdWo3bXVJZUM5cnBkVlRYSnIrZHJ3MllSMlpxTG9kK1psMjE2NXNaWHEvMk1kVkRQZ2pkcG10MG5FMlZzc3NDSmo3aFQ2U2pqcmtyclJucy9pbGN0a1hsS3ZoeXIyQnZqdGVSVW0rT1JOd1FkUE9qcGhjcHFYamgyVkhrZDltYWpua3RTNSs4NjJwMm5qK3UyNjZKMnU2RU5Ddz09', NULL),
+(145, '2023-12-31 17:42:04', 'T3BPSEE0TkFHUXY2WGxXcVl1U29nN3piOHAxcWJrZm9vRGU2ai85OVpYUjFjbC84UDRTMjgwblI2UkJKZWwvYTVoS0NsYVRSQ2l6MUI2WUVXZGZaZmp5Y2VTQ3hhMXdlV2RiNklzc21CQ1k4UHdqblRKR29ETDBQU1hjaFN3bXAzTUNuK24wL1B6Syt4RG54VGhSdk80V1JvRG9aRnp1dnZESGFMZFc0TERYMXQ4NlVCUmkzdzlCQ3ZQSnBuRDFTOE5pZ0Fodjk1aXRlRUFEczdwZlRyZz09', NULL),
+(147, '2023-12-31 17:42:04', 'RVdic1JaK293NmlPVm9RK2NuTW9UMWVyd3IvMVErYnhycStmZTBza1dWNjlucHlBVzlTQjBENkpyNHpXaDVRNWxOVnBDQ2dqOVF1WWgyOXg0dDA4d3ZZVjdBb1JGdG10MWp4dGdRWDZoM3VUSUpSNEtlbDZ3N0VUSFZYaW51RmJUeVhoejZjYWdtdVREbXgyd2NRaERDVXZEcmo5VitUVHhCZSsyN2V5L0JNdGpuSlpSWExiTEZTN1VneW1HaXNCclR0bzRKbHFJVUNUMEY0aVRwU1g1cDN4L0EyQVpBTGt2MEpVWHhKcjdVST0=', NULL),
+(149, '2023-12-31 17:42:04', 'VzRSS3NhMUk4dzQxNm9iVXRsMzlTYndXeTJvNmpxemR4Q3orK2czbGlFZGZWdUprNEZkYy9ab003L2hwTksrKzNMejVGWGFQS3ZPa0srVk5GZ2xKdU11Mzdsd2hieVdiK0RYZVQ0UlVKQUE1QmVnUU5lSmxrN2syUnVySFppcDZ1ZUt4OWhJd2J6SzdYS2hTSHpCdFhOUVN5eW9VWWoxT29qWE1nTkpKMVVROHE1dXVNRnJBSlA1bWNranZjaHpLZ25mQ1BzK0hnQWZ0UU51UEFqbkNoZz09', NULL),
+(151, '2023-12-31 17:42:04', 'VkQvNks5MzBFQ3Q0cEpkT2owS1A0VWRDaHFEdnRuOHpYZ3B6ZGliMUs2bFFlWjZLY1pENGpwNzNGUHZpWHI3MWxmb0NOc05UMThhbE0ybHpndkprd01zTmc4WVU0aWZPb0RrZjVxeTA2WlY3VnVHREtGREYzeDhmY1VNUVZLVEhFRVhDU1JYVllSanNWK0xXRnB4d1FUd0w4VWRsR2VYMkpVRzIveDVlU3RrcVNzN2Y3a3dvUGFuWWxtZlpXYis4WmwvYndBam9LMy9udnBBaEo0OVNrUT09', NULL),
+(153, '2023-12-31 17:42:04', 'Q3Nib21XTmhvWU5SbmJ5TTk1anJHNFZ3YU8rYkRScm9jam02Mnpnbk1UM2p2NXhwZVNTUTJFQmM2WFAvOGQ1ZUVjMnZDOXltdld1UWRzKzRDVCtrV3ltazlhaTl4RlI5Qzk2MlMzOWRGUTFKVDl6aW9yMWQrWWJrcHBVdEt2dFpFWHBWVkJRVytrTUdvUTJyT3NuUzhkN0xRdE0vcHd5YlQzb1lUYjFJc0ZBTnJCOVptMFcwdVVnYkZESG9BWi9id2hLRUwvUlVyNEVKeHkzbUFxMms1cHh3U0kzdEJYcWZJVmdCeENOeXNaYz0=', NULL),
+(155, '2023-12-31 17:42:04', 'dFVndDNSYlVzN3NlL2IrdlhjS3RpMDYvcXdSa1pxUWhDQTFDMi9uV0YrRmhIay9aRGJwRE4zcGU1Z3I3cnZKa2Jod3ZZNmFzaDlxYUhBa29DZWRvZXdtQU8ybTF0cG1sOHFWZndBV0JsWGhUbms0WlpRYzVmTEdKam9PeFAvRE9KUnh6eENqVUR5Wmo2b0Zsc0M5VisvWlZNcXFtejBHNDd2amhPZUR5Wi8wdjRhMzJVbXE0c0JrQ2pod0ZFQjYrMGJzMEZwZXV0TnNNU25Ib25xRXB5UT09', NULL),
+(156, '2023-12-31 17:42:04', 'ZUlOV252MzJONGF6MGZuYWVsYlU1b01rTEw3Nm5NS2dZRU1MaHYycU1nclpOeiswVmNTRHZtOFBpYVQ1TmxsNUxZdVV5S241b1hCRjRjWFgxWi85VjZvc1Mza2oyc0dtK0VhZVE0LzRFUlpJSVFHem5SOHVJQWNMNFhRWXFsRFFsNnNwYlMrdG5pU1p1VTA4QzJnWDlZUlBqMUw3OTRWV0tWS0Q2UlU2VFI5eWJSdWl5bmVyTnk2Yi9zUFZnZmlqRUhDdm95Y0RPRm5EZ2tsa3FMTWJTQT09', NULL),
+(157, '2023-12-31 17:42:04', 'dTdLL0REQURJUERmeThJOXZCck8yYTcrYnRhWDVnSFFxZmFZY0ZZa1I0Qzg3MXJZTE5MbEpKRHFqNUtPR2Q0OEVaNm9GdHNBb2R2WjNLVkMrM3JNMGR2WFVUWFpSNjBFcEpRWlB5TDQ5NDFkbVFNSXdUYUhZUDdVK09XOVJXMkk=', NULL),
+(160, '2023-12-31 17:42:04', 'RlQrdzRjL0h5VmY1WkVIYy9TZEI0L2tSR0xjNWpIRWlPY2N4UERWUTFINVkvRUdxSW8zNU9BOG1ibVhOa0ZsWXdyK2E5bE5RL0lUZEh4TmxabVJVdFVLeXpGRmxqdUhDMERtS1YyUWRJRUNwNTcvTko0L201bERnakZqQjUvT1E1d0tiNDZGejlTbVdtaFMvVFhGQzBaelc2V2duc0JqaTNGbDNGYUZZVFRvSE1zR243aVJsZnFYdHRQVEZMeUxNTTZNR2k1akt6NTBMTEhJSEtMU0x5cDFYZUZ5YlYzdUlseWp1MXpvVjl6VnprazlJdkUxV0VjSUljM2dMSnVxb3V3Q3RaTFVocURaUWNLRHdLU2Nmd2c9PQ==', NULL),
+(162, '2023-12-31 17:42:04', 'NmtwZFpYT0k5eVExaEY0K05VbnhueG9FcWVqUExGNHgxWGhKNHE2Y3N3bU1YSHgrRUdzZWlUaGxBNDdEUEVTL01EUkRSa1dtSWlhbTl0Ymh5VFBLQVI1WTc5bEhUL215M2NHdTlrZVREUmsxSnJzV0Z0RjZCRER5RE5JOHZscVVuN1BaRlBZTFdSZmpsM3NwT3c4a290cUtEUU56UWFNNGtqQi9haUtmRGIwPQ==', NULL),
+(164, '2023-12-31 17:42:04', 'OTlGdW1CSmdJblZDbk1rTTBpdXdIZmZEYnYzZnllUlZaM2JxQk94b2hwV2M0YmtjdmYxeHQxMVNiTEU3SVBmSlRyT0JRbURycENKanhzTlFJay9KTG9xOHZrZlZYUlJHRGgrZlg2M1RzU0pMelRWTkJpWlY1bmV1cFpQclpGcFVsU2xvMDdMbDhiUXF3UDltbnJsK1hzRC9vVWxhSk5lN25RdUExNkY5dHp4eE9rdEhGSG1TNGw0QzBsZzM3bGpGWUF6azl3V2dBNS8yVllHTC9ZUkYrSy9CM3dOd0ZwUkpVUzk0N2ZJMW1rYz0=', NULL),
+(165, '2023-12-31 17:42:04', 'ZXd2bHdXWGpCVXVNNDRjSW1sbmZ1VG8vYnJJbVhXcUhjVzhiamswK2wyQzRzVXRQOTFUZFJMTHR2U3krNUVzNU1OWkh6aVRBNmZuN3UybHZuZ00yRHNTcFZFOUhpT3BxNEVHdlkrUFRQQTJVa01URU5GNzBQWHYrSzZVV3FWTHI0NnNHNEErdGk3YVVLeWNUWXFhMEtRPT0=', NULL),
+(166, '2023-12-31 17:42:04', 'bTl3Rk9rdWkvUm5EVWsvZSs1Y0dZTXFwY3lVU2NpRGZ2RkdIL2crak94c2xISEE3RmltVWlhOG5UNTJCQTdIbDZPcnJaaTNoVDlFUzZEc3c2QkVpZFAyZWpNVGthWDZyNlJKUjFOajBxN3UvT00rWW1nVkJIMjBrUjZqK0RZQXJ3cUtzZ2tOMHZMTTNtd21PeHZTbHpwclpaVjROZnFQRDRGblhsSU9GZlRpeVZneitXak93L0NUTmZIWi9SR1ht', NULL),
+(168, '2023-12-31 17:42:04', 'cTg1YnY4UjhlZkp3dDJLcVBuQjhoQ1ExMVdHYVVTUXZtakhWcUwwTmgxUXlDWk1CTXh6T0hDN0dOZmxKOTBtM0VYZjdUc3hnL1UxaFpZQ0F4Y0pYU0tERU9QMVBsaFRQSjVmTTJPVm03d29SUlU0Q0NPUGxVQWY1dXVaK3ZZbVJ2NlRhTGFScXNkQ21sc01zZU93Tnh3bUhZa1ZlVUJINlAvWDZZM3RUN2ZOSUU0cTE2SlJ3YXVWSldYMHNBVkFX', NULL),
+(169, '2023-12-31 17:42:04', 'MVhpTy9PNUJ3Ym9JSExNbHpFcDRkZ0dRemhGaXRPY010dWZ2eWEwaEQxYkpHaXZuYThEZXpzSlUzeWphYmRyY3N2ZW0zSStDRW5LV2pDMHphNDVVSkd3M1AxbGlZZ3B1aXEzZnFCd0pVdkpTRjBEZndvS2Nac05nRVpkNmNjNFNJcVhBZVpzY3dMKzlmcDdrQU0xdVk0NGpGSkI2UHdpMmdQK01hWUJpMnIrUGx1MisyOExFTTF5dFBHQXVVTHEz', NULL),
+(171, '2023-12-31 17:42:04', 'NlBkYlVjZ2J3RWp0NWlScmlPTnpzT1FidGM3TkYvalFsRitoZ0VOYWIyR21Qa3N1ZUhUeHFJN3ZZL0ZHZEkyQS9sSVJBdzlDYnl0Q1p0NkxjL05vQk4zbk1aUDFkWE5KSFkxRkg3VnRpVzU2R2dOZlVlRFR4TGEycmxxZG9aUGwxUmk2eHdwTjZlR1JNOStVbEQxMFYxdk9zaUFEOTFaSURVQ2VHQUk2NFlRPQ==', NULL),
+(173, '2023-12-31 17:42:04', 'R0U5SjNGYnpLUDNFU0dkMS9Tcjk1VUtnWmVYUFFsT2syY0ZXbk5HUVZackJWUWRJdC9zcU5PZTA3V1NuVXF1TTVNSXJUbnMzWTQvL1dWdjljV1hBUi9uTTdJL0VwNlhYWHVzZHRRbEhMQ0cyUU9XUW5ZdUVnaUMwUkd5QXB1ZjVvcCtSU1lldW9zc3lMcXFGL00zL3kzRnlYN0pvckY3UVNpQlJxamN1Yk02NThLb0tUQ0ZzbU1RRXFibWVKYks1', NULL),
+(174, '2023-12-31 17:42:04', 'SGtKYkRxUUR2NlVYSnNlSXlEYjZSY2hrdHZsSm56eHJqMmlKNFFRT0Q1WU5nZk5DN29FR1FVT09FU2JhblFKVWZYN0Fjb3NRS3VTdmNnc2h0eUU3YVhidXAyTHBFVjJWeG1iaWovL2Q0RzBjTnM3NFZ1YTYrTmRpajhNMGVqN3FxMlJEMVdOSnBsTG5Odmh3M3NsTFZBcWdsZVV6ZEdwb2p6Q2tXWVFENzNrZEVJaklYWEJxbCtFM05jcC8zTnZR', NULL),
+(176, '2023-12-31 17:42:04', 'QWVNVG1kcWhjMFFWSWJOcEFteDJCeU1XNmVFS1Q4dTVsSjhkSTZ2UGljYlI0dW9oajRnMzJaUG03bEFZZTVZSHFRbnNmRUU4MTcwanNJdVJZU0JmQjI5YkRzVkFyOHBlMi9GdWVjK24vMmV5M3c0c090Qk5iWGRaank3TnpPM1F3RHJ5NmdJNXFTVUtqb2ZrU0F3KzY0WlRkVDhjbklPL0VIU1Y5YXJ1cVFzPQ==', NULL),
+(178, '2023-12-31 17:42:04', 'eGZYejEwUHFadjBHb0dySlFId1E2bk81WkxSR3l0bU02UlptbHY1OTdCQjl0N05FNDRsNkJSemJzdXJZTnBXazF0dk9tRDhmejNoRFFSZE1KUjA0N3I4TmZwYXlOS0NaVzZqUjRjNWQvMnB4WmdLdlVMTkdFN1dwaXRaajc4WHRMNUZ0MTRTT0F6NGUwK2Rubmt2U0UxVi9IeXZyTmNCbEFHMm4xT1NaZUs0PQ==', NULL),
+(180, '2023-12-31 17:42:04', 'MTVyUFBpYmhMWlMxMmxuaUhWSjZlUkppSWoxUWEvM0t2VXVuQVJmMlVOUmJtWU1iYnRLRFRxTnkrR05pcFVJdERuU1dXUTRiY0grdEVRTGl3b01ncm1ZY1g1V3UzOHFjMUIraDBnRXZnaDV6K3Qxb1J3NDc1T0d4ZHhzSVFrUUZMUXNUQ2x6RnZ4TmJsUkR5dXFOOSswYkY0RWtyM2Z4VG9zRWZhMnpjZXhSOERtRm13dlVTZ2tqaFRmUFlHYUo2', NULL),
+(182, '2023-12-31 17:42:04', 'VnBLZEMzeFVIbWxwaTU3N0hMWmhvZ0cva3hiTk5ZemQ2b1IzMGFGNC9EN05KQ0VudGFYUk1zQUNhNVM5aU5wVy9FRXFRYmpEOWJrOHorUXJrcjhueHBRc05rVkhCd0hHK0NPcFBUeU5pMDQvRzZLRzF5SXVzQ3V3SVdTUnhpUVBIRW9MQXN3ako0ald2b09aL0JNZWdtWjFqWWZPUWRIS1lBbElmU0VpaFhua1RPSTloTDVmNmQveFlHOUdmQWRt', NULL),
+(184, '2023-12-31 17:42:04', 'b2pXVG1OZnNtN2hNUVQ2d09JamthVURYbjFBWFlwemYzQVlPVzV4QlZIcjMyT3ZiWmo5UmlieEw1LzU1VVhsaUVGbjFjK0xkL1FRbnJ2aHVrMWN4QVhKSkVtSW92elBMZHBLdHJLNEdUdGs2SmFEcHprakQyODJzQ1FnZmYzQ0Y1djlZSWNyTWdLalZGNlgwUGV1UUk3N0F2RGV3MVNCL2FmbXNIS3hEQk1XVEY0YVZDZHYya0FZOU9kZzdzS0ROSWZSN2pWaFRFU3U3SWtLZ1M0YW5pVHF4ZjA4WU16dk5Wc0p4VERNWnVtT2R2SVlzdjFyaVlFdkcxbUczMllyeQ==', NULL),
+(187, '2023-12-31 17:42:04', 'SmcvYVZxZ3Rna2JVWW5hbXkyWXlvaXNkOE9FbXRtNkhsUkVrNXBCUWZvVi9PMTB2akVnU0tleWltQldwbTUxSnp2OHpyQ2piWGFOK09Yd0NEanJSOHBxUUt4WlFRNzA1TVE1WGRMZWNzL3JZS0wzYS9IV2ZYc2VHaStjVHppb3E1Q2o1dlN5RE1TNTR3SjZDeEFmNmtpQVkybjk4bXFhRW5GZmdZVXdtS3JEb29YSFk0WjZuK0J0MmIvcjNJVklEU1dDa2dkSGw0eW1FKzVhSVpzSlNzdkVYdHpFZXR5VENKUktLeEtXVGlYTT0=', NULL);
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `h8185_excel_gestaorecepcao_roomstatus`
+-- Estrutura para tabela `hssa_bw_excel_gestaorecepcao_roomstatus`
 --
 
-CREATE TABLE `h8185_excel_gestaorecepcao_roomstatus` (
+CREATE TABLE `hssa_bw_excel_gestaorecepcao_roomstatus` (
   `id` int(11) NOT NULL,
   `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
   `room_number` mediumtext NOT NULL,
@@ -212,16 +490,1344 @@ CREATE TABLE `h8185_excel_gestaorecepcao_roomstatus` (
   `room_type` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+--
+-- Despejando dados para a tabela `hssa_bw_excel_gestaorecepcao_roomstatus`
+--
+
+INSERT INTO `hssa_bw_excel_gestaorecepcao_roomstatus` (`id`, `data_importacao`, `room_number`, `room_status`, `room_type`) VALUES
+(1, '2023-12-31 17:42:04', '    0151', 'Sujo', 'STFM'),
+(2, '2023-12-31 17:42:04', '    0152', 'Sujo', 'STQN'),
+(3, '2023-12-31 17:42:04', '    0153', 'Sujo', 'STFM'),
+(4, '2023-12-31 17:42:04', '    0154', 'Sujo', 'STQN'),
+(5, '2023-12-31 17:42:04', '    0155', 'Sujo', 'STTN'),
+(6, '2023-12-31 17:42:04', '    0156', 'Sujo', 'STQN'),
+(7, '2023-12-31 17:42:04', '    0157', 'Sujo', 'STQN'),
+(8, '2023-12-31 17:42:04', '    0158', 'Sujo', 'STQN'),
+(9, '2023-12-31 17:42:04', '    0160', 'Sujo', 'STQN'),
+(10, '2023-12-31 17:42:04', '    0162', 'Sujo', 'STQN'),
+(11, '2023-12-31 17:42:04', '    0163', 'Sujo', 'STQN'),
+(12, '2023-12-31 17:42:04', '    0164', 'Sujo', 'STQN'),
+(13, '2023-12-31 17:42:04', '    0165', 'Limpo', 'STQN'),
+(14, '2023-12-31 17:42:04', '    0166', 'Limpo', 'STQN'),
+(15, '2023-12-31 17:42:04', '    0167', 'Limpo', 'ROFF'),
+(16, '2023-12-31 17:42:04', '    0169', 'Limpo', 'ROFF'),
+(17, '2023-12-31 17:42:04', '    0171', 'Sujo', 'STQN'),
+(18, '2023-12-31 17:42:04', '    0176', 'Sujo', 'STQN'),
+(19, '2023-12-31 17:42:04', '    0178', 'Sujo', 'STQN'),
+(20, '2023-12-31 17:42:04', '    0179', 'Sujo', 'STQN'),
+(21, '2023-12-31 17:42:04', '    0180', 'Sujo', 'STQN'),
+(22, '2023-12-31 17:42:04', '    0181', 'Sujo', 'STFM'),
+(23, '2023-12-31 17:42:04', '    0182', 'Manutenção', 'STQN'),
+(24, '2023-12-31 17:42:04', '    0183', 'Sujo', 'STTN'),
+(25, '2023-12-31 17:42:04', '    0184', 'Sujo', 'STQN'),
+(26, '2023-12-31 17:42:04', '    0185', 'Sujo', 'STTN'),
+(27, '2023-12-31 17:42:04', '    0186', 'Sujo', 'STQN'),
+(28, '2023-12-31 17:42:04', '    0251', 'Limpo', 'STFM'),
+(29, '2023-12-31 17:42:04', '    0252', 'Sujo', 'STQN'),
+(30, '2023-12-31 17:42:04', '    0253', 'Sujo', 'STFM'),
+(31, '2023-12-31 17:42:04', '    0254', 'Sujo', 'STQN'),
+(32, '2023-12-31 17:42:04', '    0255', 'Sujo', 'STTN'),
+(33, '2023-12-31 17:42:04', '    0256', 'Sujo', 'STQN'),
+(34, '2023-12-31 17:42:04', '    0257', 'Sujo', 'STQN'),
+(35, '2023-12-31 17:42:04', '    0258', 'Sujo', 'STQN'),
+(36, '2023-12-31 17:42:04', '    0260', 'Ocupado', 'STQN'),
+(37, '2023-12-31 17:42:04', '    0262', 'Sujo', 'STQN'),
+(38, '2023-12-31 17:42:04', '    0263', 'Sujo', 'STQN'),
+(39, '2023-12-31 17:42:04', '    0264', 'Sujo', 'STQN'),
+(40, '2023-12-31 17:42:04', '    0265', 'Limpo', 'STQN'),
+(41, '2023-12-31 17:42:04', '    0266', 'Sujo', 'STQN'),
+(42, '2023-12-31 17:42:04', '    0267', 'Limpo', 'STQN'),
+(43, '2023-12-31 17:42:04', '    0268', 'Limpo', 'STQN'),
+(44, '2023-12-31 17:42:04', '    0269', 'Sujo', 'STQN'),
+(45, '2023-12-31 17:42:04', '    0270', 'Sujo', 'STQN'),
+(46, '2023-12-31 17:42:04', '    0271', 'Limpo', 'STQN'),
+(47, '2023-12-31 17:42:04', '    0272', 'Sujo', 'STQN'),
+(48, '2023-12-31 17:42:04', '    0274', 'Sujo', 'STQN'),
+(49, '2023-12-31 17:42:04', '    0276', 'Limpo', 'STHD'),
+(50, '2023-12-31 17:42:04', '    0278', 'Limpo', 'STHD'),
+(51, '2023-12-31 17:42:04', '    0279', 'Sujo', 'STQN'),
+(52, '2023-12-31 17:42:04', '    0280', 'Sujo', 'STQN'),
+(53, '2023-12-31 17:42:04', '    0281', 'Sujo', 'STFM'),
+(54, '2023-12-31 17:42:04', '    0282', 'Sujo', 'STQN'),
+(55, '2023-12-31 17:42:04', '    0283', 'Sujo', 'STQN'),
+(56, '2023-12-31 17:42:04', '    0284', 'Limpo', 'STQN'),
+(57, '2023-12-31 17:42:04', '    0285', 'Limpo', 'STQN'),
+(58, '2023-12-31 17:42:04', '    0286', 'Limpo', 'STQN'),
+(59, '2023-12-31 17:42:04', '    0351', 'Sujo', 'STFM'),
+(60, '2023-12-31 17:42:04', '    0352', 'Reservado', 'STQN'),
+(61, '2023-12-31 17:42:04', '    0353', 'Sujo', 'STFM'),
+(62, '2023-12-31 17:42:04', '    0354', 'Reservado', 'STQN'),
+(63, '2023-12-31 17:42:04', '    0355', 'Reservado', 'STQN'),
+(64, '2023-12-31 17:42:04', '    0356', 'Reservado', 'STQN'),
+(65, '2023-12-31 17:42:04', '    0357', 'Sujo', 'STQN'),
+(66, '2023-12-31 17:42:04', '    0358', 'Reservado', 'STQN'),
+(67, '2023-12-31 17:42:04', '    0360', 'Reservado', 'STQN'),
+(68, '2023-12-31 17:42:04', '    0362', 'Sujo', 'STQN'),
+(69, '2023-12-31 17:42:04', '    0363', 'Reservado', 'STQN'),
+(70, '2023-12-31 17:42:04', '    0364', 'Sujo', 'STQN'),
+(71, '2023-12-31 17:42:04', '    0365', 'Reservado', 'STQN'),
+(72, '2023-12-31 17:42:04', '    0366', 'Sujo', 'STQN'),
+(73, '2023-12-31 17:42:04', '    0367', 'Reservado', 'STQN'),
+(74, '2023-12-31 17:42:04', '    0368', 'Reservado', 'STQN'),
+(75, '2023-12-31 17:42:04', '    0369', 'Reservado', 'STQN'),
+(76, '2023-12-31 17:42:04', '    0370', 'Reservado', 'STQN'),
+(77, '2023-12-31 17:42:04', '    0371', 'Reservado', 'STQN'),
+(78, '2023-12-31 17:42:04', '    0372', 'Reservado', 'STQN'),
+(79, '2023-12-31 17:42:04', '    0374', 'Reservado', 'STQN'),
+(80, '2023-12-31 17:42:04', '    0376', 'Limpo', 'STHD'),
+(81, '2023-12-31 17:42:04', '    0378', 'Limpo', 'STHD'),
+(82, '2023-12-31 17:42:04', '    0379', 'Sujo', 'STQN'),
+(83, '2023-12-31 17:42:04', '    0380', 'Reservado', 'STQN'),
+(84, '2023-12-31 17:42:04', '    0381', 'Sujo', 'STFM'),
+(85, '2023-12-31 17:42:04', '    0382', 'Reservado', 'STQN'),
+(86, '2023-12-31 17:42:04', '    0383', 'Sujo', 'STQN'),
+(87, '2023-12-31 17:42:04', '    0384', 'Sujo', 'STQN'),
+(88, '2023-12-31 17:42:04', '    0385', 'Reservado', 'STQN'),
+(89, '2023-12-31 17:42:04', '    0386', 'Sujo', 'STQN'),
+(90, '2023-12-31 17:42:04', '    0451', 'Sujo', 'STFM'),
+(91, '2023-12-31 17:42:04', '    0452', 'Sujo', 'STQN'),
+(92, '2023-12-31 17:42:04', '    0453', 'Sujo', 'STFM'),
+(93, '2023-12-31 17:42:04', '    0454', 'Reservado', 'STQN'),
+(94, '2023-12-31 17:42:04', '    0455', 'Reservado', 'STQN'),
+(95, '2023-12-31 17:42:04', '    0456', 'Reservado', 'STQN'),
+(96, '2023-12-31 17:42:04', '    0457', 'Reservado', 'STQN'),
+(97, '2023-12-31 17:42:04', '    0458', 'Reservado', 'STQN'),
+(98, '2023-12-31 17:42:04', '    0460', 'Sujo', 'STQN'),
+(99, '2023-12-31 17:42:04', '    0462', 'Reservado', 'STQN'),
+(100, '2023-12-31 17:42:04', '    0463', 'Reservado', 'STQN'),
+(101, '2023-12-31 17:42:04', '    0464', 'Reservado', 'STQN'),
+(102, '2023-12-31 17:42:04', '    0465', 'Reservado', 'STQN'),
+(103, '2023-12-31 17:42:04', '    0466', 'Reservado', 'STQN'),
+(104, '2023-12-31 17:42:04', '    0467', 'Reservado', 'STQN'),
+(105, '2023-12-31 17:42:04', '    0468', 'Reservado', 'STQN'),
+(106, '2023-12-31 17:42:04', '    0469', 'Reservado', 'STQN'),
+(107, '2023-12-31 17:42:04', '    0470', 'Sujo', 'STQN'),
+(108, '2023-12-31 17:42:04', '    0471', 'Reservado', 'STQN'),
+(109, '2023-12-31 17:42:04', '    0472', 'Reservado', 'STQN'),
+(110, '2023-12-31 17:42:04', '    0474', 'Sujo', 'STQN'),
+(111, '2023-12-31 17:42:04', '    0476', 'Limpo', 'STHD'),
+(112, '2023-12-31 17:42:04', '    0478', 'Limpo', 'STHD'),
+(113, '2023-12-31 17:42:04', '    0479', 'Reservado', 'STQN'),
+(114, '2023-12-31 17:42:04', '    0480', 'Sujo', 'STQN'),
+(115, '2023-12-31 17:42:04', '    0481', 'Sujo', 'STFM'),
+(116, '2023-12-31 17:42:04', '    0482', 'Reservado', 'STQN'),
+(117, '2023-12-31 17:42:04', '    0483', 'Reservado', 'STQN'),
+(118, '2023-12-31 17:42:04', '    0484', 'Reservado', 'STQN'),
+(119, '2023-12-31 17:42:04', '    0485', 'Reservado', 'STQN'),
+(120, '2023-12-31 17:42:04', '    0486', 'Reservado', 'STQN'),
+(121, '2023-12-31 17:42:04', '    0551', 'Sujo', 'STFM'),
+(122, '2023-12-31 17:42:04', '    0552', 'Reservado', 'STQN'),
+(123, '2023-12-31 17:42:04', '    0553', 'Sujo', 'STFM'),
+(124, '2023-12-31 17:42:04', '    0554', 'Manutenção', 'STQN'),
+(125, '2023-12-31 17:42:04', '    0555', 'Sujo', 'STQN'),
+(126, '2023-12-31 17:42:04', '    0556', 'Reservado', 'STQN'),
+(127, '2023-12-31 17:42:04', '    0557', 'Reservado', 'STQN'),
+(128, '2023-12-31 17:42:04', '    0558', 'Reservado', 'STQN'),
+(129, '2023-12-31 17:42:04', '    0560', 'Reservado', 'STQN'),
+(130, '2023-12-31 17:42:04', '    0562', 'Limpo', 'STQN'),
+(131, '2023-12-31 17:42:04', '    0563', 'Limpo', 'STQN'),
+(132, '2023-12-31 17:42:04', '    0564', 'Sujo', 'STQN'),
+(133, '2023-12-31 17:42:05', '    0565', 'Sujo', 'STQN'),
+(134, '2023-12-31 17:42:05', '    0566', 'Sujo', 'STQN'),
+(135, '2023-12-31 17:42:05', '    0567', 'Sujo', 'STQN'),
+(136, '2023-12-31 17:42:05', '    0568', 'Reservado', 'STQN'),
+(137, '2023-12-31 17:42:05', '    0569', 'Limpo', 'STQN'),
+(138, '2023-12-31 17:42:05', '    0570', 'Limpo', 'STQN'),
+(139, '2023-12-31 17:42:05', '    0571', 'Limpo', 'STQN'),
+(140, '2023-12-31 17:42:05', '    0572', 'Limpo', 'STQN'),
+(141, '2023-12-31 17:42:05', '    0574', 'Sujo', 'STQN'),
+(142, '2023-12-31 17:42:05', '    0576', 'Limpo', 'STHD'),
+(143, '2023-12-31 17:42:05', '    0578', 'Limpo', 'STHD'),
+(144, '2023-12-31 17:42:05', '    0579', 'Limpo', 'STQN'),
+(145, '2023-12-31 17:42:05', '    0580', 'Limpo', 'STQN'),
+(146, '2023-12-31 17:42:05', '    0581', 'Limpo', 'STFM'),
+(147, '2023-12-31 17:42:05', '    0582', 'Limpo', 'STQN'),
+(148, '2023-12-31 17:42:05', '    0583', 'Limpo', 'STQN'),
+(149, '2023-12-31 17:42:05', '    0584', 'Limpo', 'STQN'),
+(150, '2023-12-31 17:42:05', '    0585', 'Limpo', 'STQN'),
+(151, '2023-12-31 17:42:05', '    0586', 'Limpo', 'STQN'),
+(152, '2023-12-31 17:42:05', '    0651', 'Sujo', 'STFM'),
+(153, '2023-12-31 17:42:05', '    0652', 'Sujo', 'STTN'),
+(154, '2023-12-31 17:42:05', '    0653', 'Limpo', 'STFM'),
+(155, '2023-12-31 17:42:05', '    0654', 'Limpo', 'STTN'),
+(156, '2023-12-31 17:42:05', '    0655', 'Limpo', 'STQN'),
+(157, '2023-12-31 17:42:05', '    0656', 'Sujo', 'STTN'),
+(158, '2023-12-31 17:42:05', '    0657', 'Sujo', 'STTN'),
+(159, '2023-12-31 17:42:05', '    0658', 'Sujo', 'STTN'),
+(160, '2023-12-31 17:42:05', '    0660', 'Manutenção', 'STTN'),
+(161, '2023-12-31 17:42:05', '    0662', 'Sujo', 'STTN'),
+(162, '2023-12-31 17:42:05', '    0663', 'Sujo', 'STTN'),
+(163, '2023-12-31 17:42:05', '    0664', 'Limpo', 'STTN'),
+(164, '2023-12-31 17:42:05', '    0665', 'Limpo', 'STTN'),
+(165, '2023-12-31 17:42:05', '    0666', 'Limpo', 'STQN'),
+(166, '2023-12-31 17:42:05', '    0667', 'Sujo', 'STTN'),
+(167, '2023-12-31 17:42:05', '    0668', 'Limpo', 'STTN'),
+(168, '2023-12-31 17:42:05', '    0669', 'Limpo', 'STQN'),
+(169, '2023-12-31 17:42:05', '    0670', 'Limpo', 'STTN'),
+(170, '2023-12-31 17:42:05', '    0671', 'Sujo', 'STTN'),
+(171, '2023-12-31 17:42:05', '    0672', 'Limpo', 'STTN'),
+(172, '2023-12-31 17:42:05', '    0674', 'Sujo', 'STTN'),
+(173, '2023-12-31 17:42:05', '    0676', 'Limpo', 'STHD'),
+(174, '2023-12-31 17:42:05', '    0678', 'Limpo', 'STHD'),
+(175, '2023-12-31 17:42:05', '    0679', 'Sujo', 'STQN'),
+(176, '2023-12-31 17:42:05', '    0680', 'Sujo', 'STQN'),
+(177, '2023-12-31 17:42:05', '    0681', 'Limpo', 'STFM'),
+(178, '2023-12-31 17:42:05', '    0682', 'Limpo', 'STQN'),
+(179, '2023-12-31 17:42:05', '    0683', 'Limpo', 'STQN'),
+(180, '2023-12-31 17:42:05', '    0684', 'Limpo', 'STQN'),
+(181, '2023-12-31 17:42:05', '    0685', 'Limpo', 'STQN'),
+(182, '2023-12-31 17:42:05', '    0686', 'Limpo', 'STQN'),
+(183, '2023-12-31 17:42:05', '    0751', 'Limpo', 'STFM'),
+(184, '2023-12-31 17:42:05', '    0752', 'Sujo', 'STQN'),
+(185, '2023-12-31 17:42:05', '    0753', 'Limpo', 'STFM'),
+(186, '2023-12-31 17:42:05', '    0754', 'Limpo', 'STQN'),
+(187, '2023-12-31 17:42:05', '    0755', 'Sujo', 'STTN'),
+(188, '2023-12-31 17:42:05', '    0756', 'Limpo', 'STQN'),
+(189, '2023-12-31 17:42:05', '    0757', 'Limpo', 'STQN'),
+(190, '2023-12-31 17:42:05', '    0758', 'Sujo', 'STQN'),
+(191, '2023-12-31 17:42:05', '    0760', 'Sujo', 'STQN'),
+(192, '2023-12-31 17:42:05', '    0762', 'Limpo', 'STQN'),
+(193, '2023-12-31 17:42:05', '    0763', 'Limpo', 'STQN'),
+(194, '2023-12-31 17:42:05', '    0764', 'Sujo', 'STQN'),
+(195, '2023-12-31 17:42:05', '    0765', 'Limpo', 'STQN'),
+(196, '2023-12-31 17:42:05', '    0766', 'Manutenção', 'STQN'),
+(197, '2023-12-31 17:42:05', '    0767', 'Sujo', 'STQN'),
+(198, '2023-12-31 17:42:05', '    0768', 'Limpo', 'STQN'),
+(199, '2023-12-31 17:42:05', '    0769', 'Limpo', 'STQN'),
+(200, '2023-12-31 17:42:05', '    0770', 'Limpo', 'STQN'),
+(201, '2023-12-31 17:42:05', '    0771', 'Sujo', 'STQN'),
+(202, '2023-12-31 17:42:05', '    0772', 'Limpo', 'STQN'),
+(203, '2023-12-31 17:42:05', '    0774', 'Sujo', 'STQN'),
+(204, '2023-12-31 17:42:05', '    0776', 'Limpo', 'STHD'),
+(205, '2023-12-31 17:42:05', '    0778', 'Limpo', 'STHD'),
+(206, '2023-12-31 17:42:05', '    0779', 'Limpo', 'STQN'),
+(207, '2023-12-31 17:42:05', '    0780', 'Sujo', 'STQN'),
+(208, '2023-12-31 17:42:05', '    0781', 'Limpo', 'STFM'),
+(209, '2023-12-31 17:42:05', '    0782', 'Manutenção', 'STQN'),
+(210, '2023-12-31 17:42:05', '    0783', 'Sujo', 'STQN'),
+(211, '2023-12-31 17:42:05', '    0784', 'Limpo', 'STQN'),
+(212, '2023-12-31 17:42:05', '    0785', 'Sujo', 'STTN'),
+(213, '2023-12-31 17:42:05', '    0786', 'Limpo', 'STQN'),
+(214, '2023-12-31 17:42:05', '    0851', 'Sujo', 'STFM'),
+(215, '2023-12-31 17:42:05', '    0852', 'Sujo', 'STQN'),
+(216, '2023-12-31 17:42:05', '    0853', 'Sujo', 'STFM'),
+(217, '2023-12-31 17:42:05', '    0854', 'Limpo', 'STQN'),
+(218, '2023-12-31 17:42:05', '    0855', 'Sujo', 'STTN'),
+(219, '2023-12-31 17:42:05', '    0856', 'Limpo', 'STQN'),
+(220, '2023-12-31 17:42:05', '    0857', 'Limpo', 'STQN'),
+(221, '2023-12-31 17:42:05', '    0858', 'Limpo', 'STQN'),
+(222, '2023-12-31 17:42:05', '    0860', 'Sujo', 'STQN'),
+(223, '2023-12-31 17:42:05', '    0862', 'Limpo', 'STQN'),
+(224, '2023-12-31 17:42:05', '    0863', 'Limpo', 'STQN'),
+(225, '2023-12-31 17:42:05', '    0864', 'Limpo', 'STQN'),
+(226, '2023-12-31 17:42:05', '    0865', 'Sujo', 'STQN'),
+(227, '2023-12-31 17:42:05', '    0866', 'Limpo', 'STQN'),
+(228, '2023-12-31 17:42:05', '    0867', 'Limpo', 'STQN'),
+(229, '2023-12-31 17:42:05', '    0868', 'Limpo', 'STQN'),
+(230, '2023-12-31 17:42:05', '    0869', 'Reservado', 'STQN'),
+(231, '2023-12-31 17:42:05', '    0870', 'Limpo', 'STQN'),
+(232, '2023-12-31 17:42:05', '    0871', 'Reservado', 'STQN'),
+(233, '2023-12-31 17:42:05', '    0872', 'Sujo', 'STQN'),
+(234, '2023-12-31 17:42:05', '    0874', 'Limpo', 'STQN'),
+(235, '2023-12-31 17:42:05', '    0876', 'Limpo', 'STHD'),
+(236, '2023-12-31 17:42:05', '    0878', 'Site Inspection', 'STHD'),
+(237, '2023-12-31 17:42:05', '    0879', 'Limpo', 'STQN'),
+(238, '2023-12-31 17:42:05', '    0880', 'Sujo', 'STQN'),
+(239, '2023-12-31 17:42:05', '    0881', 'Sujo', 'STFM'),
+(240, '2023-12-31 17:42:05', '    0882', 'Sujo', 'STQN'),
+(241, '2023-12-31 17:42:05', '    0883', 'Limpo', 'STTN'),
+(242, '2023-12-31 17:42:05', '    0884', 'Sujo', 'STQN'),
+(243, '2023-12-31 17:42:05', '    0885', 'Sujo', 'STTN'),
+(244, '2023-12-31 17:42:05', '    0886', 'Sujo', 'STQN'),
+(245, '2023-12-31 17:42:05', '    0951', 'Sujo', 'STFM'),
+(246, '2023-12-31 17:42:05', '    0952', 'Inspeção', 'STQN'),
+(247, '2023-12-31 17:42:05', '    0953', 'Limpo', 'STFM'),
+(248, '2023-12-31 17:42:05', '    0954', 'Sujo', 'STQN'),
+(249, '2023-12-31 17:42:05', '    0955', 'Site Inspection', 'STTN'),
+(250, '2023-12-31 17:42:05', '    0956', 'Sujo', 'STQN'),
+(251, '2023-12-31 17:42:05', '    0957', 'Limpo', 'STQN'),
+(252, '2023-12-31 17:42:05', '    0958', 'Sujo', 'STQN'),
+(253, '2023-12-31 17:42:05', '    0960', 'Sujo', 'STQN'),
+(254, '2023-12-31 17:42:05', '    0962', 'Sujo', 'STQN'),
+(255, '2023-12-31 17:42:05', '    0963', 'Limpo', 'STQN'),
+(256, '2023-12-31 17:42:05', '    0964', 'Limpo', 'STQN'),
+(257, '2023-12-31 17:42:05', '    0965', 'Sujo', 'STQN'),
+(258, '2023-12-31 17:42:05', '    0967', 'Sujo', 'STQN'),
+(259, '2023-12-31 17:42:05', '    0968', 'Sujo', 'STQN'),
+(260, '2023-12-31 17:42:05', '    0969', 'Sujo', 'STQN'),
+(261, '2023-12-31 17:42:05', '    0970', 'Sujo', 'STQN'),
+(262, '2023-12-31 17:42:05', '    0971', 'Limpo', 'STQN'),
+(263, '2023-12-31 17:42:05', '    0972', 'Sujo', 'STQN'),
+(264, '2023-12-31 17:42:05', '    0974', 'Sujo', 'STQN'),
+(265, '2023-12-31 17:42:05', '    0976', 'Limpo', 'STHD'),
+(266, '2023-12-31 17:42:05', '    0978', 'Limpo', 'STHD'),
+(267, '2023-12-31 17:42:05', '    0979', 'Sujo', 'STQN'),
+(268, '2023-12-31 17:42:05', '    0980', 'Limpo', 'STQN'),
+(269, '2023-12-31 17:42:05', '    0981', 'Limpo', 'STFM'),
+(270, '2023-12-31 17:42:05', '    0982', 'Site Inspection', 'STQN'),
+(271, '2023-12-31 17:42:05', '    0983', 'Sujo', 'STTN'),
+(272, '2023-12-31 17:42:05', '    0984', 'Sujo', 'STQN'),
+(273, '2023-12-31 17:42:05', '    0985', 'Limpo', 'STTN'),
+(274, '2023-12-31 17:42:05', '    0986', 'Site Inspection', 'STFM');
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `h8185_excel_gestaorecepcao_roomtypes`
+-- Estrutura para tabela `hssa_bw_excel_gestaorecepcao_roomtypes`
 --
 
-CREATE TABLE `h8185_excel_gestaorecepcao_roomtypes` (
+CREATE TABLE `hssa_bw_excel_gestaorecepcao_roomtypes` (
   `id` int(11) NOT NULL,
   `room_type` varchar(50) NOT NULL,
   `room_type_qtd` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_bw_excel_gestaorecepcao_roomtypes`
+--
+
+INSERT INTO `hssa_bw_excel_gestaorecepcao_roomtypes` (`id`, `room_type`, `room_type_qtd`) VALUES
+(1, 'ROFF', 2),
+(2, 'STFM', 28),
+(3, 'STHD', 16),
+(4, 'STQN', 200),
+(5, 'STTN', 28);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_gestaorecepcao_saldos`
+--
+
+CREATE TABLE `hssa_bw_excel_gestaorecepcao_saldos` (
+  `id` int(11) NOT NULL,
+  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `dados_saldos` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_bw_excel_gestaorecepcao_saldos`
+--
+
+INSERT INTO `hssa_bw_excel_gestaorecepcao_saldos` (`id`, `data_importacao`, `dados_saldos`) VALUES
+(2, '2023-12-31 17:42:05', 'c2QrV1FNSndiRWk2LzJZQlF6SkEybXhHbVlWNEpVVjRGY0VXVlFsdTJ5V0wrOE85SnZjUFh1V2FsZ1lNM2JkaQ=='),
+(3, '2023-12-31 17:42:05', 'L0dZZXJKTEZaT2s4dkQ1SzV3OG5GazZXdnAxWWVEOU0rRzNXWHpLWWtMbzdXZTkxaWxtTk1Uc0tTNUlILzBFMA=='),
+(5, '2023-12-31 17:42:05', 'R3hWY3dqREdGZXFkWU1IV2ZoTXBzS1JkN0ZGK2xNUHo4VzQwcXEzdFpqaHhmcjZjYkRZWUI0NDd3a3BaK1k4bw=='),
+(6, '2023-12-31 17:42:05', 'RVpnMjg2ZUJQSFBRbW8yM1FpNFJGWEQ1SkhkbUZXVXZtVlJhcWh5VGtzRlNIYmloUmovV2tKQS9ZUnFpV24wNg=='),
+(8, '2023-12-31 17:42:05', 'ZzV3VTNxWDhVQjNib1ZHZGhDTDZtV1ovVjlkdGZ6c1pqRHF4bjA4VkE3Z1ZQV0c0b0RJVjhBcStqTWxWbENOMw=='),
+(9, '2023-12-31 17:42:05', 'U2dzRXdiaWt1NmIvZU84REJNVkZCdTFHaFV4MVBYMWJpOG84ZkdjaWZYb01yaGtXbDgvc0pVcG1DbENMTExuRQ=='),
+(10, '2023-12-31 17:42:05', 'aFRoQXBnUGNhd2l3RWdBZWMxK1JMZXNub1BZbTQ1aDZCaXZWT1U5VldBdUZ5bWx6Lytjb1AyNzZGajhCUS9rNg=='),
+(11, '2023-12-31 17:42:05', 'K1BsUkNWU0hYVW1aQVgwZXowUXRuTTNXamZQZE4rcy9uMmFzUU1qL1dxSzdLTEpQbm5Dc2tERDR6bzBFMVI5Qw=='),
+(13, '2023-12-31 17:42:05', 'aDQzaEZxck5lTlJmampiTzVoMkRIMktyWHd1TnFTK1kxd2VjbmxxL25FY2U1cUU3R1IrSEZvSmhmZ1BJNGVyMw=='),
+(14, '2023-12-31 17:42:05', 'RkJUUkRHRDM4dEFUUG9KZlFxdENyaFRMUmY2RnFqWVpHeWdQZGs0Z0xFOVBEZUtjdnRlNjdNaCtWQWJSUkVpMA=='),
+(15, '2023-12-31 17:42:05', 'ZTV1WTE0ZTNtK3dCNTI1N1RRYURRZUJyaGJST0VMM1AwMDJCd0cwU242bTA0OE4wVmEwZ3lMN0twcEJPSE9LQg=='),
+(16, '2023-12-31 17:42:05', 'VWxIcStnZlUxUmViRkxDSlFXalhNRGU0bXFmcDN2YnB6YldoZHgrOHdMcm40RDZWaVRuQXJTREJwZXVRTnNJRA=='),
+(17, '2023-12-31 17:42:05', 'bmN4SVVrWFN5NVlYMGZjeHA1bkJhZEt4Q2lxVUFIVGV2N09jNEU1THlLTU1hSVNTcDZwd3Q1emlLNFRLVGM1WA=='),
+(18, '2023-12-31 17:42:05', 'enQ3NDA3eTU5cnNRYlE0bi83cTZPc3RNaDQreGlQZS9ZK3UrS2tjM1VPWEtIUzFtNjJTNk4zUVRWRXllMXE1RQ=='),
+(19, '2023-12-31 17:42:05', 'eUx6TGl0bEkrb0QyMHZEZnUzTmVPWUtnbG43Yk1UQkdEYVFkTlI0eWlqbk1GZUhOdEJEWGNBcTQ3UUtHOUxzcA=='),
+(20, '2023-12-31 17:42:05', 'WTR6dCtTRENDY0I2WDhoOXJLbkRLQUw0Mmp2akpvRlN6K1dJbXpKYzBzbEtBV1puQU1heFg4MENHb2lFTHF2SA=='),
+(21, '2023-12-31 17:42:05', 'K1BJSmM3TG8zUTBacE9Uakt5SGtIYmpEcGZwSWdpazRVZ2paTnFzUGxVcW9icmFkZmRmTSt1V1BGLzl1RTB5MQ=='),
+(22, '2023-12-31 17:42:05', 'dlJtdDhiWmZ1QitLazhVZTZTV3REVVFRSmpEdjB1d0lpT3F0UjJZaXp2SEkycWFmMUN1aTlPYm95RitMZTYvZw=='),
+(23, '2023-12-31 17:42:05', 'cHk4Z3FxQk1Gc2ovZnZLUjV3UGZMbXoycmFHdFpaelpFYmFmSFRTWUNxdzFmTkd5UWdxdmd2YWN5eUlnYmw1Yg=='),
+(24, '2023-12-31 17:42:05', 'UWVaR013dnkva3o3RWxPQ2JyZDc0Nmo2dGJ5cUVNZFJUQmcxMVFtWGlQU3JEY2o3UEk0M1hQcVNyV3FJakJ1cg=='),
+(25, '2023-12-31 17:42:05', 'RlZBZ2VLcU1ER0ppVHppYXhQaDVucXg0eHliRU1nWkhHY3ZoT2tWUk1rbXlhNC9FZlpnTGxXTUYyd2hXYzM2NA=='),
+(26, '2023-12-31 17:42:05', 'VlNEdTFpcHJTa21waFdKSXJhNWdLRy95RW5yejN1QUlJOW16RzhIczRaRTU5c0d0bDB6TllFVmhkb0ovNzA1TA=='),
+(27, '2023-12-31 17:42:05', 'c1AxYnRmSG4vbFVvc2dObjVSaCtJRmk1TjYxU1V1N0ZsWnp0VjhzYmtvd2FOekY2WUZORmFBVEZ6UnBRWmJVcA=='),
+(28, '2023-12-31 17:42:05', 'WG9oVmRtNEk0d2ZxOWRGWmE2R3B2ckxpVEJQRmxqeDlUR0J5R3RDMVRrbXRFUVZ5VGx3UGUweDc5QVNaN3YyRg=='),
+(29, '2023-12-31 17:42:05', 'aG5rdEQ1L3VkVHNJVTMyems5OGRjaUo2WFVVanNZZmg0c3NFVDd0SHFKK0QvNERqeXk3cG5MTDdxalhMQklTRg=='),
+(30, '2023-12-31 17:42:05', 'eldhaWRHaFdvSDNXVHNkYVZIZ0phNytHa055a2E3WjhIOFltWGN4YkZFT2ZmUG1aL1pZNEI4R1RSVFEvQ1kvKw=='),
+(31, '2023-12-31 17:42:05', 'cWZqZE1jbDRpazV2OWRBTFVNZGtnUWwxakFaVEhJSGg3eGFuZTlsa1FKSVFvb0xhV1lFbW5IMDZaY2g2eXo2Sg=='),
+(32, '2023-12-31 17:42:05', 'WmdheHFYT1JDSkY4YXBUZkx1bThGdzcxQVUzY0MrSDZEbmZoWFVBYVNvY01xRC81NHJHc1hHVy9NZTRDdUovcA=='),
+(33, '2023-12-31 17:42:05', 'a3phWkp6N0x2bVJnU2JyS0p3YjhIK2ZNeFFnWlJ0UDFaSWE3WHdCNmpqU2dVSUxWVGV1SU4vVG0yZW5PeVRqZg=='),
+(34, '2023-12-31 17:42:05', 'SVE3bVpWRzFpa1FlM1ozSUYvcmZLR1BhZTJBTmtMUUxWelpkbCtyR1VzT3lXQ1VIRW8wRVhzRlhqL3ZxTDVTMw=='),
+(35, '2023-12-31 17:42:05', 'U0ZqYi9haDc5YlRjTFVPVGFheC9KRmhzbFE5M1dqUE1RQ0dZMjhjWjdvSVFjZmdPY1h3QmdBWlhRTDB3ZmxieQ=='),
+(36, '2023-12-31 17:42:05', 'UTQ3a2swVjN1aC9COUxVREt6Uks0Zm84T0hzUzhLaHhWNlM2N1Z1ZmVFTHdqUnFrcmhWdEFJcUUxeG44VjFKSg=='),
+(37, '2023-12-31 17:42:05', 'NEZzaHJ5UFRyZHpCRHhZaS9oa3d1VTVMNlNiMzE5S1BQOXlSamYvMHBGTU51eTJSdWd0cmtnWFJBN0lwV2JQag=='),
+(38, '2023-12-31 17:42:05', 'anJCQTNCblBBeTFSc2xlblVoSVRzU1I5L1A4ZysxTGFFNno5RHBNVDFoUEdjSzZqSFJ5QUNHVGV0ck80UllxcQ=='),
+(39, '2023-12-31 17:42:05', 'eGZES0d4QjVNSm0wTGEvTWpBWjRmaFBsYkRrd3BIWHFPaW9hMXZiYXcrcWhocDQrQ2ZZWERyVlY3RWhJSk5FYg=='),
+(41, '2023-12-31 17:42:05', 'ZkhhR3pCQkFSYjdIa25FTjVzZkF4Qk9QUFJFTUlUUVJ0MjFqVThrUTRGZXFDTXE0cTdaWFdLbHhjblJQRE9IQw=='),
+(42, '2023-12-31 17:42:05', 'bVRkVjdBZ0FIdE0vaDd5NFFVQTlFR0p0Q2lPejcreFE1VE5PbzltVk02UXNuQnhwSVE1VFNRalRzT0c0OGhDaw=='),
+(43, '2023-12-31 17:42:05', 'TlJKV0lvR3FtZGowREV4bWpwaDFvYlpsbFpYb1JNcnBhL0M4Ni9qSHpLWGhmSnhtdHRyS29NUUpGQzcwUUdmOA=='),
+(44, '2023-12-31 17:42:05', 'MVVhZnJkSW9oN1E2eHQvSUNKTjBwWWtUSjgvUUxHN0gwRG5NL1VqdDhXRDRwVmFxRElodWh6VG53RlBqODdpNQ=='),
+(45, '2023-12-31 17:42:05', 'MmJ3Qy9XbmpoY2FDRnc4S2FGaU5ER2JQUGlpc0NBem1CWEFCN2tkcTc3bDl1NGg2REpkK241VEpzRlRtTXl5Vw=='),
+(46, '2023-12-31 17:42:05', 'ZStZcHRoQmFPQVRQaDRlTTk1T0FLWlZXc1N3eHpDMTdmNUlhbWUzekErN1lGL2Z1eXU5ZldGQWQyZEVJYnNrVQ=='),
+(47, '2023-12-31 17:42:05', 'eTAyUW9vc2dCczMzdDBlUTVobFEweWY5S1h2alJyRWtJMUxnc0pZYzJncnlXVS9JOVpFVy8vaWZSakJ3Z0ZhKw=='),
+(48, '2023-12-31 17:42:05', 'Qmg0UVRqeGdvYzdleG5heFZiWmNzcHkwOGVSUmV4YThqdFFqQVNIcjlvM0pidnhGckxBMnBsK0trUTdSUzdYQg=='),
+(49, '2023-12-31 17:42:05', 'U2dUaXkyTW5PNmh0eU5VV3cvc2NGakpHdlJxYjZPOFBsRmJ5SzlPZDMzVGJYVnl1ei9wOG1xekJNRStzdUxtVA=='),
+(50, '2023-12-31 17:42:05', 'cUJtdm5BVDlsbjMzbTFzT0xGckFWVzVSZ2FSUzNla3U0MHVFRUQwSEttQ0E3NjZTODVTNDdUUGN1MnlwNVUxaA=='),
+(52, '2023-12-31 17:42:05', 'bG9FQjRXYW5ic2YzTmNWaTJXSGFuNitZcVQ4UHI2QmJlVkE5MHNUcjQ3YlVveit5cVdCbitKQU1mbnF5SXR5VQ=='),
+(53, '2023-12-31 17:42:05', 'SmM1TmFPNU1iemRUQVlleWxIM2Zwc0hCM25scHFjOFhwVHZLUDVEWGZjNnZTYnF5dksydVpEanhGTFl2V0tLeQ=='),
+(54, '2023-12-31 17:42:05', 'b3BwMlpWQ2lPaXNuRXhYQkdtTTJFdytmOE43N1hLMXdKWktwTzNOc3Eyb2RSMjEzYkRidlNjVjZzOGR2aGY1bA=='),
+(55, '2023-12-31 17:42:05', 'bUxCM21reWVyWEhVSWc0aXNpNGdOMWVoWjlvWjdWQ29ESGNycGR3RG8yWjlVWk02RktUZ1RHYWZXbnNOelJFMQ=='),
+(56, '2023-12-31 17:42:05', 'NUh6V1p5aGo0WGxsY0ZtR0t5bjdjOHluU21pTTNNcWt3YWNTbDVKd0xRZDlGR0lJek9SMkNTS0FVMDNVVit0ag=='),
+(57, '2023-12-31 17:42:05', 'a3dWd3pXTU5aNzV1SGl5WU9aUWFQYU90Z01vMEFlMzB1TldBYWQyS0ZvbHA1aHRlckFOR1hqL1U2anB2UGVjWQ=='),
+(58, '2023-12-31 17:42:05', 'bE1kOUF4ZWV5L2hNbmhKQzJUY3JoUmVGUmJkWFArNGxXem5yNlBjNnR6MnZyZ2plZXNQNjIrVTZscU1jRkpSaQ=='),
+(59, '2023-12-31 17:42:05', 'YmE0a280VEMvTWtSZjRWYUF0YVRsaGhBL0hFbGExMmswR2NsOERqRVJSTldBYlVZRWZnZCt2SFVIVGpEeFdBTQ=='),
+(60, '2023-12-31 17:42:05', 'TGlVd3cvcjNtY2E2bGpsNXN3MVB3T3g2ajE4TDJaMEtGdzJlVHYvbTltalNMRytqcG9CS2hIcVVpVjVyalFoMA=='),
+(62, '2023-12-31 17:42:05', 'ZkpHRzhIbUVFL3MyckVNMGxmdGVPYzVodTlKMTQ2dENpUjhTdnUyU2JLRUZsMHBuWXNIK2dCK1hWN3FzMkFJaQ=='),
+(63, '2023-12-31 17:42:05', 'Y3ZuQTZHZHNKTGIyK3B1ZWY1NWNUNmNYZlBqYTlXbXBoYnMwMzEzRUVPY3o5OFF2aSs0YUxzd0xxbGJ5dFRGNA=='),
+(64, '2023-12-31 17:42:05', 'bmpkc0RneU1ZZU4xYmdiMS9rR2IxRmwwalVGTnJTU3VkWkhWVnFueXo0MTVJN0V0elNYQ1VsNi94S0oxdlRoYQ=='),
+(66, '2023-12-31 17:42:05', 'VkR2SWJvNG5Wd0ErNW1JMW4vNUttNTFsY1F6UDk5cmo2K3JaUm9ZcUY5Qk96NHI0TjIrMUlCTjdFZjVBZ1Eveg=='),
+(68, '2023-12-31 17:42:05', 'R1MwQStkNVZKSzN3aFFDVVpWUDBQa1VBZlFvdE9CcjV2bkl4U0IyaDU3ZGo0ZlRlay9RMEhSZFI2eHNiTGRsVA=='),
+(69, '2023-12-31 17:42:05', 'RC9BTjRqSnN6SkY1OTNPZ1l2VkpqNFUzR2JQRm5hQ1RPSXNBQzMxRzBNUDZaWDV5RjBsTStDNUVNUjkrWjVIQQ=='),
+(71, '2023-12-31 17:42:05', 'b3JBZUtHdDYyR1pMOXRzbytLc0FUaGlIQlI1bzB4UWdCdmxhOEtxREswWHNsQlNSQUtsTmFYeTZlVlVFQWc2ZQ=='),
+(72, '2023-12-31 17:42:05', 'cVZzNHpPSDVSWlBmVXhuRVQyMlY2NHhpaDRjRXFhdytqZ3p4OU9ldmlBUm0ySThSbkFEWEkyY041WUpTMHYzNg=='),
+(73, '2023-12-31 17:42:05', 'Vm9nQSswNys1YjVuSHhiOWpMUklKZkIzaEJNUC9WdXBBWmQzQ1VaRFVrWmtMVll3L3ZFRVo1RXZRZnVjVUxndQ=='),
+(74, '2023-12-31 17:42:05', 'WWVoMjRaQ25hYnFTOHZzNGxDeTVBR0ROajJnRUNGTHlQc2UxalJLOTZuZXBtZTg0QUw1Y0pSbzBNdHowcFpNeA=='),
+(75, '2023-12-31 17:42:05', 'ejFzbVdCMldsSThxZVFNcjQvakE5aHVSZWExNUgzaG9VSFhVUytKcGlaS01hZkdsbVRnVzF1aFdxY3pzRTA1Nw=='),
+(77, '2023-12-31 17:42:05', 'VS9VZDhCUklFUzA4dVJibE03SWhKbE5NNmFJUW9namtWNzN4dXgzVHBoWXFoMVhqWGpwMStueTg2WFFwUWJSdw=='),
+(78, '2023-12-31 17:42:05', 'bDF6UGcyaEt1UlFwdytNQkoxdU1lYy9LMmlBRnVFNllibG1PUjFoTVBPc3M4TGZubGpLOGZkY29KRnF1dzhkdg=='),
+(79, '2023-12-31 17:42:05', 'aE5qWXlvdWZLZ2pBTC9JdjIxaFRhTFIvN2g5SlRRQTN3UWFlbGJRRzc3WT0='),
+(80, '2023-12-31 17:42:05', 'c0VhS3FwT0V6NVdncnhmRmt0N3JIaTNiT0o0cng3RHNENEpyNFovWEFsa2k4NjBmWVF5Q1VmcHMrbDUzYktrMA=='),
+(81, '2023-12-31 17:42:05', 'VE4wd3YzbWNNUGhOQnB2ckx0dU1sV2F6RXI0TmNRdEw1ZkZGc0hBTW1iWT0='),
+(82, '2023-12-31 17:42:05', 'UGMrRUZNOUlnaVltNmVPa3QwcDg1bmtPTExaR2xvK1hKOHBQZW5MeE5JMkkwbTEwRzdXMm91N05TQ3FlTmdtdA=='),
+(83, '2023-12-31 17:42:05', 'QXNiV1ZrTjJCUGJ1bzNMVjZydFVNR1Nkak5pMnFpd0RSbUdpVVN2WmlDdz0='),
+(84, '2023-12-31 17:42:05', 'RzZyeWVjb2NsVHk0ZDVBZzVUVHV4S09mOWVpaVBJcmVBYk0rcTBDRllWa1RFbHp0ZUZQS3RLZmFmNnVQcmliVQ=='),
+(85, '2023-12-31 17:42:05', 'QU5EbWlTb1QrMldzODAvMGFuNWFmeWVXQi9nRFJoYzNjekxCUEpNL1NsU0U5Vzl6T3RWY3J3UkttU2Z5bmdZVw=='),
+(86, '2023-12-31 17:42:05', 'eEVabDlFOE5FTmFVREh0LzZtTEFNY0ptVkhrVU15UW9DV1NHN0lTR1pxK0w2N3JITG5TaXQ4bzFpemVhNlladg=='),
+(88, '2023-12-31 17:42:05', 'VUJnNXpPT3Z4TXphVm9nWHd4QjVnS2g5algxMm1WR25LdkRiTHlyeURoUzNuZ05BbTFzWW5xUGNRc1hqRXB4cA=='),
+(89, '2023-12-31 17:42:05', 'bTYyVlJVSiszUlJpUjU3anM0aDd1aWt5b2FVRHJDcE5ncnFhcVk5TVZwRytOdHJnUTJRZ2xoaWJ3NVNwRGtSaw=='),
+(90, '2023-12-31 17:42:05', 'MVREMUgrZkNSNGxtT1VmMWVkVitJbno5My83TGl6bkJoalFFeUlybDArVkRTT2FJVUFoVm5Ia01POW1aSE9iVw=='),
+(91, '2023-12-31 17:42:05', 'Wmd4SFJqMG84ZjBpUWx6NC8rTXVvcHJPWFpSVVk3RGJvVzdmZkFMNEc5WUNFcnBtc2lqWXRtVEZiUHdpRHJqSA=='),
+(92, '2023-12-31 17:42:05', 'R3c0SGJjd2docU42ZTlsekVCaVdCMGNwRmNXaEV0QWUrYzlxa3JhMTN3N1VOOVM1cVhTSkkvUVJxZmh5WDU3TQ=='),
+(93, '2023-12-31 17:42:05', 'U3E1VE5HU2NtckdLaHliZXFjNjBHelFjTGRJNVgvMHRBY2lZemtNNGhsaWxMSFNLSjlySXc3ck4zRkUycHpBeA=='),
+(95, '2023-12-31 17:42:05', 'OTgrZ2xXKytOdUpkYlNXeXJ4QXpkUzZWNm8rSGU3Z3JzS1RUWmpYQldqUnNDM1BiVmFVVEgzcDZhempXK3hTdw=='),
+(97, '2023-12-31 17:42:05', 'M1ZHcE1YQmI0N2RPSElmdmc0WEVzMmtKb3I1THpjSytxYUxvSk1EamJWUVpNNEJiMm8wRXVlK2hxMWg4US80bg=='),
+(98, '2023-12-31 17:42:05', 'cTZEM0d5RjBFbEJxdWN2K0dZWENpSFUvWExneWYyVGVTZGg1bUNsckpLUmNVNkgwSTNiZDVmRkN2ZVYrY1o2Ng=='),
+(99, '2023-12-31 17:42:05', 'SXVUNjBYcWNGYmtrZUtRME9QZ1ZWTFZtZDBJTXd6R1BCdU9HYXVyLzRsU2tIR05IajNWQU5aWGVGSFpzS2ZXYQ=='),
+(100, '2023-12-31 17:42:05', 'cHFUTkJqTFJLcytRNzlsMUgzTzlsQjF1WXlPR2RmUlV0akFiNndyUWEyUUkrMmFJZVBiUEcvNUZZWm5aVG5JTQ=='),
+(101, '2023-12-31 17:42:05', 'TWJYcXFRbWtHaUlobXhLNG80UWhRTWFCam9LSVVUUXBJSzhwcnVMblBuK0xKTjFPQjhKeTFsbHRDY1hqREluRA=='),
+(102, '2023-12-31 17:42:05', 'Z1dUOFc4Ulc5dGFTVEJYMDhjU1pqQmJmL1F6R09QclVQSlp5NkI1RExhWHA3RlMrdWpTVjJLTDlXYjA1ZmZaRg=='),
+(103, '2023-12-31 17:42:05', 'VTRwMFVVMkdEcnQ4WUNzdWlXSDBvZTRjNTFNUGJBWTZaamZoMm02cGJHeTY1U05OZ1B1Rm9MTjBzMmNhTHFpSg=='),
+(104, '2023-12-31 17:42:05', 'MmU5TnhZWVBKU0VzSFVvSGdhaGhsZ09HdE1GdjZmMlNnNzdhYlI5YkhhNGlJZWxPdkhuamdDQWJoVEp1NVIwag=='),
+(105, '2023-12-31 17:42:05', 'U1AyN1UzUVdIdW10UFVaK0krZ1VkUmFHcTJPYWx0NnBobmpWc1U1K0ZURUxmZm9yZjRQQ3hGeEViaEQ1WXdqbg=='),
+(106, '2023-12-31 17:42:05', 'aFo4VUttKzd3cFAyZkNqUzZMS2FyZldERVNGaFc5WnhsbERGbmliWkNoQT0='),
+(107, '2023-12-31 17:42:05', 'b2M1U2RHN2ZKOXNuVlVjcHg2VDdsSDYwYnJrTnBSSlE3cHZtZDFnei9mVVNSQkhld3ZsNE9QMDFGYlFaTzQzNw=='),
+(108, '2023-12-31 17:42:05', 'MVJPakIzNUZPRnp2NjRsS2xCeUZGU24zSWlNQlYrOVRDcTJKKzdDaG9nVkdKdWFSV29aWXRTNExaQnBYdkpPYg=='),
+(109, '2023-12-31 17:42:05', 'L3E4bUtqZ0FsQ2RJRnBueUwzOStxV0crSmdUSENLYjhEWHJMWHpBcGVSTnVMVXlCd2dwN0RMQXlMcGNjTEVsNQ=='),
+(110, '2023-12-31 17:42:05', 'VzJHVG8yU2xMc0NCNm5ONEw1cjlTSkVOZ3RJbjRoZzhJK1NYQU5JSlk3RT0='),
+(111, '2023-12-31 17:42:05', 'QnRTMW1hcmZPWkhoc242WkQ1cTVJN3lJQTdHZ3BnODAxMHMva0NBUFNHUzVLVFZYYjVuT01YViticEVwSExrRA=='),
+(112, '2023-12-31 17:42:05', 'VjlsQTZwai91TDkzR3A5SWtkZUNNdzNUQ0pMb09GVEs5a2dGL2RkSUNkY2dHYnRMWCtWTGNTYkhQV3NJQ3FXMg=='),
+(113, '2023-12-31 17:42:05', 'MnAzK0U4Z2ZrRUFySWhUbWNnTDlEd2FaeVVnVkRCMlBvSVJQQWl3VTBBa2F5ZHlDNnlBd3pjTzNXbjBhR0k0Sw=='),
+(115, '2023-12-31 17:42:05', 'R3N3QXhBUHBFMm1mVUpuUGhtMndnVExnOWwvMld4cE81UzFHckNzNmM1MWdJUTIrOWM1YXI5ZFEyMUZOcXByKw=='),
+(116, '2023-12-31 17:42:05', 'Mnh2UGlrMlo0d1U3OERBZUVtREwrSkRBRmIwMy9ZNUwwYmNSVWNBdzQwZWhRdHBRTjFvUWM4WUU1UWx2T2s3NA=='),
+(117, '2023-12-31 17:42:05', 'dGRXTHU5Vk1ZZlllbFFRWW9wWmpaRGtERDA4SDBBbHRaeHNuQXNvRXJEMD0='),
+(118, '2023-12-31 17:42:05', 'b0llMkp1M1RQZEdOaTMrQkNCMlBQOWdiUndlMVl2eHFCYWhuUXVtZ0lxZjZKTGc4d1dpNUdpN2lmQ0JDclVNcg=='),
+(119, '2023-12-31 17:42:05', 'QWRoN0cxdk4zVm13ejA3L3pjYTNSOVY5TmowQVFiUndoUWpMdVVnU1FtQkNUa3MvTHR5S04vanlkL1hlWkdydw=='),
+(120, '2023-12-31 17:42:05', 'dlBaRHN1QXB5N2RWYzVjM3J2SDl5NUlKVHRPcVU5a0JIQUFSUG9sR0R1SlNLQUxEZjZVNG1JQkg5YStvZW9LMQ=='),
+(121, '2023-12-31 17:42:05', 'c0pveGVTMEdwdzluVjIwWlZoUkRuSVRRb2ZGT2Rkam5ReTg0cHdndHBIbTBDOFlhWE9CeEVEc1RQZXlnSU5ocQ=='),
+(122, '2023-12-31 17:42:05', 'dWhZSVlJTUhsalhoNjJPSCt0OGdvMkV4WnRmTVFzaDIxVU5rczdkVTlsWlpVQlNFeG12WFUvamQ0WVRTbkg4Wg=='),
+(123, '2023-12-31 17:42:05', 'M0sycmh0eFJiR2Z6NHFOZHRNSDgrWFdnT2c0cmVMWjdOcDRYTVRmOGx1dTk4Q0FKWWhlem1uUU5rbTgySHdSOQ=='),
+(124, '2023-12-31 17:42:05', 'VXhSRll4T3prK3U1Z3NSV0Q4NzdNaFJ1VmN5U043M3BBQWgxOFprMUt5WlBlcmRzWXdkVHhJYTB4a0RCYWpMbw=='),
+(125, '2023-12-31 17:42:05', 'VUcyY3kvbGRqbU0rZUlGZS91MzhvbU5KN2NacWRSYjNRZG15elczMkk4QVZGYk9veUUyR1lCL1hGcTFpWW42WQ=='),
+(126, '2023-12-31 17:42:05', 'V1FFNmJwd0RoSmlOMWYweXFQSkt5ak56ZWxScldlb1hoQlBiSUNZa0lBSEpyMnkvY3NDNEJnaXUyeDBxUlhJeg=='),
+(127, '2023-12-31 17:42:05', 'UFFvalIwaEdlUHlmcDNhSEY5TmpaZC82WmhuR21WOTJTWnJjaEQvbWpzOXA5TjJ6dXRsY2ZLMGFRUlpHTzNCSA=='),
+(128, '2023-12-31 17:42:05', 'N1BKSVc2ajcvMUdGQVhQN3kyelVOcDFNL1F6aHpDUnNZREFyY3JHNzlkRT0='),
+(129, '2023-12-31 17:42:05', 'eHBHd1g5SVptLzE1SlhpUWFXNDdoQUFocU9ZdEdlZnM1ZjRwVDl2Mk50a0hvWWJMeDdWRThkWnpRWlVRQk1JOQ=='),
+(130, '2023-12-31 17:42:05', 'MVpLZTgvaXFmd0JoaHZGejdkSEltdmRJa2c3NUY3eldTdEJTWENEN3N1alBPUzdtSFA1QWJrbG9oaUFTNmFBTQ=='),
+(131, '2023-12-31 17:42:05', 'cjRXNDB5M21razk0ZmhFWHRsTGZCRWMxWG1LWHYyS25HaEQwT2ZIODZhOEgyc01PdHdEL1pCZzVaQXpxaU1lVQ=='),
+(132, '2023-12-31 17:42:05', 'dWdScGZacnhxbmozMURTcXpwUUNaVWk0dmU1MVJ6SUp1aVNsbFRYSElXNWRKR1VqdnFtTVF3MHlzMHp1ZExscA=='),
+(133, '2023-12-31 17:42:05', 'UkcxTHgzc09qS1FhWUJhUUdibDhWYXU1aG9CeTBIaTljY1Vid20rSFc5dkdHVm1DeURkbjFndmtHSnV1TzlMRA=='),
+(134, '2023-12-31 17:42:05', 'emNvRXYyVEJwWUtBQjN3MmJVQU02M2Z3ZWhiY0xWeTFxNlB6aHpPTEdvdWI0eGJzK0NEU3hqSzFTME9PN3lOcA=='),
+(135, '2023-12-31 17:42:05', 'UHNuYTZyWnVvTFFNZWt5ZE5DdGZabkpZQU50TVhMc2h3YnlTVy9aNk5CL01xNTRIb0MzckVkWVJUczUxR1plQw=='),
+(136, '2023-12-31 17:42:05', 'WHRBdzhKcWF3WVE3bFdLZmdBdWE1ZXpqcVp0SDV3SVRBTTdKK2Q0Q3pNNjBOaTRuU29aQWV5d1JLRmpoVGxKMA=='),
+(137, '2023-12-31 17:42:05', 'SVE1Y1l2RlRXYnFHU2FFM2JUeHMxWi9OME9BZ0lUNmZPbDRpQWJNTFFiUngwOEdVYXV3NVphU2tFNUhzRXhaKw=='),
+(138, '2023-12-31 17:42:05', 'ZnFlY3FHTUQyd3g3UU9nR0lHL2ZwV25pSVlCNUVnanR3NU5WWXUxTlBQWnIyd1FqQ2pEYzhjb01sTjE0Q2N0aQ=='),
+(139, '2023-12-31 17:42:05', 'M0tESWJ3ZTFJcGV3UGhRcDk3SVJUczNpR0k5WVRHQUxiMFkxdy85SmJucDFKTHlMY1kwOVFCdWRYSi93UEhmWg=='),
+(141, '2023-12-31 17:42:05', 'Qjc4UEtYRjFpVlV5TktEUVVqbHVMenk3ajZnT3IrSXlFTVBBTmhUQVFQOFRFTERLRTFiWHYrcm51Q2hZSjdyQw=='),
+(142, '2023-12-31 17:42:05', 'SmdyQnozdEhzS1dqTHFGRzIrQnJ6VzBZOGFobmhnajN4VTQrQlkxbXpzTT0='),
+(143, '2023-12-31 17:42:05', 'UVBmZ1RjSGZCeGhpaENXeTRNUm9lUythY3B0Wkk0ZjVaTHAveWcvcWVpWU9OT1YvK0JhWEVldnRpZEluVHpSYQ=='),
+(144, '2023-12-31 17:42:05', 'cG9CR1M3L0toVWxjTXBSR0pWVElQc1JHd2JFRmY0aUpVVng3cis0dW5qbUNncG5pTWkrQmExd3V2dEZDMVFRNw=='),
+(146, '2023-12-31 17:42:05', 'SFgvSk5ld01wNDNnNlUzYXpMaFUzTVhwU1F5d3UvdzM1R2l3aWpIK3ozNGZZc0RaUXQ2MTc2WmhrTk5ndHFyTg==');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_plano_camareiras`
+--
+
+CREATE TABLE `hssa_bw_excel_plano_camareiras` (
+  `data_plano` date NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_camareira` int(11) NOT NULL,
+  `camareira` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_bw_excel_plano_quartos`
+--
+
+CREATE TABLE `hssa_bw_excel_plano_quartos` (
+  `data_plano` date NOT NULL,
+  `id` int(11) NOT NULL,
+  `qtd_camareira` int(11) NOT NULL,
+  `id_camareira` int(11) NOT NULL,
+  `room_number` int(11) NOT NULL,
+  `guest_name` varchar(200) NOT NULL,
+  `room_stay_status` varchar(200) NOT NULL,
+  `room_status_1` varchar(200) NOT NULL,
+  `room_status_2` varchar(200) NOT NULL,
+  `room_type` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_auditoria`
+--
+
+CREATE TABLE `hssa_wy_excel_auditoria` (
+  `id` int(11) NOT NULL,
+  `data_auditoria` date NOT NULL,
+  `dados_auditoria` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_auditoria_auditorias`
+--
+
+CREATE TABLE `hssa_wy_excel_auditoria_auditorias` (
+  `id` int(11) NOT NULL,
+  `data_auditoria` date NOT NULL,
+  `auditoria_status` varchar(30) NOT NULL,
+  `colaborador` varchar(100) DEFAULT NULL,
+  `data_finalizada` datetime DEFAULT NULL,
+  `comentario_garantias` mediumtext DEFAULT NULL,
+  `comentario_gerencial` mediumtext DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_auditoria_auditorias`
+--
+
+INSERT INTO `hssa_wy_excel_auditoria_auditorias` (`id`, `data_auditoria`, `auditoria_status`, `colaborador`, `data_finalizada`, `comentario_garantias`, `comentario_gerencial`) VALUES
+(2, '2024-02-17', 'Pendente', '', '0000-00-00 00:00:00', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_auditoria_poa`
+--
+
+CREATE TABLE `hssa_wy_excel_auditoria_poa` (
+  `id` int(11) NOT NULL,
+  `data_poa` int(11) NOT NULL,
+  `dados_poa` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_auditoria_poa`
+--
+
+INSERT INTO `hssa_wy_excel_auditoria_poa` (`id`, `data_poa`, `dados_poa`) VALUES
+(1, 2024, 'elh3YTUwUGRBdGpNRmE4UW5PREIvMHJ2eWhua0xWSmt3Umx2L0xOQ3Z2L0RCcFZHUXFianB6bjF0ODJuWmpZbXZudFBSbkErb2NEdFBsTUJjRVZhNW1ZM2cyNlpZY2MvWGhsVHJTdUV6RjZpSFhCTlhTRjJVbHhZMXVLelg4VjE2NlFmeFU5c0xULzYyUEZUa1Ewejg2RXlSNU15SEwrZU9OVkVncXFVUm9oYkY1OE45U1NIb2NlVkJydDIyRmljNm1VSzFybk11ajk0ZDllUFFWTkRYMVFkOTNnblBBc3czbWJhNmt5YjFjL21QZ2FxZ2RRWTRpUUFUdGdlSEpSbHcyUGpOd2tEQzI0UzJaS21XU3BWSnhiVWhueTBFVCtDTlJ3eEk0aFUxSGwxRmw5S0RsVms5ZURPN1M5THdVQXA=');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_comboedas`
+--
+
+CREATE TABLE `hssa_wy_excel_comboedas` (
+  `id` int(11) NOT NULL,
+  `colaborador` varchar(50) NOT NULL,
+  `pontos` int(11) NOT NULL,
+  `pontos_tipo` varchar(30) NOT NULL,
+  `pontos_data` datetime NOT NULL DEFAULT current_timestamp(),
+  `pontos_obs` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_comboedas_lojinha`
+--
+
+CREATE TABLE `hssa_wy_excel_comboedas_lojinha` (
+  `id` int(11) NOT NULL,
+  `item` varchar(50) NOT NULL,
+  `pontos` int(11) NOT NULL,
+  `status_item` varchar(30) NOT NULL,
+  `limite_mensal` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_comboedas_lojinha`
+--
+
+INSERT INTO `hssa_wy_excel_comboedas_lojinha` (`id`, `item`, `pontos`, `status_item`, `limite_mensal`) VALUES
+(1, 'Dobradinha', 50, 'Ativo', 8),
+(3, 'Dobradinha FDS', 200, 'Ativo', 1),
+(4, 'Hospedagem BW/WY com Acompanhante', 500, 'Ativo', 1),
+(5, 'Jantar com Acompanhante BW/WY', 100, 'Ativo', 1),
+(6, 'Almoço com Acompanhante BW/WY', 100, 'Ativo', 1),
+(7, 'Café da Manhã com Acompanhante BW/WY', 80, 'Ativo', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_gestaorecepcao_arrivals`
+--
+
+CREATE TABLE `hssa_wy_excel_gestaorecepcao_arrivals` (
+  `id` int(11) NOT NULL,
+  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `dados_arrivals` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_gestaorecepcao_arrivals`
+--
+
+INSERT INTO `hssa_wy_excel_gestaorecepcao_arrivals` (`id`, `data_importacao`, `dados_arrivals`) VALUES
+(1, '2023-12-31 17:42:05', 'SE8raWxxc3M1ckRJR28rYXFJT3RjV0xEWm5Ua0F3QnNqMU5hYTgrRDNNNTdVejl0VU84Z2VUaU1DaTUycWlIblBwcWk1YTljd01mU1J2OXVxaThiaDNKT1ZMMktPRVFzZWJONW4wSTBJNURjMGpJR3VibGpZQUZweE4wdEtFWXM='),
+(2, '2023-12-31 17:42:05', 'YzgyZ0theHp0K2FQQWhOOFhtVjEwVUlHbC90Ukp3VldZZytua1lwOHdsRmpSVTFtZmRad25pcnY5aE9sOUROSlZLN0NQSVpMN0wvK3FqOExtbHd3OHR0QTNFbytTM1R2Y2dTSzZMOGlpQjVma0h0bXYxamNaaFY0d0xyQzVTSkg1dEJnZER5WHU3d0lsSjdDOHY3UE53PT0='),
+(3, '2023-12-31 17:42:05', 'ODNNMVZPVjZSaEZkd2srT1BiODFyNm9ZK25nd2pxUzR6MzdIOVFORUlvN1krallNc2RUWTNycndnWWN4VHVJdkpwdGZ4eXd5eERGejhqTFNOWi9jc0llSkc4VnVsQWVrMVpXWlRIczlnUmdJbmY0UExBNkhqb1h5WW5iZEtVU3BWVnVPdzg1Y1U1Uno0Um1aR09JK0hBPT0='),
+(4, '2023-12-31 17:42:05', 'QWJOQzhqM053UkhjMUJOSDd4OWxBRUNNR0ZkYWk0WDdxOFRPYldJTHRZMlRkbXpHclV1SHRlMTFIaFNoWHhsMFhabzVzZnkvSWl0VTVPWGp5Z2JpVGN5VDRBdjRrYlhnVHRyQmg5eHN6cDN6VU1sWDBDRTQ1dmRvaERBak5SekE1ZWZVbEsyQUFBWXVyNlkzTGwyZGxnPT0='),
+(5, '2023-12-31 17:42:05', 'Rlo3aDVwVmtRMHdpT3NCUytXVnM1MjdUaEViTWNCNjdyZWY3Q0tTWWtFL3Jha1FRbjVYdTl0aEtDUUlaLzVNMnl3WGRFWWxWT1cyc1lZSG9KYUVvNEtuQm84MzAyendLcklnWWROeVBES3puR3hydENmd1FUNHZyVlNUcmtEUWFIdWpsd092N1JPajNzRU5GZmNHSU5nPT0='),
+(6, '2023-12-31 17:42:05', 'Q0FCNURneXkzSFA0WTZPaWpvM0M4Mit4Q243VVZFcDVPTkF5VjNBdHo4aVloa3U4Y2ZWbVR2QWxiNmlRU2laTDM0SmZ3bFdLV1hjcW1zRHdsTFFUUVliZHBHaE10L09POGR3OEZKMGlxak5ENTAxZ2VDbkF2Rlk5YXM5bmhPTGpHdGpPMWRzWWtyR3lzOThHTVJlWjJBPT0='),
+(7, '2023-12-31 17:42:05', 'Yi9ieGc5Q2hWNnFqWVpZR01VcTVCSUUzcU55c2ltUCt2Zlp6K3V3U2JleU05ZDhBclVjMUZjaHJTTUpxNzU2T0tuVEV6bjlkUUE0RzFSVmVEM0k4TjJGeXQrOEdsbjFGdFJLcGJLTmFJZmtJNVdHMEorS0NWTlppREVKZTFwVUtyZGN5VVBhd09ZR05ubjl4dFVJWldBPT0='),
+(8, '2023-12-31 17:42:05', 'S0hkK0ZvM3RYeEFBbUtRSFFhbVM1ZE5KV2ZhcDRUazFyT2I0NE0vaWE5QTQ4Ulh3Sm0yOWU5VDk1bTRFL2Y5SWt1U2k0YndGWEl1M0xhRHJQNGg2QWJkanhkWDhnZDN5dHZPYWZjeDdYNGtNMFpGZTNQNndvQUc1Z3NtMXFuOWE1S0NpNXRLeVZtUDM0Ty9qUDRsYzlBPT0='),
+(9, '2023-12-31 17:42:05', 'bldYai9hRW9RWUw5UjJNbUJibHpYTUFRdDdMaW91QUJEMU0zUFZKVWxORFpIWDhCQnh1SExEQnhISTFiTTB4QklFU3d5dlpNUTVtampndlEyaFhQWUo5SktEcEJSUXA0Nk52cVFsNjZxNCtLd05rNlo3WStCV2hLOWdCRUM1dUk5anFNMEUzWkM1d2NtK0JZVlZIK3pRPT0='),
+(10, '2023-12-31 17:42:05', 'eWNBdjNaUW5YNURkTnBSblN2OENXWnVPZWxEa1Z5aElnb1FqVXRjdFdTNE85UUNZM1M0SVZ3MFFjRjA4cmZkK0MzT2xKVVJjWHZESGxHRmpteG5yaEhrUm5RdnNwVkl5di83NFJOZFluaFBrU29XMUdiZytiSEcwbWtxOUpweWhPZkFyRnFCOHAvZDV1T3VaTEhwVTJBPT0='),
+(11, '2023-12-31 17:42:05', 'SnkzVFZYNk0vL3NjLzh3YXhESit5N1lEWno0TWZ4Mk15c29OOXNocHhRcUQzbW9xN2dZNkkyZytneTIvUC9UT0RLUzI5bVVnR3F5UGtZcjRkYkdGK2c4T1l0QitXNVZpbm5KN1J2c1lPU3lzOTYzWkRHWm5lNHpneXZVRCtqMUFtbHkxczhQOElnejlqUWhPRDI3VTV3PT0='),
+(12, '2023-12-31 17:42:05', 'VXFCQUQ1V0JMVlR4TUZMek80SkNhOUFFRXFhVklUKytMSHhEM09FK0hhNHVvRC96eEI3aTA5WXNMcm1RSkdvenlZVTlqb05WNXB0WGpmZEZNMlZBaENGOFZGUE0rWFh3eFNlSFhLc2ZWZm5PdURwZnkvZVAwWWxPTWdHKzg2QVRibW52K3k3SXN4WTdxTTJCVDZQNXB3PT0='),
+(13, '2023-12-31 17:42:05', 'QVZWN3ZGeHBmMGNKbmRLcnJIT2dDSVEwQzI4dHc3UlppdFR6OWkrYzM3eUE1enIva3BXT1NSVmRSOFByNndxSERmd1VyRUw4YnZueFFZL3FaNG9wOEZkNXE3WE5QUkg5dGtKVzFJaFF4RjNuZ1prQ1lXOERNNFEyc3hJTVpoUzhWREpyMEpEaDlVY3cxNFczYUgxZlpnPT0='),
+(14, '2023-12-31 17:42:05', 'dUcyZ3ZrL2tiSStRa1VlVDhySnFDZXlaZmNibnpNeEVYMWxJclc4UzRkckxTaENKNWErdXltWXhTWlV4b3EyZDMvSWMrMmNMUXM1R3o1ME9rMVBTS2JvUkZROThKbGNzWHFqd1JybnVsYzZhSzBLbjRJWFk0TmxGYWR3Rmd6QS81ek56Yk1OYytHUHJ1bTJBUWFmRVh3PT0='),
+(15, '2023-12-31 17:42:05', 'YTBSYXpIRnk3MUE0YWVCR2xDTXQvM3VJeG1jYlluUmVzaEllalRKZSt5Q3JUc2cvbVU5Tk44eWNVZHZwRU5nZGU1UzFZMFgrV2Jwa1owYzlPeG1iSXllOVBRZWZ0Z3VDb0VTS0prN2d4YStnUG9hMzBLWXE1cTFYcDNkcEdQMDluOXFBMVRGTEt1SzhScjdvenhvSWxBPT0='),
+(16, '2023-12-31 17:42:05', 'bVREU25YSVFrVi9SR2Q2UTEwY2IvN3RVYmFQZFk5ZVY0N3RxVzkrajc2Sjc4V2h0YXBYNEFpNnhzZk1rYys0SnVGcThVYVlWelNCYllXQlVTTGtXa0NyMHlPUm8rR1VzUTFKSWs5R1BvQ3VmeVp0Miswa3g2aUFNVXZnM0FWWXRZSzVxQ0xrOGRjeHpING14Z1NkV3BBPT0='),
+(17, '2023-12-31 17:42:05', 'bGxhVE5kcE5QU3RqS0hZMTFmR1YwcnR3MG5HenRQV2hraDd2bHhqOU1ITFpJTHRCemNnQW1vSi8yUXVyM200czVzS3UvbTRlN1ZhODY4bGg1YTFWZlBYWjRuYWFsOFFCTGFBbkgzQ05HcDZsUGUvNnBHQ2Z1MjgzaC82cFphclk0VjN3UmlmOUFERC9HL0c2OXdFRXN3PT0='),
+(18, '2023-12-31 17:42:05', 'OWhFdWtHZjJLcVIrQUU1WHNjdjFlNFZ5d2VaNGpKdW1GWlAxZkNnWUxwSDVlMkw2MDJHOEkzM2x4a3lCeUJheFNZdjlUWHQ2WmxKSXQvcjQvcVJPa3dsWFpUTTAvT2MwbGFVSkJzcjZjNFhSMmZmQkFMemZDOHh1eFIyZ1NXaWpQYnB3UjNrUHZ5WWNTNWdaWVQ0bW5BPT0='),
+(19, '2023-12-31 17:42:05', 'NmNHWVZoWllqUFEvNlVQTDlKWkpzOUoyaEd4WWsvSkxwaVFlVVFSY0tNQ281ODVFcmY1eGhia2xpYW83RnE3YlVkVjRxNkkvb0ZFVWxGdnhkMzdUN0tTRnpLR0pGczhGMmVMTTVqQzIyaUhEbCtOaUhTZGU1NHdnVmRoTmVBRGZGWFM1eWZMMEhONW9TTkk1NWlIVmhBPT0='),
+(20, '2023-12-31 17:42:05', 'NjNXZjJvckZWZDV6K2pmNGs0UnlRcGM5TjR2dEFLRGM5dUdtR3ZMTEl1R1dQWEZlMlhTTWJzTVpPTFJMc2VIekM0cVRNUElrNjFYc1BMcXd5YXQ0MUlPcHRURFp4dWg0K0lXSWgrZ0JMUmZMS3lQcThrWVEyM01yZllTWXh4MjFDWXVmWnNXSWd2eVJSVmZDa3kyUUpRPT0='),
+(21, '2023-12-31 17:42:05', 'b0dISk5ZbHRLaTFCcTY0dldGWERxeEhjS2JKK0JRZUg2ZmJzRmxhVXRvc1RNNVNJS2pQcjlKRGZrMnBxcHVDNmYrb0xkTkU1YXV3a0l0cG9udjVFMFdXbmMrWlpQaGVMUVZqc1dQMlM3c255dE9rUDdDL1BpSHp0QXoyU3BGcm03REx6Tmd3VWNoZXdNVklGc1lTS3RBPT0='),
+(22, '2023-12-31 17:42:05', 'UHRFcU5uYk94bVlTOUM5NGVxMGx0b0tlc2NVKzhjbWRTdUQvOWorUkJkeFNISEY2OU1ta2xwdnlHMGtRdU5UY25BaWZBQ1pudDkyYXBKbElBek5WcE1mZ3hFYzJtbDNLTXA0bitlK1hSMUtPVm1mekFDY0VrVkprc1poQVJPYy8='),
+(23, '2023-12-31 17:42:05', 'MVZJaTUvaFJteXdEUlZIS3hRdTJLOHpCT0VDQmd6czZ6OUJXUXh2R2lOMUllNDgrcnJORVlIUU1QM1ZlZ3lseDdxMDhOZDZtS2ZSU21nd0loNXI4MUt2eEtqQUo4SnVpR2NYdUlEUnhBQWlJZmlyMW1sYWxjMldhV0tVZmR5Z0Y4VUlKNFBjeFVqYmJZMUg2UlhDOEdEN0FwTlF2UWNKb28vN2ZkSXhGOEV3PQ=='),
+(24, '2023-12-31 17:42:05', 'eWtRbU9Mbm82R0V4R2g2U1hYQ093SUlwZ3V1TGN2K0Z1ZUZJOTRxNGl5TGRyaVAxUFAzN0JZcHRGQUM1a1R6VUxKSi91VWhuSUY1QnlkTnhxaFBzRkRLOUw1aWM2Vjl1SmFkRGIzN0lLaHA4UXdCTEtsTm9acCtoUmJtclBKckd6K05jeGx2eksxWngvL2JjTjdiMWZBPT0='),
+(25, '2023-12-31 17:42:05', 'YjNvS3dMaWI1U1BLeGwrd3EwL1lkc3JwZHVOV3JoVE90VGJBVE02ZmRNcjFuSEJ5b242bWxrWEl0Z200MngzTHJBeFI2R1piYW93SlJYN3BzVjNvUWh5NkdYZmpDWlNYUDY0RWJEUlJ2RlU9'),
+(26, '2023-12-31 17:42:05', 'N0tqd0VtY2tGL0xBRkJnMThYTVJMYWJzVlhLbDFTT2xwaHlyK2g2RGtmYWJhU2ovUHEzdXpvQ3d1U3h1QTY5NllYNUNrc1ZQZ2J5V3pSdlRPbFRsM3Z4OFpzTGJwVkZJSnpGQUNIZWtVc1oyaFRrQjNiZVYxU2JiYlFoTmh5eDk='),
+(27, '2023-12-31 17:42:05', 'ajlaOE5CN0gyNVNYQ0czZUlNb2xlbkFuck1sejQ2bzhMaVZOWS8vYjBaM2tGU3R0S0x0TkRHcUkrOUJ6dldoRXB2U1hjWVFrOHBpR3hGdEM0VmQvejh0eEVJR3RzUmdVb2JOdVIycFhPZUxaMm1pMHJhaXJXSlBnVlNpRkZkSHo='),
+(28, '2023-12-31 17:42:05', 'cDdqT3ErRTFFK3M5bFRaVGxpODFUT3h6Uk1TVndPQU4raVZaV2RSKzFjUk5LZ0UvQVh0cXM5VVUrQXJpdE4wenREYnh2cWRLb3VvRWdKUzJOOWROaEpPem16emdaaXhzb1JxbkpoamV1aTNyeS9HWkdjT0Fxa1I2cVlmamgvU2Q='),
+(29, '2023-12-31 17:42:05', 'VXFDbWNncDZWbURiWE8zMUJwUDliNzU4aFhnaUYvOU52SDZOOVBSQmxKamxFdllzdENyY1dqS2xTcjF0MmZ6aWJPWmJvM0Q4Rk5KSnBCdFBVYmp1UG4wWEFCM1hlOHh4ZjgxcjNKY3o2Z2pTcWpPR2s4aHc3eXdsaVRFMktDNFU='),
+(30, '2023-12-31 17:42:05', 'Ykk0VG9tOGlSbmczNDkwR0FLZFp4QTNUcHpxV0JraXAwVDExWUZBQUtzb2dVUk4zUlZYbFpWQlI5ZHdOSUZXblpqbXFjUkxMMDh6UllmamtjRDlheXVqcUcyRnNOU3dOWXQ3cFFZUTc3cy9qRklubnJTZWl2VHpMaEpGRGs4c0R6TVh2S1RWTlJzNEE3N2F4UXRraStRPT0='),
+(31, '2023-12-31 17:42:05', 'OWJKZlBkdnVFcVp4UU1VRkJqVE95eVptdU8wb2ZVYUdwYzlIam96UUpFK3ViVXpBUGpRU3lqdG44bjQ4VUgxeFdiaVZZMEd3dnp0QXhISmkxREtkS2FRdjJQeGtPYUN1alJETWh5MHJJWlZEbFRvWWtlV0pUYmloaldiU3JHSEM='),
+(32, '2023-12-31 17:42:05', 'VlF2NEhxSDNiMnpYTXFlTmsvZDI1dHF2d2xrS2g1SkdUM0l1Y2FCVXhJSGJCT3lJbnhPZzRQRmc5U2QwdUYwcUpCZ0Uyem5IMEJWWUpRVXZna1EveGZyeUovZjdMRDBjREJ5UWxtbTRjdUZRWmUweXp6NUpsdVZOOVU5N3c3TEQ='),
+(33, '2023-12-31 17:42:05', 'ZVRkK2pwejA0SjhublI2a2daVy9BcFZaVjQ2TGFkRXBORHRSVFBzWVA2WjFzVDA0VDEvVGNTM0RoMHBxOENvWDZ5dWNWbzdoZlk4S3paSjlOcjZ0cDdrSHdMc0V6cDFlZ0NkRFBjeWlIREZMSzJVSTZ1REtwaW51SkNVRjFMNWtJUmVRK09KSHUxQkx2ZEk1Y1ZrMTlRPT0='),
+(34, '2023-12-31 17:42:05', 'MnFMVGZsSldJeGNhZHlpVFlKY3k4bEYwektwc3RZUXk3WEV5U1RsR3pIRGNUTEdDNHFCUHRTQWp4L3l2dTNwaG50S2JuQmdRQmpaQTBQZGkvQktmU0ZocTZoNnRYT1gvVjR5WGVoYVBVeTA9'),
+(35, '2023-12-31 17:42:05', 'KzJSbnZobmpEZkZZYmNRVUxJMFNqbDIremk2K2YvdXdGcm1oOHhDVlIyYUl6UW92Q1UwOTlOc1JrQVhwanhxM3grVWdhME84MWlGOERiVEFPa1ZybHhGMWdFc0xyYVgvdmwvczlTUDc4UHkwKytrQXFiTG9HZVdJanc0T1dOa0Q='),
+(36, '2023-12-31 17:42:05', 'RUtkTjFXT3JpZ1FiVTVPSDZKYjdnWGc3T0NvbjNLZW04R3pjQk5LNlVQVEJYYjRPNkM0dGszVzUwZlQ1VkdtOFRraXhiVXBrWDRwaG1nZDNLVkVwMDZwZUJmdzVvaEFnbUk1NmlhLzB2eFEzSzd2dzdXMEpueGJFSW1WVUVDd0Y2WC9CYk80YStZL0NDRDhjcWtaWmdwbFJTSjFxdFYrQWU1OUZBdzZJRS9ZPQ=='),
+(37, '2023-12-31 17:42:05', 'Ukk1MWtIbE1lbFgxNlFRQWpGR2dFUzMxR1A4ZkhHbkxqckxzRzdwTU4rTjlJY0ZFZUYzU2gxNkdtVnNTOWFOUHdYNUV0VHNhVlB6Y3lzRysvbW5TNjJLNTBsSVliRlZjRkU2b2FweGxydU5DdzdKYk1paWhGalB1dFZxRzR0Y2tRbWU3UFFZTS9NMzRzekJQRlV2RjA0Mk9VNnJOcmtVNTlkS0VCdFQ1eGlZPQ=='),
+(38, '2023-12-31 17:42:05', 'LzZBRE02YmdnNUtUOVJkMXZ1am5Gb2RzNkxrQXNtOVBPSW1oWjNUL1BhN3JPejFoMFdJVkh5WWtNcVpsdVJVTGJaL2V6dWFtdUxJaGduelJzTXZLK1QrTW5CTnJJdXgvMHhSNmpBdTRNMGM9'),
+(39, '2023-12-31 17:42:05', 'WnJSWjg1YWdwM29pd1paV2pFSy93WmlZamt6eEtFbC9ibEdvZHBuOFFnWG0wNU5xRmk4ckgwM3NlaXI5SWlYNzYyUXN3c2hwVWdCUEE5cGxCTFdOU2FFRndFQXk1OVRNQk95VEdPMGZjRTg3cUVOcWJvTnU4YXRlTFRhQTdkNjBOdzlWditFVjBxbzVHczBJQ1pKcVpEdzFhTEo4ZjB4SS9JQ0xQV3gzUGRZPQ=='),
+(40, '2023-12-31 17:42:05', 'SFA1b3hBZ3licWp5NTZkM2E2aW11ZnVXN2N5S3pVSWpwN3kzTm4xV3JYaTBDSG9vWHhtK0R4N2t3TGEwdGIxLzg3dGpFU2IwU3hlUW9IZnl1ckRWQk9ybEhWdm9HVXhBOFVsNjZQdWtuSEhTc3BIV2ZxK3k2YzRsY1dieFp6Q290TWNOQytzN0NKVEdlVUJObmoyMHByVHNSS04wSS81eG1CU1F5dWNKd0JUVUJjaFB2M2xVZ29YaGFSZWFJQWds'),
+(41, '2023-12-31 17:42:05', 'clJsZ0pRZ0lDQUVOKzQvOUNuTlRlK2RmOE0vNGtLZDJkdU1UaitXc2lBZE9uUndFeURQanhteDFMVnBaQ2E2RStpenJrNDVGcm5yckdnWUtJaDd4Z3FRL0NXZmJhektUcFhoYjY3UDlhTVVEWVFqMUdPUXJRaFN4VzJWbWVXVFc='),
+(42, '2023-12-31 17:42:05', 'WlhQOXRBcC83dTZ5UjRFOWlyWWt3a1BnSXh5REtUV1UyOURDdHRtQXEzZG9SeXJmMTlSb1dVQUo4NDV1UWNFT0dXMnVIZk9mMjZ2T21XWHpEbFZhRUJBSHl3bExtYm9tc3VTdG0yT2pQNUJUWXFWVkhvc3ZjNkdBa2J1eWdwZk8='),
+(43, '2023-12-31 17:42:05', 'ZVh6QXh6UmZMYVkzaDRmeVZiVG0xQ3pDZ2hVTURnKzNsZmVZeis2b2NFbjNaS2wyYnhkUndYcG1QWHJOY0dYNVM0Vm1LVitENGhUNG43ZTJXZmVUZExSc3ZIUW43MVo0enVGcUZlbUZBV0hkaXdNVnVoQ2FvMW50NHpzWitJeFU='),
+(44, '2023-12-31 17:42:05', 'cWxoaDR5cEpycjZNczAzeDVNU09tMVJJVEpWOENKSHI2RU81eWdHNEFqNGU1SlVGVUUwVlVFZ2trMERCQ0V1NTJ0QXZPa2p2SlprQnBNUEt4OExDYkgwODF4cGtsS3VCZDR3ZXYvRFVDQTRoTm54TU83WS9VWVNnaXoySFhmWTMvOFJuUEFLRGxpYkdad0ROTEtMYXVBPT0='),
+(45, '2023-12-31 17:42:05', 'TXg4aitGN0RhZnEwRGkrektwNVk2T1NlTnlTbnZxYmd6Sk5FQkVnMGlQVk5nQXFzSnRTUEtkT3NEWW9Uc3pnZlhlZC9nRWRPcklDWHZWMTBCQ2EyTTVnaWtwVDBnNHh3SDMvT3JtWHZYdjF6aE5vd2VOMmtEQzJuK1ByOGxMWXpkdzFkSExBdlNLNGVtbWE0eHdrR1dhUnRGMDBQTmZvUTk5NVA3R1ZHdHlJPQ=='),
+(46, '2023-12-31 17:42:05', 'amdXL3VxQ2hCTVNscnp5Nk1mR2VaTnRjUGY5UXppdnA4S3RxdnJWcTRDVURyaUN2NFYrZFYrYUdGNHBQNWJxOCt2K0FLR2tHVDQzV0QyMVVsMlpyMlJKdnVhNkJDei9nZ0RZUWxQSTRGRzRWTnJMaFBVNHQ4UXFZOEtZSC9ubnc='),
+(47, '2023-12-31 17:42:05', 'WkpFN2EwUU1wY2xXSm56WnFOSU1INm9qRFJPeUc0eDJqVTdZZDBYOXpkR0F1czc3RlhTaklGbit0WGc5Z2NObHVibFBtZGxxV2V1YkVsaWxZMVlDZWRkMUtMaDZJeVZDdEpKU1A4aDdkVzNoNHVYbXRwVXdsc1AvWWNrZUdzMkN6NkFoVm9TZUpQWnloanpCNkZoZ2R3PT0='),
+(48, '2023-12-31 17:42:05', 'bHBGUjVGN1NxYllaYUlVaHYwRVMrTGNkWVNqNUhFekU0NUxpY05zcG13MW5FR1Z1RTVsVkhhZC8za0ZHNit3d2gxS3ZVLzhVaE5SMTVPVE85U2lHcmF6Y3Q5SThzZVZEY3F1QkdaT0MvbEtlV1hZT21SNHRVRXFvMDNUR043MkxQQ1ZKZ3pSSjIrdEZaVEZVYkUzbGtHeWVvRDJya1ZsVDdqdno5ODJsUVJvPQ=='),
+(49, '2023-12-31 17:42:05', 'VHN2b2JuSStjc1BBMHVxRW9oK3JKRk1NSUpMS2lmRTVtaHgwMkFPUTNUT2FLL1ZqUzhMd0d1eXJERXBQWDBTNGtOZjdSeVgvVitYYlFSc2M2SkFnTUp2OVNtdEtjRkpKUDdtaHcvUkJjVWlKQXY1UURtalVEdmVJZUFKbktJT0V3NFdCMlZLNU9qOWZYY081eTh0TEZqek1TUW4vOHhQV3Y0aHp6N2xZVDUwPQ=='),
+(50, '2023-12-31 17:42:05', 'VHN2b2JuSStjc1BBMHVxRW9oK3JKRk1NSUpMS2lmRTVtaHgwMkFPUTNUT2FLL1ZqUzhMd0d1eXJERXBQWDBTNGtOZjdSeVgvVitYYlFSc2M2SkFnTUp2OVNtdEtjRkpKUDdtaHcvUkJjVWlKQXY1UURtalVEdmVJZUFKbktJT0V3NFdCMlZLNU9qOWZYY081eTh0TEZqek1TUW4vOHhQV3Y0aHp6N2xZVDUwPQ=='),
+(51, '2023-12-31 17:42:05', 'VHN2b2JuSStjc1BBMHVxRW9oK3JKRk1NSUpMS2lmRTVtaHgwMkFPUTNUT2FLL1ZqUzhMd0d1eXJERXBQWDBTNGtOZjdSeVgvVitYYlFSc2M2SkFnTUp2OVNtdEtjRkpKUDdtaHcvUkJjVWlKQXY1UURtalVEdmVJZUFKbktJT0V3NFdCMlZLNU9qOWZYY081eTh0TEZqek1TUW4vOHhQV3Y0aHp6N2xZVDUwPQ=='),
+(52, '2023-12-31 17:42:05', 'Ym9JRnA3NWs4bVhXOVpmS2ZaOFRCMVNMcklQUWxkY3ZXTU5yMXdoZGdCTFZWT0ZncE1uZEdTaG9DMnBYQUdVbHVjNmJiNUVwS0JacVlwUy9QT2NadVhIWjVpRWxiOXdYMDlYWlVWSXVZU2NEY2J3azNZdFIwRGFFandyOU91KzU='),
+(53, '2023-12-31 17:42:05', 'cXpwYVU1L1Nmb244RDBOTVlKZThoWEdGeWdQVWRoRlA5aER3Ym53a0ZEQmQ0UWI1MjVlOElDYWJObDNRTEpPTzAzUkxkSjJOM1pUdXBXTVdReStaWk1SOFlKNlhyY3hiS2JPbFhTS2hVazhBRmpKbzV4Rkc5VUIyd2lWMEtHcjNlSVFzUldBdnhlcEdGbkZSL1Zib1B3PT0='),
+(54, '2023-12-31 17:42:05', 'NnlWZ0l0YUt2M2FIamtESWdZMUpSK3dtZ2N5eVV6MkJXWitQL25ZV1Bia0JrN1dFUGxCdVR1VTR3ZGJJNUNTcHpBK1FMZlhOdWNOSytOUTZkTjJxOFdzMzF2MXU2MWx6bkhid1JnS3hyVk9YZ1ZlQVdyMUZESS9aTzJQNW9DdkhncVRlVXlWdmRiSjkwWjRDWU0vNkpudDFySUpUajF6T2pkTjFqZkFDUXBZPQ=='),
+(55, '2023-12-31 17:42:05', 'Y1VYd0tEMDY3a0hPUHBRVTFaamJjcmlpT3pjYzkzNUsrNGFvanp6NUg3Ync5TTJuVGhicGR2MVpvQjdNbG1rRXg5andHWGtWcHY5a2p1eFVDNjlBQ3NOMkVZNTBSMXB3ODFEUUlubkMyaVE9'),
+(56, '2023-12-31 17:42:05', 'VHhyL1pZa1AwUmR5cUhvU2pMUHRBN1piVVdrYkVSTEc4cjhpQ3pWNmNMTVB4SDdXcFJic2prUzRqM3kyQnl0ZmpaZTNhSGRwM1R5aUI0dXA4VjBPSWhpOG5xbkI3T21jdnVkbnBSb1JDNXVmeVcyeFBYKzhHczNVS2MzMUtQcnArdE1HQTBLVVpUV0IwY245Ynl3OU1RPT0='),
+(57, '2023-12-31 17:42:05', 'MnJ6MmlmNFZuQVJoT0F2V3JWNVEwbitpY2dtamZ6d0FMK1J1MTYxK3kvblh2QnVIQ2ZXMDRESjlJWDd2QWFnYWNKWThJdDFBVFp0V2x0Qk1OWlNTMnAzMTJ0YTMraVRWUUo0ZXN2S2RsbnZzZVpaUnVHYkEvMFEyMGdBTUxVeTY='),
+(58, '2023-12-31 17:42:05', 'UVZKRDF2UEIxRGU2UHNESEJNSU52WlFkTU9pWU1OeThrY1V4YlBPb0plbmRlK3ZBVjdyQWwzL0RWeHpQM2RlOFA4YUp2c3pSb0pjd0RQMFlKRytOV0MzdlJFL3pYVGhUTnVwUXhlWEFKUWxUd0RkWk5PUVZNQmprZkQwaEJxZkRzOTdseE9BOEZKQVJacDJnSzJEcEowSkh1MkJMdEZmcHRNWHRMRVR3cWgwPQ=='),
+(59, '2023-12-31 17:42:05', 'cTUxSGtla3dWUGxCSlBKZ0poWTRIdHFzSDFoN00vNEN6c01KSlV3Z2JneG5ocmJZb012OUlWMjhnNlVJUmJ5c0ZyT3U0bmlTanp1N0xlV0prNVNTZkhkMlM0ZDdHaU8rUGRQVWUzQW4rTmRvemhOWWpRNGZ4VFFnbGhzOGVhMTQ='),
+(60, '2023-12-31 17:42:05', 'aTZYbTEyVVUzTGNNTGdwM3ovaHdQR1Bncy9acWY0eUdwL1g4alVXdk9wY0hFZ3R6N0RKRFQzM3E5OFlvQ1ViTDZCRFpXT1liSTIrT2tBWUZJdDR1ckU5U3lBY2JWSzExRG1oMmZjUEg5d0ljVkRibHM1MHAwS2FpSStJRHFOYmdtWlQ4WW56U2lHM3J0bDZNY2lYWFpMd3BUeUlqckNtT0NJOEVEc2ZEUEFBPQ=='),
+(61, '2023-12-31 17:42:05', 'aTZYbTEyVVUzTGNNTGdwM3ovaHdQR1Bncy9acWY0eUdwL1g4alVXdk9wY0hFZ3R6N0RKRFQzM3E5OFlvQ1ViTDZCRFpXT1liSTIrT2tBWUZJdDR1ckU5U3lBY2JWSzExRG1oMmZjUEg5d0ljVkRibHM1MHAwS2FpSStJRHFOYmdtWlQ4WW56U2lHM3J0bDZNY2lYWFpMd3BUeUlqckNtT0NJOEVEc2ZEUEFBPQ=='),
+(62, '2023-12-31 17:42:05', 'bHFvWGQ1VEVWMFU4ZzFYbE5hbFdyWXAwaENxNy8zdUNIemJqc0JNRWVicjIwYU1QamJVQjVreUZTbWhKVXVtZ2ZGUDFYMjZzazlRd0lYRWd5UFVVR2lxazVEMWVHNzdwbGRKRHlxaHZKYUtSMHlXTm85aDdoQllubTJRQXIwVmx3RDFIUWMvdVIzZWJ4Ui9GSmZmY2NKbTB6OHZGdzZjQThCN0RwSEg5cjFBPQ=='),
+(63, '2023-12-31 17:42:05', 'TW4vZ1FjcTZPbWJYNkoyQUF3N29WZUxmdHdVMjFydFBIeFdNK3B0VjVJVjl4NUVmMk9Ga1YvVHJOU3IvM3ZxaUhpcThBWnA2MjdyTXI2elpPQUJjR0RkdHJ0dlZoUStCOGhKUTRYb3ZGV1FkL1grc0NJZ3kxaWs5c21xc1BKZldPdHVzVlhTOU9ZOElqdWRLMWxoMXJUWlR1Z0JkdFhYVWsrVHB3cjdPMnAwPQ=='),
+(64, '2023-12-31 17:42:05', 'cHc0V3FOampiYnhKUDdIdkhHYk45Ump6b0dmT3RReHVSL3RMUXdqWmFmNzFEN1VhU2VvL1hzUTJyVEJMSnFsUVBNSkhYZkN1eExQUjl0eFJMVGhmYitWNE91eld2cXIzdG5RTC9KaEdUZUk9'),
+(65, '2023-12-31 17:42:05', 'ZnVDdXM3YncyZU1HbU43VUhXazdkeDJLS2VRZnAvL3lXdXpHWDJ5RVhLQlZlNUNqT3EwQkUwa0FFSnJxMFUydU9raVQraDFWb2tOeGFVdjA0Q05CMmFna2c4RHlJTGRqTjRiTmZXRlNFOXZTS0ROeFRxMTl0YkNtMFVIWm4vQklPOHc2bzNvTkRxVWlrVWxHM3dSWGhTTkxadVZ2c3RHR3BsU3lBbURHdkFBb1IvVGJTOGI3UkxSNXRnR0thc00w'),
+(66, '2023-12-31 17:42:05', 'UUlvOTVaek9rcUZVOEVJS2R1aDhuNVFORHRrb1NFRWg4TDNpMlV3S01iTnJScmF4cjdueGlmWU5mcjdLMlkzY1AyZVlCc0pHVHFNNmpkeC9sZEhBdHFxWGNFNmozOVpnbzAvWENUNmdBMlFJUkhUdFhZelUweDY3UFVoZjZqZnVKaUNHcVdyb0hCSENsaDczc0pOWUJVTUlxV2x6VGsvSC80NEI0VFZheEZFPQ=='),
+(67, '2023-12-31 17:42:05', 'V0RQU2k2TmFKaDhaaFhqY1kyUDdCNUoxK09VWGhvcjBFOUFCbzB1bWlJaXZ2bmtoTUtTQVhoTmpNMW94NFVvL1pNdTF0NlBUSGR0djh0b0V4T2pnRmcxenk1N2hZeDN6cjIzTUM1cnR6dTNzQXlMd2l2cFJacGQ2NTR5L2hxVkU='),
+(68, '2023-12-31 17:42:05', 'aGxISkl3ejZ2djNER0UzRWpKblRmRnEwZG5oUVBjc0NKb2ExenVVQXVyMlE4dnpxRGFhVmd1T2hnalRTTEhDb20rTDMyUldoTEdlY0RVTXV4dlBsa2FLSHRjaCtoT3ZjV3VSY3h2TDNUbmQ0blZwU0UycDNBY1MvNEx3TXAxYmxiMU0xa3kvS1VCcjhONDB6ZjY0TDJRPT0='),
+(69, '2023-12-31 17:42:05', 'cnRjdW9Pb3NXRjVKeVRNbWZEZjVSQnpsbU0rdkRWR2U0SmFLcGxMUGhEbUkwa0hUQ2wxYzVrZFI2SThqQzU2N3RTVFZ0TlBQbEdxZlZvdnFSRDk5Umd4UTZJQXI4QTlSeFZKNmJ5aFNnYTA9'),
+(70, '2023-12-31 17:42:05', 'bWwxek5Sc1RlOTNuQkpuOFoyQ2gzcGs3eXl1ZEd3bzdXa0JKMVR2ZFdHVnJrOEFCbCszNUNjckJ2aFdOTEVIT3NzRHlDVVFpTFArYWE3QkwwWHpiejNjbllaNzR2cDloVU9ISXhwRmRNZUE9'),
+(71, '2023-12-31 17:42:05', 'ZlpxY3pWdU9iMUZDQkN0RlNka0ZyU0UxbG1mdHpCUUFGbWdlWnJpV2Vha0tLbmMwdzE1SzlqZjRvWTgwMUNWbEZPOHl0eVFyTFNLSlA1TXJDSnZrMENQWS9iZDg2bU0rcENjMWtTYVFHSVg2TjA0RHVRQkRYbm5uQW9nRXB2QU4wbC8yWTJISEUxSm5SZVhQMGxxYTBPd1RYdFp3Z0dwUmVMeGRMYWRZZk13PQ=='),
+(72, '2023-12-31 17:42:05', 'ODlRa3F3NVJsa0oweitMbkN2aU15aW1iN2tuOVFISzlQMnRRZUtod2NuOU5RWTRKVTB2OUlvaG1sb1dVTkI2VnhqbHc3VHM5RWdEMEMwaDRTb1JHTXB1aG9ZcVlEU05GeE5oN2gvWnMwUjh2N2FNa29MQWpzWE5tQ05FWDNJRGZWUVZEL0g4djZhMjVEemN3R1ZJbUlBPT0='),
+(73, '2023-12-31 17:42:05', 'STg4MFF1cGlNVmJJN0QzYjUzWGN3Njk4WlNEVFoyc0ZpY1RBVytVcUw4VU1sOXlXVi9MekVacm96d292T3o5eGdhcnhsVFBmL3oxN2lSa0dSaGU3Qzg0RTZJWlZnSEVJS0JDQVUrZHJMUWtJQ0NDKzFPMGdLOEo2SzVjaHVaSlQ='),
+(74, '2023-12-31 17:42:05', 'aGV3aWczVlRnSU8rcFYwSmh3ZWsyOVZyU2hyWWRZbm4xUFBtSmR0RGg0c2crWkt4OGtpbG1zdm83TndGV29kV0xXQktHRnNBUDhjQ2RLaXpSa0dJVThQb0lKaExYVEtQOFNFam96Rm1VbmhuUloxM1ZMZGNvOHFUb1pQOS96Wk8='),
+(75, '2023-12-31 17:42:05', 'SmhSRmdGUGowMXdvK3ErV1JPNEFnTGM4NGdRWkRlUWFUN0pSTFFWTnZ1cTh3WU1kbEZqNmRLb1JIeVZzTFAyVGVwbUd2eTB3Q2VwYUpxb3R3Znk1SThyOTQ5cW13RUpSTGs3a01UQmhXOVgzSXh4a21OcjJ0eG1wWU95bUJFbnMwTDZmZFRSTWhmWXFxUm9XcGxTeVZ3PT0='),
+(76, '2023-12-31 17:42:05', 'SmhSRmdGUGowMXdvK3ErV1JPNEFnTGM4NGdRWkRlUWFUN0pSTFFWTnZ1cTh3WU1kbEZqNmRLb1JIeVZzTFAyVGVwbUd2eTB3Q2VwYUpxb3R3Znk1SThyOTQ5cW13RUpSTGs3a01UQmhXOVgzSXh4a21OcjJ0eG1wWU95bUJFbnMwTDZmZFRSTWhmWXFxUm9XcGxTeVZ3PT0='),
+(77, '2023-12-31 17:42:05', 'dGU0VUorbHREVnkybnBlaWpxOGVTU3ZwUjUyZzJ3am1CS3c1cks4R2pJcWdJQ2Z1MTVMd1h5UmJkUS9EOFhpMVRTQjNVUjUwT1pKQlo1NTJONUMrVS9kTmtweEhHbnFhcWxHWXRvYk5wNXFLb292aVJtVE1TeVdCR2lZZk05ZnVUOGYyOTBSdWdGZjRRNnA4VVBaR0hnPT0='),
+(78, '2023-12-31 17:42:05', 'cVdMWEtDWXFlOU0vLzhkOHd0dTdvVCsvUnZLNDJZOXh3R2Q3N1FPSktMMzNIdVl5eCtDMGZFK1FXMDQ5R09HQ1hEY3VFY1BRNjZ6VGlWVzY4UVlrc2J1TVREd1RrVFNTeHEvUURJbE5jMzFpRlIrOGdWcERUcWNNbGJYaFhmM3I='),
+(79, '2023-12-31 17:42:05', 'aDdBM3h4YnlWRkZ6UXNQN3dGTWthcWk1aGg0RHN5Q0lSYTZONGFjbHMxLy9Jb1lqYUlCSlp0L3V6eDhJTDkxcDAzRkZVTWZpb2RSb0NheG5MbGhWZW9GdTJxZnEydS9FRUhCbEtTVGpHWE4wVmhTZlpFZUJPRVFIQTRUTmlGVS8xRDhQQkZUUDFSY2hnNWlDNW10WEV3PT0='),
+(80, '2023-12-31 17:42:05', 'VXlxNGF4a015Ly9JMVdlR0VYVlNwWER0SHJoVnpXaTVqdzRDSnB2Nmx3Ri91V2dZc09qTGJFcENicWtuVCtEaFB0N2JudDJ0RmVjNEk0ZG5sa3FaREQzU1grcUFqc1d1ZGlBQU9RZTBiakU9'),
+(81, '2023-12-31 17:42:05', 'QVZtek5hTmFZeXViai82ejdWZGJvVGVTZENuLzJNL3hQeTNmRmJEcVR3bEhFUGp1YWJZUjNXSkpXYzFDaW1wQlVXanpiSnBjK1o4cTRJTFlOQ1VzVWNpcmdtOGVWWk85QUQ2QkxMem9seEhQVEE2Zmp1c3hNQW9GaE4xbDhKLytwbm15d200b3dZd3BZQlppTXVzcHZ3PT0='),
+(82, '2023-12-31 17:42:05', 'bEV6Yzc2S3VoVmxwd2p1MHlmMTMwVW1Oc1NpTDFSUHFWZTJDVHd6amxQU08wRWRycnVQeHdQd2VwdG9ZUWRiOHg5eXpKWThMei91eEg5d09xSXQwTlBITXpLQUtMeVFlLzJyVms2LzYzekFQSEdWcUpPcWpXUm92QmFOc0VmYk4='),
+(83, '2023-12-31 17:42:05', 'MmttNEtuWWMweklOc0hZUmZNZGJ4QUFwNlRZTW1QQjBzS2NUV2Q5eEUvTTA4eFYyaWJkNjlmc2g2RkhET00yV2pORG5KQ2I1N21KS0NVTFFxRld3Yk95SXhITit4dkM5dnFyZnF0ZTRnZTQ9'),
+(84, '2023-12-31 17:42:05', 'aE9OZkJiUS93andTaVZsejhZZ2pHRjlPZTZ4eFV2TG5PYzUwUzRWM3dWaDBTUmpuUDZsalRwTnJqejFUamNDRFc3R2oxTmhpVGc3eCtjZlZsREhGOEQ5OXc0bklBWjJ2VDhFUk5VZVBqM3NyOFk0d05qRHVZUWFXeEZSNHAzeDFzK1l5UTNrRWVsUGYrVXpkNm1OSW9VVTl3YU9hWm1IODJ5TGFqVjI5K0ZFPQ=='),
+(85, '2023-12-31 17:42:05', 'ckFwQmY1ekZyeVcwbDIyK2JmRk5EK0pFNngvMVpQRTYxZnZ5T1Y3cGl6QWYvQ3dSdkNzOE9WLzdHQlh4Z3dISk12T3d0ekx5VEdzN2NueURQNkRKWW1KREdNM01adlRkN1ZwQXBQckJSbk09'),
+(86, '2023-12-31 17:42:05', 'QUNiOHkzNmNJQ2ZIVWZyZGswMG9RNy9EMVFQazFvM3J6ckQvRlYrMnRZTUI1QlZmT2MzaTJtK3Zrc1lSQlY3ODZuV21ab090cVJ4b1B1aGdIQzVjanRnY1FhQWJVYjVWZUhVVEQwS3RrN3U3eGJmMlB4MVFuMk9QZHVnT2xqQnlLTjJOdytWUEloendTdkdHMkVxQnZ6SGlFS0tMZUdqaVY4WWZIazJTZ3ZSV3VBM2s0bWlKaXlBOWlGQ2hxU2g3'),
+(87, '2023-12-31 17:42:05', 'bUNKbmRDYlEyMkNUTmZYNkx1cEw5NXhhZi8zeDhOTzJMM041cnhTUVhTaGNNRkM1Rjl2R1lSR24zZFRtdUpWYW5YcUZWOVJtQ2VvVURpeElLRlBIbXFHa0FKckVTTHI2Y0t2ZG5TSDJnM0dncFhweXJNalNXc2phQlV4UUZrUEc5Q2RPQ1RLOWFCREhSRlhrRXEzZ0RPNFFZYzVQRHZLSzFiOS9WQnU4VVd3PQ=='),
+(88, '2023-12-31 17:42:05', 'TGpMVlNJZDFpdzc5Sll2Vmd0TG9vdUkzY3grM0pYd1hZd1J1SkRTZWVPeStvRnp5U3RSeGg0OGpMZWYxMWMxdmZ2TzBybWFvaUNlckFtUUt0c3VLU2wyWmhMRVlRZmViV280Sndncys3NnZTK3hKem5qZXBmL2JJZmRCUktRL0xtTWhjNkVkeFg3c2xId1BYQ0dndjBBPT0='),
+(89, '2023-12-31 17:42:05', 'OWp0T2I1NWVXOSsxY3pPczhSUjc3bjNvL3BOYVpCRWh1MnVYYW5lTmVlT0Y2aFk3ZzhjTU1NbHl6TFJuS3BvcmNaTG5yaExIWE1JMmpTaXUxQXRmaDUxOVpBZ3FMTjFaajVHZFpZUUFEaVVhY1RjNFBOdTNOa3ZJVE1EdnZUNmM='),
+(90, '2023-12-31 17:42:05', 'YWoxMDRxOWxENEdlM1hTRHc2ZFUyaXFMSFRqeHQvSGM0bnpjSjhYeFJ2NGhqbTNmZVF6ZzlpVXVNZjY4QjRicnlGemhpUm44OXI2Q0RFWnppWVZYRFFFU243MEhTcEovUTYrYmlWVmlVZDU5MUNBd1p6azEwdmp3MThkSXRhY0s='),
+(91, '2023-12-31 17:42:05', 'bHZDQUdwODlKSGVRa0NBV3JnMlBOMkRrelBFRE9ZYm1URjZlcTBETUJ3Vk1QSVZHVFg1UDFRbXEzSHdJWVZ1NVpGaFN2UVhkVHFTSThOOWRta0lPVTgreEk3KzUzWXY4T2JzTTFkMVlXaXVTY2I2YWpuZzhIbWQyNnp3bjZJTjRlZ2MyTi9YUzdUNzE1ZEk5WlVIMHJabFplcHRVVkU1bWRZRzduVDR3TEc0TklaWW9QVElUcWlLZkhlaVBKR0Vq'),
+(92, '2023-12-31 17:42:05', 'Qnc2YVhGY0thYUVlYURpSUViRzhyTDRWQUhHb0JZbzFrMFdBRmE0d2xObXFoUmZZMTJDaS8rRWduVFdXYmhIUE5vR1htNFBPaW0yQmJldFEva2dKcEU0S28zb25tTHVuTS9WdnpHVXRBMEhUa3pKYzJXWGdkdmwvb2hyYW1QaitmcjdnZTQ2WUZjNHQvVU1YT2dVdlF3PT0='),
+(93, '2023-12-31 17:42:05', 'Qmxaa05HQm5CZHI4RXYvTGVmdExjanR0bzl3em80N1FwTHh2UW42V3k0OEYzcGFFZ3QxR1pCY0dLSm5mQTEwb0p6R1BBbkRRUTE2T1dINGRJaWpDNzFReUpibmdYR0RLQWlwQXlsaURwWDg9'),
+(94, '2023-12-31 17:42:05', 'R2tTT3VNbGN5bllNOFVya3B4d21YaGdTenNGTUJ5MEpNQ3kzc2hYU0Z6RHNvSHVmZmtQcDQrUG9ZRWNZR2p4V21xT1dyWWcyak04UHBwVHlxTFFtOVBwc3h0OHRHd2VyVGFFVjJKT3pNaHg4NytqUWppTUlFTFQ1b1doNUtpbWs3T295eUFMU2J3SmxtWlRtT0dpSEZEVXZwc0Zwb0JBL0NvY3pLQ29rV0lnPQ==');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_gestaorecepcao_cashier`
+--
+
+CREATE TABLE `hssa_wy_excel_gestaorecepcao_cashier` (
+  `id` int(11) NOT NULL,
+  `username` varchar(35) NOT NULL,
+  `tipo_lancamento` varchar(35) NOT NULL,
+  `pagamento_tipo` varchar(55) NOT NULL,
+  `pagamento_valor` varchar(55) NOT NULL,
+  `reserva_id` int(11) NOT NULL,
+  `origem` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_gestaorecepcao_cashier`
+--
+
+INSERT INTO `hssa_wy_excel_gestaorecepcao_cashier` (`id`, `username`, `tipo_lancamento`, `pagamento_tipo`, `pagamento_valor`, `reserva_id`, `origem`) VALUES
+(1, 'DFERRAZ', 'Pagamento', 'Dinheiro', '10', 52, 'inhouse');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_gestaorecepcao_inhouse`
+--
+
+CREATE TABLE `hssa_wy_excel_gestaorecepcao_inhouse` (
+  `id` int(11) NOT NULL,
+  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `dados_presentlist` mediumtext NOT NULL,
+  `reserva_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_gestaorecepcao_inhouse`
+--
+
+INSERT INTO `hssa_wy_excel_gestaorecepcao_inhouse` (`id`, `data_importacao`, `dados_presentlist`, `reserva_id`) VALUES
+(3, '2023-12-31 17:42:04', 'aS9vYzJqNVl6RUg5SE9kdUczdGwvUHpFWEs1MEtkOFVPZFVTdGFJaDl5VGhZUit2SHhDSUdXbFdzeDN4cVA5Sm1qL3FHbm8yTGsrVDI3R2ZjbWFJMzloakVVUUFkN2VmZHp4aDBmM3JpNk5KZFRHNWNLVnlEODdVRVZyNklleS9NbjR0UnZYQjNTUmx1bHoxTTZYOWw5RE9VNlVDSDNsVU85MXdPdlBtSGFwRXFweHFFZ3NrL2FsMmt4RHNGOVhEajVPdzNabFV5NzBON1BhZzljUkZSWEQxdW9SUkdOT3MrRW1LQS8zYmhNeXNwZndKbVBNcUlDY0NCNER4dVhuYw==', NULL),
+(6, '2023-12-31 17:42:04', 'dkdUUkJxeHBUZ2NSdGJjM0krRi9HblRlSGVhWlk1VVhZTkwxbTd1YmV0VFpwL0dSNnN5WXRNK0JxRVpoVWJmdHJzRU1KaXFOR0lJb202UXhWcTdXZHFwVmpneXRZK1ZxYzhDUXY4MUREK2oyL0JVMXRJUHRzQnJBNE9UQzVTekgxK01wMmt6emVtS3hacU1ieXFrcWVhQlZMNmxoTHFNSnYvcWZPd2xMVlluYXpxNlp3dHp0eWVIdy81cWdCWHdl', NULL),
+(9, '2023-12-31 17:42:04', 'RmgzQXFEZkFURTZWeG5WNFFCaW5vWnp1Q001ODRJWW5udWc5N0c4b09mS1RrWG9qUUYwSXA1azB6TGFkUVVONFF0VGJGUEd5UVl5czU4bmVuV0xheTNaQ2NManVFTUVHOFB3OXNIcHZ2eWNRTWcvcWNaOGNFVEtZSXEwMmRjMFMyMGdwVVorWTE1SXRVNlg2eC9vVDhwL0h6dkpTdnY5RVN1MGUyNkZZZ1lQT1Y0KzdVcktxTFdtRkw0ZG42c0ZDakppUUxwa2Z5d2gwYzhjazg1dmhBQW5ObmJySTRyWDZVM0tmWTkzNzEvdz0=', NULL),
+(11, '2023-12-31 17:42:04', 'cmVPeDE0Y2xJeDJadmVvdXcvTnVVMTB0STJMV0xlcFkwdDhEZDFOMTgzTjFyVGgxbEExV3o5SVZjNEEzL2JBU3NZVHBYa3gxRk5rbnc4YVFuNlFBYkkrOXBkWDlCaTMwYVpmRnQyblBFaTJUdkZ3UzJQYUVUeE1zZktVaDZqcXJKWjcwYkVhNjhtbHRCS01zYmFEYmdPUlRONGk5dWpZNWJwMmdUSjZBQkpyVG9Ucjh5WEVyQlVFMXlnOTQ3ZTBu', NULL),
+(13, '2023-12-31 17:42:04', 'cExiNlZGeUtDUHRGNEpYNmJDdjdxSTAzUmJoekEybGxFbjVabmdSZ0o2ckpYOHJWdi9zNkF1aXFaNmhzUzJPWXA5M0JxYXlZckpuOWhPWlJaOXNvdFJhY0JqVGNZVy9ZWEhPNUNhWXYyMUJPeGNmbVl1RDJDVndDTDg0MmtHbTE4bDBwUjg4RXYxcTdab0RWemRFbEs5YkNITjFscUE4dHNnYWx4S21yajZHajlsdGQ3WUZ6cERyNHN2SThCcFM5TkFDU2phTFI3K05pZFdla0Y5dUFNZz09', NULL),
+(15, '2023-12-31 17:42:04', 'VWJ6QVRiMy85Z3d3Y2pkeWpMMzQ3WGVWVkRUZjFhRmo5bGtENmdsbXNFaUk0c0pEQnRXdHkzVnVXNFhyS3JkVWRFbUtpb0xGR2NEL1BBL0JwQmdlYmt2aTkrVmUzaWh2aThmYWtPZEY2RkxZajQ3bFFGVHNMa1JBVWcyTngyd3NHQ3dHMjl2dExLVWlsQnBQY2wyVStubm9Ja1NrMzFSWkVyQzlRVnhRQU9RPQ==', NULL),
+(16, '2023-12-31 17:42:04', 'UkNIWjBFUkl2cVU2Zlo4VXcrT3F3ODAxVjl0YlJDbTgyOXhCMkxkQTd1NWFxczRta2hab2JMNE83TU1tSzduN0gveFRia0RUd3FnT1JsTHlLU0tZVmNTbEVkaHgzZStEZTQ5emNIK0RLOWwyd2JaYzUwM3hOUHc0TDhieGpBeEU4c3hscktIRmtyTGUxdmRFN0lBSVFZSW1OUU1Bd0tKL2VJRCtXSExBZWo4UTNhTlJickt6OTFPVkxENkxram1iYVU2K2wyZXJEdGNQLzRpMGhWbklDZz09', NULL),
+(18, '2023-12-31 17:42:04', 'USsrakpJd0wvQXpZWG9QNk12KzZuMkhmbjNmemhsSENvSXZRUk5kdWFjbnhJYXRUV09SMHlsVHA0OGlQdDlhaDVoMXpkYlN3TllpR3cxTHJqZW5YdUFNQWM2WjhCWE9YRmJYQ29SY2dDK2FEanpLQzlqR2ppZnJrb2RJbFBrbjI4SFBGZTVpKzFoU05NMkR6TDJsYzgvM3c1NmNWQ2Q4QTliY0lrZGFYU1hnKzBpNzFrUVU5eU9PN0JqZkRpS051S3Fpd01KaG5lVlhRUG1OWnBlRFREaUMyVWF4T2JoQ2I2aCtFcXZyUW5laz0=', NULL),
+(19, '2023-12-31 17:42:04', 'MzBqQUdjaVlYS1grQkxzTG9qWHV4aFZjbW5VQUIvWlFtTWFUNDhwcWthT2dhSDV3V3dLcEN2L3NOZ3JFRkc1MTdpaVE2dHBiTkJibTRCZ2pMUzQyakRTYUxEVm9OVDlORWg2UjJMMlBtZ0ljbDl4SlJlVm1aTFRRTUVJUDYvVzdJTkhNRFo5cnk0ZTJwMXVnd1BVd3g4dlhFUHpYOUtLV1ljSmNtS3dtdzBDME53RDY0NUdJdDRBZUxmcG9lcFcy', NULL),
+(21, '2023-12-31 17:42:04', 'M2ttcGx5LzhuQVcrZGlpMXdyY1RIOXhraUl0cUd2VVg4TWFCZkliZUtHZmg3VTNuT0xnSXEvbjJJS1RjUHorRWFSMVJaT0VBTzBNZkR6eGcwNWFEUlJGUE93N3NYcXU4NGpKdHcwT2RZc0QzWVl1VVZqdXpSZ09ZSDFibFQwaEdZVlZra3lPVmh6QVVmVUNMSnoyMXVWWmhBNXpJT2tvT1Z2b3Y0TkxZeitFPQ==', NULL),
+(23, '2023-12-31 17:42:04', 'bUxtdVhYcmxMZFVPVTluNHZwVS9hNkc3dlFzVitrUnVid2NIOWxicGdnNHUvYmhYYWZUNThXR2l1a3VQV0x2R3Q1Q1BRdzFtbEQ1cnFhNytjZDVNNE5XTEUzOEN3blMrVy9PZjlqRnVRcHFmVnU2Y1VEUDhEOWdLUXNBNjQ2a3EzeFFSWU5GbE1qU0ZmUW52cFJ2TUcva014QnJzcnJYVWt5ZUorN2RuQmM0TklRYjdEbFQwKzFyU05VblVlSmRkS09DS1FHU0V4RE9tOWZBcWZ4MnM0QnA1ZHBjbkF5bTRCb1p4NXhVNUk3MD0=', NULL),
+(25, '2023-12-31 17:42:04', 'aEpsVE1FL3ZTM2tmMVNzaENFQngzUnVsb1JITlg1MnpFWnZ5TE1OaDd5TVFHQnlYaUd3QWNIYkM2SGJXWHoydVZLN2tGRTNyNVIwQ1FhTDZBM2FMMjUvaVF3VWVUZlloR2RIclllTjRoTVdzTi9TMGdRTDA1RUtjUUVQR1lDM01UVFZpSjVqYkZEVmdvWEpFaUpZN3ZtemFocmo0SHpjMjU5QVoraUdyQ2lSTFhpME1CK1hUSmNLMmp0UXJXbEJP', NULL),
+(26, '2023-12-31 17:42:04', 'U2I1M25IRjVpOGxaZFJ6TStGZk1DQXcyMTFGQmRvS1JJdnlmT2lJdG51UDZyOUFZTTdIYzJ2ZTRFaDJjQkJjcklBWVRNMFBKcHdsMXhjeXRNbS9DNFFYUUFwdVRJOVgyL2pOaDVQUTJYcUI3dXR3c2RWbVd0RnZoZ0VhNFE1ZkV0STJvbld2aEFoNk1lYnFBNnZSanowL3pRM0JPejZkeWF1aUcxNms4U0FxMmN2TGxOTGVjbDh0WmdJYldTSlgyZHU5Myt0Z3c0dnBFU1ViVTFmQUdqUT09', NULL),
+(27, '2023-12-31 17:42:04', 'VFhvSkdDVmFSbEZ5em1oalFac3RJeHdycHNudVlVYm5mSklPR1ZPMVRSUEUvd3YwYVlWOWRPZnoybWo0R0o2cFkreUlsUnhwSWxxZzRzU2NzRmVLU1Q5cWVrODNxTVJlOGFETldnZ2drekg5S21vbVlpbCtMSWh0WW00Wm5OSHd5TXREQ0V4K0ZDUW9CdmVvU1VBaW53PT0=', NULL),
+(28, '2023-12-31 17:42:04', 'VTA3Y3VBVTFxQlVFN0xtUHRVRUJ3dG5XUzdIUmhUU3FCVFQ4Vjk5V0tweE1waVZJcU9kYzJJNHQvRnlyZThRZkdrRjNvQ1BDYzFSeFp2V1JVL2hRS2g1ak1xQ2F4NDBBMUtlSzVuK3ErYkVxOTFMNW5ibmZKajFXNGdaeVNZVFJtc2dMcllOc1FuR2piWXkyVTBWa213TUJDZXQ2NUhmT1AzVE5Rc0JHc1Jma3REc1Z1aDFzaHNCVHZNRGgrYUZtTFhuUGd5QWV1YTNqU3YxNmpaWUp4UT09', NULL),
+(30, '2023-12-31 17:42:04', 'VTdmWHpKRUhBeDZkK0lPcnhKQWR2RysyYXZWbkw3YVhZUXpqZCt3eGRqRGovSmRxR29ZeWNsY0N0cjh2TmJuME90VTFZSmdGNWhOT1lNOU44bUFVbUM1NTBDeHNOcTBFTjJySlR4SDc3NVptU1VIczM0WTg5Qkp2TTZmZ2xIT0U0ZDh6SWNPYUw4NllsbEVDWHljdURNdW14L1hwZlNSeE9UQWQ1QlcyWjFpeHlTTWtlZThQMUFGUGFsVzk2SnAx', NULL),
+(31, '2023-12-31 17:42:04', 'T01mY25jMERpVGY2UFVJQXowQmZOWWtCam5ZWU9JMkhJY211TlRDZzNDLytmaCtza1k2YmF6RkxsMXNWbXFJRitERTd4MlVBZG5GRkU2bmJ0ak96VWFqNjNUNmw2L1E1dHNZRHdNT1hnbVdUN2lyY25URTU0d1p4N1RHdG9aMVNvcTErNnFtcWlDcFM4UFNUWVk4V2JBPT0=', NULL),
+(33, '2023-12-31 17:42:04', 'bkgwYVV2amVOc2dabTBUbTFCcHZjUWIwei9nSlpHWFNrZnB0MmNmd3ozemtFOWpDYStGUHUwWGJWeldnaFNlcjN5RE96WUV3TFJGR1Z6SDlsVjgrSW1hc01qQThsbW9XOVlaOFR6d21ESVhNWTRzWStmYjI3Q3dLbGVLNzJLbDNUYzI2TjV5dko1S0Q1eEtHOUJ3eGdyQVFrZUI4MVAvU0ZNMkprelMrcmJZM0VGaVRySWpuWWtxbmxqRHJybTQzNVJCUE4xTU9YL3dNd1VGVkNwWVZqNnJ1MUpWS24wMW5DaDdIdmZyZkxHWT0=', NULL),
+(35, '2023-12-31 17:42:04', 'R2NLSTRrZVBhbEJVNm1RS2t5eUF1aUtybDJYMndnVmlacVU0eW4zNGFWdlIxa1g3QWhTOFVNbzlaMXkwaFBSVVloejNGa1M1dmltUUV3UzNxdlplRUEycGhLSnhQbzZHNktweG11L0RsbDY0Ykorc2tISGdRV05mT1VueEtPdzJJYStxRFdEZGsrUFhqTVpUUEUxZTdTdFVTWWlEZjNQWUxybEpoY2FUN0xWUVVtVy8yK2lMNU8weTNvTVExQlVRWlRXRzQ5R3hoblFvZ1hHRnd2Ymh0RzFUdXN0VDdqUDQrSGF5ZEZVeXVUST0=', NULL),
+(37, '2023-12-31 17:42:04', 'clkva056ejlxbXBDTFdDaHpJSUxScVUvR2FMTnF4WUdIK1hrRmxlRlVqL1hQKzNlTVlIcmdpelZlN2NnNkM4My9PbVlTanZ2d3dtUGQwcVNqZFNRSjRFV2taamc4a1c0SjRZb2pvQllob3pRKzZFdlRmUDVsbUhsQ0cxQlg0dFdNc29DRVpCWmZNN0drL01lN21WYzk1RXc4SDVIRGtZM0UxdW1YRmN4U3JxZ1RYUnZMcVVJK2EwcHFwTmRWcTFvSGZqb2JwWDhjNWo5bmdkNmVYMVU0cnJPbnArWFAvUkdaWVF3M1FDWHdHNjhRODdMd0F4U1RLaENlUVVFbnN1bQ==', NULL),
+(40, '2023-12-31 17:42:04', 'ZTRneDlnYUlNTjZiRU5mWUZNNlBqR2JuNm5DV2NZODFvK29zMFVuRVdYN2s5c1NHZVNPQkowWE56Q3U5czdpQmdzVnRQbi84OGRYek51OGIwUmhzREZJRHBIdDI2M2I5LzVkQS9mSHlvZ1piaGFGdTcyZFYxajM3blBiT05EbGRUYmN0cnVHQUpXZmpGVk9QaDlNVGJkOFNyL2JzM293c0ZlaE1HZVE1d3k1Zi9PRjNxWFpJeFQyTkk3a2U2eURiTTlXSTlqQXAwV0dFTkhLaExWdHFJb0JRdnZCdlBxU01PQ2ZYWUY0Q0NvOWNLYStabjBmTHQxQVlhT0lEU0g3cWl5eWpKMDl0TDg0RzBnb2QvSkxOQlo5MWJmZ29hL1g1MnFQUElrQUpnZ3c9', NULL),
+(42, '2023-12-31 17:42:04', 'ZTRneDlnYUlNTjZiRU5mWUZNNlBqR2JuNm5DV2NZODFvK29zMFVuRVdYN2s5c1NHZVNPQkowWE56Q3U5czdpQlBhdzJsNkptbUNUSUpkMEhDSzFJbS9aa21oWmlmdkhlN2dhTGEzOWdFaDEva2Q4RlFIK2NSZ0ZJcThVOHdsSHJybitWY2NRWU5jOG1FVlYwU3FxN2plSGluVlVUVzNGRDlhWitTRlVkZ0k4V1RKbnhNUk9aNmk4L3VNTURnNkZUZkJvb2FXSTVZUmgrNWlIUEM2cjJ6clBBajZtL05vdCtheVdVZTZjcStLc0Jmb1Bhd2JPc2RYREgyTksza2hEeQ==', NULL),
+(45, '2023-12-31 17:42:04', 'V0puZEFLY0dlZTNCM2xMVXE3TExaQ015MkxsZmYvalAzSitXNzhQOWZSajQ4cmYzTTNpQU9lOW5ScGY0bnUzMHdkb2NnR0hsd2l6Q1pEQVJQT0VKR1ptamVlSnpZdG1nd3JkT1BUUW0rL0d5YmdzTWdKK3I0TVhtKzBjeEQvc0RPbnMzMG56UFFMTWZCdTcwcmFtVGE1Y3hUODY4WVVQNy9UTHMrb01nRU5kWDEzSkV3dDFuUE04ZFFLVnYyVUtjSEczKyt3Wm45K1IwaXBTMzBaYmNzZTEzR1VqYzBWekYyR0dEYXlndGdlMD0=', NULL),
+(47, '2023-12-31 17:42:04', 'T3lEbktsemV3YW5JSVBRZm1kbWJ6T3NpeUlMdklTSHBKWnJYWHdiT2UyTmdVaTlTZDdVVjE1NzllaTBkME1PVUVvK0xvTWxtRWFUZmJ6ZW4yWW1nNVUrcTZyOEpGTzU4Ump1NEdEcGlEeThRYllkSkloWUxFbWVRViswaHBRRC96dmNVQ3RhbXduWjlXRkZROWpUaGdYMVZ1Z21tL0lKZi80ZlhYOUM2cFhLdExmbTUzMVpYRGU1Y0tJT0xrNDdJNFVBMEFjK2RmK0xxZHNsRHU4Yk1INTYrSTA3bjVScm1rOHIrM25tUmdNZz0=', NULL),
+(49, '2023-12-31 17:42:04', 'cFdvUWZxQnhTVFFUU1BpNlNlQVBGK0M3aEpRZGtvUHJPM3Z3SWVNZnVSUldyNURHWERVQVVyMDAyODBDdXdlOVFZdXlMdUcyRnVYZkFMeWh3Z1FrWW12OWYrenI4eERibzVJZldzbjVqQ1lyUU5DZ3hnR2pBeFhGVHBtMy9aSkRXajdLQlBFM3l4bXRDejBhb25MdTZxZlE0Ukt5ejBwMnNjQ0ErbjdPNzRkbFF3bE5hMVVGMFFTeGxmcHg0UGRq', NULL),
+(51, '2023-12-31 17:42:04', 'T0ZkWlJJQkpZdjB4OTF3cXRkbEJjWW5FMXJua0J2M0dJOUVKbEJtTHAyYUY0V3FaQWhkQzZhSVpWY09LOFUrM3dUbWs3OHZQNXk5TGVGRjgzNXA2T0FVa3AwZi9VeEx0NDhRRGRkbm1CdzBGSDhSNTVDQUc5eWw0MjJEb3lTSVg2S1VoNHNJQUFzUWZ1WHNNNmhaMVByTFEvS3NDUzRFK0pxLzRlR1dqMXdVPQ==', NULL),
+(52, '2023-12-31 17:42:04', 'L21UV094RHliOVFiUnhmRnVtdGk5M09UVTArZlJnQjBrMFN3SUc2c1VrUkhzd2M2R3JpRmJINml6b1BaNHZEZktxUlIycnRyYi9HZk1UZml5VUF1cVNMQnF0a0U2MnhKZy9mak9BZlhZYTRmNmplV2p0MGF0UUZkSWtwR0JNUUQ5ZzJ3eVdDeXAwNUllZGhGcFl3YUQ3QnIrYUk2Tm1uM1JBV1IzaGhJUzRNM0RoNTVZNlhDbWIrMVV3QXJGUjl5', NULL),
+(54, '2023-12-31 17:42:04', 'R0ZrbmxNSWV3K1JUZDlXV1U3ZjRlN04zTDFCb2FTcnZscTB2RmxtWDljT1c0a0t2UTBnVGRrNjBzdDNvSjRUbTNObDArZUJMRzJQdy8xak51RGliazh6czkwTHR1cEJTYTM2djkwL0JrTWE0Skl1L2pmdGFHdnZUS3ZhWkpDMmQyS1NJdHpiWVZzZnV3Q28xUENkVGE1bWpZRllpcTMrd2pLM1Z1ckdZVDZnPQ==', NULL),
+(55, '2023-12-31 17:42:04', 'WGRXUS9HSVM1UVpaUm5xamhlUENMb0lyTXc0MFJpODNkRUlqT1BRcnRUa1d4aW85VlhwMVk0ZE83bG02clMrcE9iUS9ZZnpjYU13R0RDY2k5VlE1VEhJSmNlVXIxNzdzNkZGVGNCb1FNYmpDMlg5Wm4vendaTUxhQ0w1UVlOM2E=', NULL),
+(56, '2023-12-31 17:42:04', 'azJReEUyd2gwemxIaWdiSXNxQ2dRRUo4QlM3NE5tTXcySXQ0bEg1M3VGMFBMQkI0anRNRGxCdS9jMXA0b1diQ0M5UEpBL2lhRHJ2dkQ5ZUtnTzBjazVkQkdkMHduVWxmbDk5ZHp4angwN2RQRjVaN3ZjNVRXMzJVb21WeUVWcXFhUXR4TmV0UHpLaTlDY1cxUDViS2h6Q0t5b1lSSFBzS252b1ZDZkF6QS9kNzN0MU1NNWROcGpQTzRISUptbm5TMFJlOFdhRDhoakxaU0J5VDJUWXZWUT09', NULL),
+(58, '2023-12-31 17:42:04', 'RXRvbHRFa0xYSUdJblhvRGxkT0ZrQkdtdUxQelc1eDhJZUVTalV5dmRpeTQ5Yk80aWl5TGp5czBZOUtQQ2Q3dlNJazcrMU8wU0hDLzMzMHM5elBwRG1xTnBqbEFKNUpWYTF6MnN4MG5SMThqeUg5dDkvV1Jyb0hGY3hpZDZuU3l2Njk4TWh5MzNocjNkWkNvcG1KdjRzWU5SbHZHWm9hRHhpdnpVdnhFQ09iVjMxYUdCei9hQWMwV2Y4RjkrTS9BaFB3RHNNVXVKVjVuek9JQmJjbm54UT09', NULL),
+(59, '2023-12-31 17:42:04', 'MytDcUdNdTJNdlpsaFNlblQvOGhMejRWSnhncGZ1SURwdWxBcURISTg5ZGQwMjlIcFc0Uzh1OCtIUFFNT0hGRVk0Uy9pQTJQcnlDUjdlMEtmV0pEcGVLdUI5OHI5L3kram5BYVVBeFcrL3A2WGwrQTBxbkhodmtzUDBsMXhZd1lxTWRRNHlPM0l4ZlowalZYaCtQbC9qc1hVQ0lCeVZEckE5RWFJZ0s0UVhKWmYzUWI2d2lvWGk4Y1N3V3pjOEZPMUF5SFN4SFZ4ZXRTOFE5RnlYSUZ3UT09', NULL),
+(61, '2023-12-31 17:42:04', 'bnJzU0k2RUVIeGdFejZmT1ZMNWQ5NDJGaTZsMkE2QTNkN1licHRTdEVOcG5vMlVlbGI1RC9aT1FNVkhMaDFXQTZRRVNoYXRXYVdCZlR4YVhySnlXTXRtcVdZcnFLR05TRUM1QVF3ZU1tMHB2bk1Zb1RyMXRvYXhnQWl6VmxqcGVyU2toSDlZUnMzOGgxTzlkZnY3c0VnT2VPWjZTWFA1d0NMYnZRdi9SNTNKNDRnSHZvNFZFK3pscU1ZcTZUT0xmQzBKTzNleldqQ1YvY3ExYU5tRHZ5UT09', NULL),
+(63, '2023-12-31 17:42:04', 'UlB4NnIwUTJ4SHcvcC9VTmhsMi9lRWRjbkhoSVc3Nmp6Z1U5SWpzcURTQTErNFdIczJ4aTdhellMa3ZsKzhNMGs5QzZvR0pHNWN5WnpPWkxvZHpqRFBWdk94d1BWMThWb2ZCY0JBR3VjTkMzOWl4a2NBWnFiRHpiNE9DOUtJSVRvSkIyYkdxVm9JeGVBNnRRS0Y0MTJPQWtEVmpXb0pua3VmSko2emVFWE9ON1BSLzhGeUVIbjYrdTFsNk1iaThReVVDRG41OGdaZlRlNml0VjNVZm1RTU5zSTd5eDBwZDZFd1JGQ0pReVg3RT0=', NULL),
+(65, '2023-12-31 17:42:04', 'Z3FOZ01iRUYyc01kVGp6YzhmZHQzTFZhem5tUWFkQWNKc0cxL3ZUZDVHTDdpZU5xckZoRkJtWjZ3OFhMemxRTCt2VmhLd0hMMk5wbUJsdTMxNzltZ243VkNCNzJPWlhJNXNIZ0hhRDZ4MXVBcnEwZFBLZjBIYTNKS2FLZUU2aVdvY3EvZnhYeXJOTWt3QTVqNURDQitDMVZhMFlDL2FJZnBoQy9PbStId1lUemxWbVloUGFvTTZsdW1TR0pIb3Jh', NULL),
+(66, '2023-12-31 17:42:04', 'aElIc083bkFuOGNLbGFxTTk1QjRvZGFYc2E2NDlRRmlaNWdiVCtWQ0lPSy9hVWdPR2FhbTZHaUJlMDVpajIyT3c1OUN5RXRSRTlmU0dzSGNhN1lhckNwNWwrMC9Zbi9wcC9Nb3pJQ2RsajJHdm9lNXlBMU5kRFhsWFZUK0FoRFNYd1FtQ3FUdW0rb1BkUitDU0h2bU1JYThWMWdDTWwrMkRlRWsrazh5Yk5sN1Bmc2hleEk2SUdNZWZyTXRzMGxD', NULL),
+(69, '2023-12-31 17:42:04', 'T3hwN1Z3WHJUU2dCWlQwMFVMQzFBU2kwa0szV2ZCbU56ZkpvSGtab1JYcE9ocU9CQndJODF4TjFNTVlNdHgzQU1yT3IzVzZ2dnE5ZThyeGpXUlJObjA4M0ZyblB6UTJxOWVOcm0zTHFXODJBQWVzSmsvdmRpRVlwSWtoeEtqYUJmbnNnRUwwUHU1K3NWditjZ2hoZ05TSDd1N0tIdXZndUk5bWdNcXc1Z2ZmS2EwRGl0NnBnTXVlempJV0RGY3pTb1BSUVVERllLQ3FWZ3VnL3c1UzdMM2d6ZDIzS0VGcW1rbDlTWHZJTzBSUC9LN085VmZpUEtLUVI0Wi9jT3VIa2xBdjNqa2RUcE9QNDJWd0ZLczR1WkE9PQ==', NULL),
+(71, '2023-12-31 17:42:04', 'SFZXdnNZVDJScmR5eFNiZitZUjdDQTloQzRPMWxVcE9NblBieHdtRURtM1I4Vm1pbUszcmQyaGVZZWViNWFIT1lldjFwaks3VWIrdDFQOHVzRGpzY1ZpYzlsaC9HVkxEZ0tINFk4cE1UbEFFcVJhK3EvL2FrcXhPMlBpWWdVMTZXOStlUmJQVXovakdUZW9pSFJwVnJCRzBGV1ZseUVLRFRWN2JHVWVSaWxNVjVHQzU4a3FhcmdQRytIN3V2NDIyOFhZZG1Ua1RTV1A5dTNzSlo1cUJXaHE5RUZEVDhJWDM5MitTN1VaYmU2Yz0=', NULL),
+(74, '2023-12-31 17:42:04', 'dlhNb01ya3ZVTS9ZcGJYQVcwRVRvQXU5UjVDMjRzSEtrSEk0ZmtjWUtVRzM0MmNZeU1qVEtJR1VaQ3R1aGZIbFgvaVBYN2JCa1EwM1dmR1l5WWl5QXhpdTZYZWdJTytmNHUxK3NRZ1VCZzUra2Z1ZHBJVzZWbDJESWlBeG1oM1RqdElZQnZPZlM0QmlnSkFiT2UzVXlRcmNwZjNqS05DRFdpZC9ibnFRTXNJclJyMXRhRDVqMm1BSlRYZjh3S3F0Q0NDeE9zMkVJa2FHYzc5anpwUzVYeHRRNEUyQm5aWTRFYk9rbkl4T2ppcz0=', NULL),
+(75, '2023-12-31 17:42:04', 'QzJMazFkOHZNT1BWWWxtWldFNTBVZW14eE9XR1lyVjNaR0JjUXhwNDdOaEhoaDExWnludDJTQzJoSUdlRTlvTVFsVmY2NWtFZFpKMGYvZ2pLc1BPTmlVTjJwSSt3WWlrOUptY2xlRDg4WU1Xd0lSeTg5VWFZR2lPTnZFTWFIRUZDMnQ0VHlGM2ZJSS9qUWhZdUs4TElIZDdqWGhNRzVmVzZoaXVlaDAxNmhSbUhEME5mVWJtL2FlTFFsSStiUDUx', NULL),
+(76, '2023-12-31 17:42:04', 'cHNqQ0VITFMzSTQ1S01LTzZ2TWwxNXN4TzczT0JmTGRmSGU2QSsxdHJSZUpNaVZYQU9OWklXc1ROS1JxWjRYQS9hOVMxREs5T3dWaWQyU3QvSmZPRC9vbmF0U1pLazRaenZpejRMWU9rbVB1bkVvaHZRNW5ya0JzNm4xVG1oOWpWbEhqMEZvUU9SNHc0SExBT0xaSnloN01MbTFXVU1oQmNhYS9PVUVWWGxVPQ==', NULL),
+(77, '2023-12-31 17:42:04', 'NVdGY2JvSGh1bWVKQWw1TUZGMFVhTjdZby8wZTJPaEE3ZmxoWHMwQk9tRVlvdnBTZ2FkeS9IMXc5MThvUWh1cDVudmZBcThKT0U0SWkzWVFSNnhTT1kzSGZHOUh5S3FFK256MmRLQnVZS0QxSWFyMTArcEJmY3JacUhFRVAvaTNJOEZwaEFVOEhjMWZwT3ZkOVFrcTY2dEpMc3lYM3YwQ05NRVdQMTBLam95US9ZYkptYlZsempnMGtUYURPTmZu', NULL),
+(78, '2023-12-31 17:42:04', 'Q0gyRkhRa0FRamt1VjZCSkJyZkJZNFI3K0FFV1Npcngxd3lmWUpSUEIxeWlnazVISW1JTkQwUjdrcm1mb2FvZy95eUh6M3c5Tkk0WjdzMkM4bEZleHppY0kyQ3FvYlFqaVd6WmVTR2x1VnhyNzRwQ3NoMVBKK3lTb2VyZ2cybjRxTFpPejZDaXZxUGRoZ0ZPL0Nuazk5RU5TdlFLR0JWZ3EvNXpuK3JwNTVFeTYzbXBYeEZvTENVNWxuMVg1NDN6', NULL),
+(79, '2023-12-31 17:42:04', 'Z3lrbEdrTXIxbWZ1dTN6bWUzWTZIcE42YTBWTDJFRFVDNC9VTzF4SjhrQXRkTkFBNTJSTC8rNUNGcjlQeFFVVnd1NjBXeXFIeEwxQ0hLZlZDRzE3SlVIMkpyNVg2YVE2YmlqVmFYNXBPc0E5Qjg1MXFnZ0Rpb2dET1ROVWVCb0JNSkpWU1k0enpQRHYvcjVML1NhcjZhUGRxY1JZL2JRMjQ0TS9hdUJYT1RVPQ==', NULL),
+(81, '2023-12-31 17:42:04', 'aDdEZ0Zxc0tvdk9tTXJSVEJTYnQ0UWN4cmZvc1luaFdQY29CTmJwbTNUTXgwNW5OK0JPdGltRE00VEhSQUhnK3J3Mk9sQ1RObXJmaUJJOE1halZqcDArdlhYb3ZlZHlCQW1WdWV0M01VMnlacjhTaytZeUtPclJkQkhpQnZDMTllbTVoUjJKK0NoWXJ5WlQ1d2M4ZUNuQ3FHWTdJeFRjdWdQNDNjRmlnbXloWjQ4MWNQUUJoSzVRSUR0VjBHc295', NULL),
+(82, '2023-12-31 17:42:04', 'ekY3MU5XVFFWcmtqcm16WVJJV2grUXVuRzRiMjZ6dmVyMGU4eU5WMHBROVlKOWR2S2xGcURwQmlQVzdQbitlU013dWlzUHZ5TTRTM0NKcUlIV3A5NUhjbi9uZUFtUXZLUFAvWlhNS3FhdDdJa3N3WFFiUEdodjBOaldxMnYzS3FOR3hTMDR2Z3FTNlZFKzdoUVAzdnoyV2dPRWhrMU56b2lTd0luUVBIVE4wPQ==', NULL),
+(83, '2023-12-31 17:42:04', 'VjlEbVlGNVpIRzE2QTgzQStmaGZjZndUZXZXQktkM0dwWE44djBEZTF5SU4yOEcrUExiUEhScjlEaGlvOTFubVM2dmxkTE9YK3NSRlpNZVBBWXhhWVRFSG1RUkpkMXp1aEhEYThodlliY3hydUZqR0dndDB4NEF3WEtocm9SaTZsWm85a1ArdEFnd1dLUFRyTURXN21ET2t6V1VwdFk5L0RRd3RnSWExdHRJPQ==', NULL),
+(86, '2023-12-31 17:42:04', 'dXRxdlJhUjVvZUl4dlIyanZiZ01GNzRMOWxmRVZPL3MvbXUyblUrc1pYb1ByWWJvNlBocno1UURVOWhFWDI5cWpwbTZDNUdoZ2JCRldEcWhUdzZ2Z090UjBHcTRIU2hKVDg3cXNTVmdRNmtISFU3MTRYbzJHdXFEeU9BTnVqWVJickRjNFVhWG5jVEdyRkdVT081dHhIWERyck5YZ0VQRUlLSGtRcTQ4VklKSms3YkdTWnZwMmF2Wmd0NkdUVzJIcDJJdWxPeWxjamNjeHJ2SEdGQ1NKSjBJaHBaNUo4N2Ewd3RiMUtKU2dYdXE2ZFh1QlZTN3I5dGgwUW50OVROR1h6cVhpWXFRWnJSMWRtVjNyUzYwbVE9PQ==', NULL),
+(87, '2023-12-31 17:42:04', 'L1ZteVN3TDdTTFNQN2xYRk1iVDZlWkVjZmNUbTdlazBDZjZRZm1ldENkcDZuSUFPODlrRzdkY2pILzJnQjQ0K2xyZ2p5eUJrTWc3bzk4bFJJZVRrN3NhdHRnYlZPUi9OR2d5NXcwUU9WTTlKbkcyUHIvWVVCMlV6bUp0OHpMNUdRRUhJWDJoTFhudnF0SUlsa1Frc21KVFJNWHFVamVia0FZWU91L3Q4T3RVPQ==', NULL),
+(90, '2023-12-31 17:42:04', 'aDdsdk5MWGtvMmw1dFZCY2FicEt2Y1ZPamQ0Tlk4SDRyTFVyUzlWZE1leUh0bVZJVEVoY3pzeHZLWW80c1RrRXNrcXBGS1kvMHNFUU1DQnpqR0RUKzFncUtIcHZCUDByMzVtZzExRmxnQU1aZHNxMFJwZkJuSkZuZTNxaVdVY3k0SXUzYXd1WHkvYXE3L092enJXWXFIOEJWQ2tCSWQzRjZTalFkVDZtYWhCSVBEbEdZRkJ0SG5GQ3RPT254SUZmcWZzYUt3YjVhQ0d2VHh2dXlyNXQxNythR0ZxNlVPbkxJSWlUVlRhU0ZDeFhyL3BRRE5EM0FpQjJjRVZ5ZGRLRQ==', NULL),
+(91, '2023-12-31 17:42:04', 'YmVhcCs5MXN0aDRFYlUvc3hUT2tVcGpXYTVIbW9QL0FoQlNKeFphbTBrem9RVDZqcFhRVFlQQVJrTHdBN2VGOWpJRkdyNXVyK29ia3NrZnE5WUpMRldISjNuUVRoaUMwZlRqbnZmNkZ5NVorKzFKM1FZZWQ3U3pEMExoMUdiSjQ3VC9pUDBvYmFLQmZ1MWpYaDlOTWljY2Ewc0o0THpFVXpCZE5adDdWRXYwPQ==', NULL),
+(92, '2023-12-31 17:42:04', 'YkZxNmFEQ0U0Q1lNWVJLWnVpczVOWFliQ0pyS2dYWEkvU1BjN2NxN0hWTEgwcHkwKzVhNHpDZitpRVh0c1YwWVRjSTRVQnFOdExQOVRodTI1NmE4dEhPUU1UMG01cGRCZ1RodEdiYUF5ZTVhNWgrQVM2Q0hIbVJySU55QlY3MWJDSW56VnVaNSttdm9pVEFkVm95dVV2M0lXRzNUSWJMQVFtaG52SFhlNVhBPQ==', NULL),
+(93, '2023-12-31 17:42:04', 'UkpsNGtDWkRYQmlMZTVlM0FTOGRrTHlvaVBoOTdMNEJ3SURPSndNMkttTGpiblhRQ2sxVk9sbEVDRVdQRG1DUGhwdkw5MW54dlN2QjNoRkI1Rm9jNmdseDkyM2l1bTREM1JsSjh6ejlzU0wrenRmTGlVODFGdktaK0x0UXQ0cm0waFVXaHJQUWNETlUrVUMvOHlOaHMwTjFWVUJ6ZlAvNXd0Rktra0VHVnRvPQ==', NULL),
+(94, '2023-12-31 17:42:04', 'dmtZbndhQkZkc3RxNmJwMzdjMVdJMkhoZXdOSSsvZk9VSnQ2am1vMHU0M3BkcVlrQ0prWGI2cG9jdEFFcnJldm80N21uWThMNHJtQUQvZVVDWkM3emV4c1paZHBiY0I1cG5VS3IrLzRQVm5ZSGRmcG9rNkFtKzNxbS9JcHI2RStmcHZZZWpKYkI2cHVGdy9qTG11YUVZd0psdUNieUFLbWphR28xb1B3Lys4PQ==', NULL),
+(95, '2023-12-31 17:42:04', 'RWRSYlRlTU80WG1XUk04SFozZ0JJVGczM1BibUluZ015U1NvQStWQUNsRHUyRkdsTThJZTk4RndoTk0rakJCeEh3Qm9oOWIxc0xuMVRsRHZpb0x2Q1J5WHRlZEo0UjN1T1BUWnpiNU1jZFR5LzJJOVBqYkdJbUlyV3VZVUVBSkN3VGVsN2RHZ0J6YkR3cmVLb2tvV3RWMGZJc3paMU5ybTdCL0grZ2hXdmpZPQ==', NULL),
+(96, '2023-12-31 17:42:04', 'T2JjOTNwU2NPbnJHaUpYdENtbEo2WnpkOGJocDBVMWdZdExmdTFPeVVISkxDVi84Y21wTWFPYjZrT1ZZaEY0endMRTBnL283bSt1elN2R2hYOVJHZGRKQTUwckZvemxYZ3ZDL2lBZUlGa0dJeUxIQUxYcTI2ZnRGS3ZTemFuRllRUUdpczhqZnRQNHZlenJoWmsvbXZiTHdTOW1hVGpmczBzZnlqSVR5YUtVPQ==', NULL),
+(97, '2023-12-31 17:42:04', 'UllsdlJFKzRlSS90QklVdkdVYmFjaUFEdjY1WVB5bVl3Y3N0aEFQeGZzVXJZUXpLWUVsbUVHa3BZK3B4VkRKdWZVbktCMkttc1VDUldKMUgxT05jUml1STJuV0p3UXJmK3JxTXVhRXhib1grYUdpYVlKbTNwbmdxbllXN1lUdCt6Z2UvalZNWUJGbHBXLzFMZWw5OHFqNXhob2t1ZGlPVm52T0swZzNCb0RFPQ==', NULL),
+(98, '2023-12-31 17:42:04', 'QmM4TERjT25ORlNlMmFUR0RMQ1lKTlJuVHAwZmdIS3ZpYnF0Y0QwdXJSWFgwYWY1bXE0ZWtxZ3k4UGdCTXhsVXR0MFNwN0tLcjBBdWxKM1dVQUxZdnEvSVZDV3BpYVBLK3B4clRjUFZpTXBnOXg3a1lISGJsZGljUnBhTDR3akRpSWs4dUhVbzJicVZnM2o0TENtcWgrNXc5Q2EvMXlrcDRCYm5DQ0Ryb0RZPQ==', NULL),
+(101, '2023-12-31 17:42:04', 'OUNsdTRITE5XUWN1ckdWQmZzcGpmd1pRK096SkxCbktoVng3R1orblR4R0xPUDNLUjZIUHdia2pCVU5UYlowQU4wUXI1L3RObDV0WTRXbXFWV3VHUnh2ODdXVGppWllwZFJSWnhMNUsvT2FRTDVKTHpxTkUrU3cvR1lXTVNxeG1pVjF4NllGc0pOa0VPMVUxdFNiU2NEcmZuT2NwWE14NjFSRzJvS2FpT2hSbDJPZnJzUUZqV2E4U3pRc1QyNDRmVG92eEM1WUR2c3FjWG1VVE0yd2JSTXd0RFgyRld5SXExVlZldTZYSmMxMD0=', NULL),
+(102, '2023-12-31 17:42:04', 'LzVybjJxaEdrbXJXQTZQWnJoVG9RanlFZmptMTJkTFJaRWpaUEM2RjZrdVRqL0VldGU3RkYxODF3cWZxajVuRFJyek9kL2tpcGwyeWFjWmc0YTBRT2FTTjRDN0lmWVZWYlVyVkNKRkFKbjM5UEVZWkxLclZKaElNcU01WC8zNzNPbk9uMTYydXNUNEMwVm9HWENDV3d6YWY2eW5ISUJGQUgxR3RoejMyK0FBPQ==', NULL),
+(103, '2023-12-31 17:42:04', 'dTFGdGZBYUJOQlBralptckZLUEt6SDdJSWFReXk5WEtFTWliVFMrRUM3MGVHQW5iNlF3UWNubmp4ZFk5b1g2ejVoU2EyTUpjODZnRW9mZmNnL3FXbjdUa2ZvS3IxaElqMkFjcUFlSWR1Zi9UcXhxckVoMUdrRHBaSFFmSTZZYitiR0JNM3QzZ3RmRjdNWm9mcnBOQnAzdzhLUnB2QXZEQkU1eHQ4R1VPRTE3Z0pBQjNjYXRRWVdhWEJnKzVWSkdn', NULL),
+(104, '2023-12-31 17:42:04', 'dTY2S3hrMnJkYWQ2MXJrcW15Z3dhYUJRM2V6dFdLbFZCREh1bDlYeUxCS0xMbjE0U2VtcG54VFF3eFlQbVhndDNBSUxCRTRPTTZWK3ZmeHhtR2lQOEg5cWtyY3N2ZUF2Y2tvS2hBTG4yMmxLYWZDNlRxK1Qrbm40VW1ld05rbE1haWJBTVVvTE9SaW9FTzkzMWFlWFlZR2l6b0RoN3BvL1dPNUJlWnlkdVF2SzBpT0ZPa0ROL0M4ZllzcTdLNEov', NULL),
+(106, '2023-12-31 17:42:04', 'RzBUbWhneU12bGFrVWo2VFRvZzgzS083emNiZVVRVGZOT2ZJQ1ZaYUFEMGR3c1ZiNnplY2lQUzREVktpdVFjK25BNHIwRnh0UTJqWWNoOFR5R2dCSUVadU4zc1RUczlOYVA1Tk0zbTMxZGVuUVVrMEJvUGpzdkY2UzlDVE0rSlBrRkYyczUxaUNZODJZclA5UlFUd3BBV1YyaFFqaSt1Nms4OEhnMUU4akl1T21lUm0rTVNwUXJSdnl1UTZUcjR0TkRIYUExOVpNY29PanVUYzJsaDVhQT09', NULL),
+(107, '2023-12-31 17:42:04', 'Tmk4NGFwRDJrVTMxM3A4Z0hDdXBqT2ZCMjNGL3dJM0xpOVpsQWgycWdTT011RThvemFKTG4wTy9hUlRhTHMzWlBnMFp6TFRQQnRkYXdaMnZ6Y2lNZFhaaE9QdXJ1RWJwM3Zxellid2xhaWRqL2xnUmdoMDR1RlN6T1BTdHhydjVoT09VZlZad2RWZXRLVGdPTkQ1cnI3dnRreW9MVjV0dk1QZldYemdJeStic29yc1dFaEFOM01iSXFhZllGeGda', NULL),
+(108, '2023-12-31 17:42:04', 'eHVtMW9pcm4wNGxLd3lJSU1qT0I4QUY2SDk3WHFzM2ZscUJRdWR4eEd0NVlLYXFyL2Y2N29VV2Z1emdRTU13b3kwZzROL3p5RzQxYmhNREk5ZUljNnhoN3RYYmJpS2QwWnlhdmJSdFdXcGxLRVhYUlZyTy8yeVlEaUNqV3diQnlTSnpla0M0VWwrNUVyUHYrOWRhKzE5RUNveHdPMjBqVzZsTnh1K2lLeDBJPQ==', NULL),
+(109, '2023-12-31 17:42:04', 'NWlYUVlXZG4xZ2FRQVMvZG9BTUFhMTc0TDVIL29rMTFvR2tyVllHOWg0Zlp2U0dFd1cvVVJ4VUZTdFJWdnplUk5FdjlTbTN6R1hveXJkeWg5Y0JHcG1Zcmo3d1FYSnkrUWhwM05UYndnVWo1Yjh5VS9BRGt5QnA0cTlnOVc4ZDhJUWRSSU04VjBBTXRkMkpmZW56Z0cvNnVxekVwaFR6QkdLRkxXS0F2eCs4cmpLSkJST24ydFg3c2NNbytyZ1VR', NULL),
+(110, '2023-12-31 17:42:04', 'L1lHSTZ5RDFyYjVNL2pQQ1hYSldMYmw1NXZCSy9HaWlPd252NFluMHJUZ3BvWGF3eXovRStRdDBTRCtpd3MxOUViNExVSzZDajZla28wM20xbHpHWWtxblovMVBEcjB1Nk10Y28zbWRaTExEUE1XZmtuMm9vZDFlUWkrWmszMTZNekFqVVBmMVRnSXByOGg2bXVpNUwxTmhNc2tEek15TmRSZENBRGtpQ1NzPQ==', NULL),
+(112, '2023-12-31 17:42:04', 'OUszblY4c2tIcHBxNTVRSDZFeUVUNGxyQzRJRVNhUEQrcXBya0FpN3VsSFlPaERXY0NzRWR5Q0Z4WmxreEtTK1NJdWIxZzNualFZRS90WDY5MVYyN0NObGJzT2dBMGVOaFJ1MjE4QzJveHkvRzR4QnFPVjVnM2hsQ0d3NHZHTnJvVHJjWGpXYVh2dUd6bVMrYm56U251MFF6R25EN0xZV1hiWDd6T0hVTk9JeWhvZDZwVC9VSnROWkVHSU11eVlqelloQkdIbmkreEpiR1BsOVpRTCszZz09', NULL),
+(113, '2023-12-31 17:42:04', 'ZE4xOS9jQys4a291ck5OY1M2MWJSa1I3bG1OZ0Q4S3ozN3VFZUtIK0tJUmh2SDFHWG92cmNGanZvaFpqMWJuZjhWak9PR1E1SVgxUksrOW5xaEZYMXlwcys3Y0VjUmJvWlpiMkR5OWh2clJYTGFuWFB6K2JTaGJVQW9YYjZudUZJcDFVaFNEazRwZlRqT1ZnWjVwNCtEWEhrQ2tGQlU0c0N4Vi9rcUtQQlpBPQ==', NULL),
+(114, '2023-12-31 17:42:04', 'MXoxQzBiTXQ2anVHbEVBQk5lYlVWenNOLzUrTCtNMGFtL3ROdmxRbjhIZUwrM0s3QjFtdFNkMjRpTjlyQ3VMajNrdS9EUm9xWG5XRitVZ0JiMEhlZjFVN0V6b0ZYUUlBYmVBbFhRK2FCbFFBRklDM2Vib2JTTk5hd0t0a0dnWGUxMmVXNjhqVHAwZ2JYcE5HK3A5YURvQ2tHZFlUeTF4b0F2c0JLMHI1a0NFPQ==', NULL),
+(115, '2023-12-31 17:42:04', 'ZWlpWGpyNGM5T2lEZXNMWWgrTnVGZWhBK3hMeXNVbENzL1c1WFh0cmM5eFAwNlhNVUx2UkVia25xNkg1bkR1VjRBSXNlSlR6SVRnVmFSNWRBc2lDaEQ2VlB0aEtkbTdlTlF4OVFTb3JRQTRxWnF6WW9WdU1TU2tPd2x6VVRmOTMwZ0p2YTBaUDBtWm9wVnF4eS85MFpnVFNJSGRzTnNPTEIzVDJRenhkbDRQM2xWWHlwQXVmQ2Q2M0FzV0pGcjRJN0Z2c0tzbVhYcmNKdE1HWVRPVHFQdz09', NULL),
+(117, '2023-12-31 17:42:04', 'ckI4M09tL09BWklEdEdBdHd3WmFlVHVZRFR4dHh0M0NwSDFoek5CdUo5WXJNVU11QnZCL2NyeTYzT3hYTW4xdWZzVWJ4aDEzRlNhWWxUZnNLUHNLYTBCQXR6cVJkR2k2SjJCdFp2MnVjVG5hR3hjOHpkWkJGWEJFbkZ3T2dEQmlEZUhkR0c1dGNWTTNnTS9rUWNuMDI4RDJDSzM4QXlPRVFKdnpva0ozRWJ6cGs1SWk5bVAra1pXS2FWN2p1M0FyY2VJa2ZORTlqc09qK1VlUm4wSmUydz09', NULL),
+(119, '2023-12-31 17:42:04', 'ZWNNMjJzOXdod3U4QkVtZUFEaXRGbnlNUWFBOWg1dlFXUThMSUIxbHhaOE1DVlRORjlFSlp4Z0VJcDBFZXBaU0pzRlY5RjVxd0tyREx4aDhic1I3TU1WeDBrTlBUd0VMNXVxakNoSExpcGJaYXNZM3FXTGlHaUEreWFaY1RVczlwbVkrWExCL3VqVmplZzNHbmFpZVJqZHJmK0JoalYvRk0wRU9BYVBEcFh6b1p4WCtDWmN0UG5zd0JvRDQzYWQwZkJZbzRzZVl2bUlYc0M3SDYyd0tDUT09', NULL),
+(120, '2023-12-31 17:42:04', 'eGdqWktKVUJwR1pXL1J2TGZWbjdockR1b3V6UGhDUTJmM2FwVnRueTZjdk1xclVONjNqSkNueGdIZUxWL1ZWZERiTTdMcVlNKzF3c01FaHg0dmtGeC83MDE3cU5lZEpuM0lkeWpCT0t5SVBST0lBZE5wSGVkN2FKa29vL1FqNzFXdTNzejdkcFpBNzNCWXYrMzQ5YWtkR0F5MXNnVU84WHJveWNFUU5RRG03bFYrT296U2dyNG55YnpoYm9ybkFG', NULL),
+(122, '2023-12-31 17:42:04', 'QkFzcEdqbWlpTjdpN3hUNXQ1MC8vcTRLUWladlpoWDkrUGZZUjczOWtNZkFFb0xiK2VTU1d6M0xNdUEzbFZSTk5GQkloRDFVZW5LNTFXbWVsTjdTTnljU00vYm0rNzBheWZ4Z1BURGpLYTZnZmZhL09RUE9FZlhhZ1FHaW4yR3BNRmJLK0hwenV0WlZ6emFweHNLK05iV0NGUGZZaUd5OThNdFhUelhXbWxTYnRsNklqZEtpZHFBd1dYdTRJNUhMTE5vM3FQSEQzWitIQ2tIVkpML3NKZz09', NULL),
+(124, '2023-12-31 17:42:04', 'ZzgyUS8vMHhCTmd2NGczdUk1c0QzUElkMWNEVjkwMHpLejdFazM0d3N0Y3k3T1o0elZGWFFFbjJiWDVheVF3SXdVdXczRWRweW9qeHJveXZiNHFMNDNEejcyRHJ6Q3hkczdoVklCUlFpOUpVNTErY1BraHZqNkV4MmpNOHBrR2hwblNySGpsZThUV2RrRTNMMkRweFJyRk5HWjd0OTRjK1E3SFU2amxsaHgvUXNaU2RuRXRRRHVHQk9KcmM0ZlloSDZMQmtQR3U2dDhYU25mNS91MWtvUT09', NULL),
+(126, '2023-12-31 17:42:04', 'WHdEOWJDbzdVT0Qwc1RDeENFRnhwRjlTM1FibExtOE9aMUIrWEIrdThCUTdPMU9Iamo0ZGpZZmVSSmJEcHZxRnRSakVUZFA4aVlYSGtRVnFLQ3FqLzQwc1ZWNTFwbHpZNHF6V1JaNkxKMDQxdGg4eG0vbVVPR2NLU3JwaE93bFdsRHYweU12RGZZbUlzdmViR2pUdm5qcUlpMXEvUHh6V2U0M1A1WUZaK3pNPQ==', NULL),
+(127, '2023-12-31 17:42:04', 'VkpYUEFIZ0NuaFpZYzkzMVRFY2l2QzE0YkwwajVUSWZFSkVIU3c4M05URXBQbW1RNEovdDVIc3hzVi90Y0hPWlRnL0pJTk13dmNRMlQ4TU1mdXBLSnJsbE1rTFlZaTdEUGs0TVJJdDhab2gvNU8xeWxadkpyWm95WmNjU1h0Y1pzLzk0NEt5NjNSQzZFbU9SQlE3MGRSZVQwdHF5UTVENHYxWEQvSkIrNkw5eEFsQzZPRUo1aEN1YU12N3hKd1V3', NULL),
+(129, '2023-12-31 17:42:04', 'R2ZBQ1I2Ny9PaWlTbkZyYTgzMmN4UW5tVDcvUnpXV1N6ZjAxWlhibkQ5WlRTaHZUNVpoNDI4VlNMeE1lbk1aa2hNYk9xRDYyeFFDOHltVW5MTXlyVnB4eWpXRGM5T0U4dUdzblE3L0FwTzVnR2xQM2JlUnQ3aEM2c2lFdUVKVHdjLzB5L1dqTGtxZ2lncXBhUUhNVVJRM25MTHYweXVYOExNL0ZHRUl2YUxvPQ==', NULL),
+(131, '2023-12-31 17:42:04', 'aG9XcGNFTGNFMUtqQ1Rvb0kvK2Q5SU55aUt0ME9Id2JBSU9Ub2VsbktDb2FaV1NpYUNDVnpjZEdYWEFiQ0dLSVhVMGQ2TXV2YmU5ekxJd1ZPQWpYMkh0SjRBeS9rSzdUUWJON0dsMUVsYkJVWm1SMU8wMjhSdUVUWnNvbFRvcGNMM054ZS95bi9idEtuNG4rSW1kWkV1a2cxMC9rTld5bk9MaDVsYnRQMGprPQ==', NULL),
+(132, '2023-12-31 17:42:04', 'am1wekxjYmptbXlNZEVGRFg5M05PNStWL2ZNQXFZZ0xRTVJleGRDTVVrM2dLZWZRZ0taZDRkTHJ1czlUTzVWclp5b3poQ1BENEVWd2JWL3RpQmR6cEduS0VJYmpuMlhkKzAvbmZNMEVNUXBFeDkvVHdySFJqUWRKOW5yeHNQUjBiQ0R5R0VKMkNqckZZR2UxcjkxRk5lNW5uTFlrK2xBRHh1TW9mRFJnQldJdjFUQlIrNHFjOVF1ci9JQlZVdmJCOWJyMTdJMngyUU5IaGNFNFJLZlo3UT09', NULL),
+(133, '2023-12-31 17:42:04', 'bEdvSDkxSWM1eXZmc2oyWVhzN2ZHYWJvb0tXRmhUTjBOSndESTd4cDEwb0prTEgvU1Q5QzNieDV5YXdhYW01eE5lSGcycXB5TjFuTkg3a1pLY2x1SFh0TGJsTHd1N2ZhYWUzcXlhRlhMd01UQk8vMFNXemlQckNHY2JtL005T1UxK0dlR3I4UjRxTkdSMmJPdVlxajZBPT0=', NULL),
+(135, '2023-12-31 17:42:04', 'V25hQ01GbmZLN0VZK2lXUzl0VzdyM3M0OVV3N1hMOWc0eGpiOG5obWhmREpnbEE5NlJONUc2dnBIbGN6MERnODBscHFtUmdSYkNydXJmZU84dSs2NWt6WHh6VERJY09QMEZDUGpoUHMrR1hPS2Q3Vi91bHE0R2NuRUJCV1RmZkxhdzFUSkFQZGdZb1dOVjFxeDlySFZ0UHBFeC9pNjlIV3l0bjhwbEdKbndNPQ==', NULL),
+(137, '2023-12-31 17:42:04', 'L0NNVUZ1WFpiWEZSSE44bUwwcGxDTWF5UG5WdDM1YzJMOXZGS3RLRXhIY0xlbllSVm9XM2NVNy9iYlNNVjUxZ0tQQUlhbElOaCtmL1hBV0d1cFhieGpnajVRc013OHlaZ2lDV1B5VXBJTTgrVU4xdkZIOU9JYkxKR3NsbDFMa2FOcGlvcUdnK05GVEo1SCtZK0pxbzZLRjdMc0RiVUhBdGlTRDdQUFVSTDh5SnZpb1JqaGJ6elMvUElZcjdqU2tF', NULL),
+(138, '2023-12-31 17:42:04', 'eUVqcGxzeVRLUDJrcFJ5MktXaFZIUjZ1aDRBQUszU01vSXRZSGl1cDl3SkdWL2RlN2Iwb2FtejdZbDVHcTRnRmJhY2hiUXFoWjZJU3pSTnJNUy93Rm5MQWhwWnlEN2tkSjMvQUtHSjE1ZklsVGZldWVSSUZjNjllY1NHMDU0WXZNL0ZYUHdlN2FRSjAwSUZ6L2g4L2JQZWZBT01RRnNXbGpjQUhTa1ZxZmtjPQ==', NULL),
+(139, '2023-12-31 17:42:04', 'TTNJb3RNbm9CaTg5c01LODF0Y0dyTUl0b2UxM1oya1Vac2wwSW1aT004VGVxWlU3R1pkbnF6dFFUdG04Rm9MWERSaDZXakhKL3B6ZDR0OE1ndnlpTG5YcDBIZFE5QXRTOTRYaFVUdzkrM2pkaWtTMjRvUGdLWi90SU5lZmhoWVh6ZWxkVUNscVkybU5rVEx6UEJlOFBERGprQmEvaVBFTkplVkNsS3ZyemRnTTZwU08rSzdZL0o2cWNZbi96aFVqcENCY25MM3VMa0tEQnEvM2tLd2VkZz09', NULL),
+(141, '2023-12-31 17:42:04', 'UXJOTUJudDhvOWI5ZDFvVElpR1pnUFZjMXp1QVJtZ0QvckJ3MlVRcVFkZzJ4Q0R5b0FVV29FcmpUQ0VubWdlMDdTZ2JIa0NQdzZHWitYNmpLZWpRR3lxTUJLNEg5SXRtRXZFVDhxK0p6VFk0WFRkd2VqTWNxd1JaV2g3U2xCU3JGSFhaMWphWW44OERrYTY2cytKQ3hjWDEzU2NDUW9QaVlGMU9EUlkyclE4M3BkMGVxKytGMm5wOWw5RFVzOFZpbjJnNHI5eVY0MGdia25rT3FrMEVEUT09', NULL),
+(142, '2023-12-31 17:42:04', 'cWFqN1dIQ2xrN1ErVUU1dml4TjFIK0ZNZjJUcktsWFk0N3RGT3ZtUGU4VEkrYUlwVk9FV3A1NkZNN1FLUVFKamdFa0JmV0Rha2VDblNHbEtlbkl0Q2IzcDZVZS9OOGFEajNOdGllMjFWcWF4NEozVXJSNEhVb3NVY1krN3hxc2F6aVd4bW05bHRTd2t6WndBZFd1OWdBPT0=', NULL),
+(144, '2023-12-31 17:42:04', 'cnhLUDZuOUUxOEpYaXJGbEY1d0tjZUtGRkt2RS9seWpZaGJ1VUQzUFNqS2FrbXp1VjdIb2RjTmlKenNMdWo3bXVJZUM5cnBkVlRYSnIrZHJ3MllSMlpxTG9kK1psMjE2NXNaWHEvMk1kVkRQZ2pkcG10MG5FMlZzc3NDSmo3aFQ2U2pqcmtyclJucy9pbGN0a1hsS3ZoeXIyQnZqdGVSVW0rT1JOd1FkUE9qcGhjcHFYamgyVkhrZDltYWpua3RTNSs4NjJwMm5qK3UyNjZKMnU2RU5Ddz09', NULL),
+(145, '2023-12-31 17:42:04', 'T3BPSEE0TkFHUXY2WGxXcVl1U29nN3piOHAxcWJrZm9vRGU2ai85OVpYUjFjbC84UDRTMjgwblI2UkJKZWwvYTVoS0NsYVRSQ2l6MUI2WUVXZGZaZmp5Y2VTQ3hhMXdlV2RiNklzc21CQ1k4UHdqblRKR29ETDBQU1hjaFN3bXAzTUNuK24wL1B6Syt4RG54VGhSdk80V1JvRG9aRnp1dnZESGFMZFc0TERYMXQ4NlVCUmkzdzlCQ3ZQSnBuRDFTOE5pZ0Fodjk1aXRlRUFEczdwZlRyZz09', NULL),
+(147, '2023-12-31 17:42:04', 'RVdic1JaK293NmlPVm9RK2NuTW9UMWVyd3IvMVErYnhycStmZTBza1dWNjlucHlBVzlTQjBENkpyNHpXaDVRNWxOVnBDQ2dqOVF1WWgyOXg0dDA4d3ZZVjdBb1JGdG10MWp4dGdRWDZoM3VUSUpSNEtlbDZ3N0VUSFZYaW51RmJUeVhoejZjYWdtdVREbXgyd2NRaERDVXZEcmo5VitUVHhCZSsyN2V5L0JNdGpuSlpSWExiTEZTN1VneW1HaXNCclR0bzRKbHFJVUNUMEY0aVRwU1g1cDN4L0EyQVpBTGt2MEpVWHhKcjdVST0=', NULL),
+(149, '2023-12-31 17:42:04', 'VzRSS3NhMUk4dzQxNm9iVXRsMzlTYndXeTJvNmpxemR4Q3orK2czbGlFZGZWdUprNEZkYy9ab003L2hwTksrKzNMejVGWGFQS3ZPa0srVk5GZ2xKdU11Mzdsd2hieVdiK0RYZVQ0UlVKQUE1QmVnUU5lSmxrN2syUnVySFppcDZ1ZUt4OWhJd2J6SzdYS2hTSHpCdFhOUVN5eW9VWWoxT29qWE1nTkpKMVVROHE1dXVNRnJBSlA1bWNranZjaHpLZ25mQ1BzK0hnQWZ0UU51UEFqbkNoZz09', NULL),
+(151, '2023-12-31 17:42:04', 'VkQvNks5MzBFQ3Q0cEpkT2owS1A0VWRDaHFEdnRuOHpYZ3B6ZGliMUs2bFFlWjZLY1pENGpwNzNGUHZpWHI3MWxmb0NOc05UMThhbE0ybHpndkprd01zTmc4WVU0aWZPb0RrZjVxeTA2WlY3VnVHREtGREYzeDhmY1VNUVZLVEhFRVhDU1JYVllSanNWK0xXRnB4d1FUd0w4VWRsR2VYMkpVRzIveDVlU3RrcVNzN2Y3a3dvUGFuWWxtZlpXYis4WmwvYndBam9LMy9udnBBaEo0OVNrUT09', NULL),
+(153, '2023-12-31 17:42:04', 'Q3Nib21XTmhvWU5SbmJ5TTk1anJHNFZ3YU8rYkRScm9jam02Mnpnbk1UM2p2NXhwZVNTUTJFQmM2WFAvOGQ1ZUVjMnZDOXltdld1UWRzKzRDVCtrV3ltazlhaTl4RlI5Qzk2MlMzOWRGUTFKVDl6aW9yMWQrWWJrcHBVdEt2dFpFWHBWVkJRVytrTUdvUTJyT3NuUzhkN0xRdE0vcHd5YlQzb1lUYjFJc0ZBTnJCOVptMFcwdVVnYkZESG9BWi9id2hLRUwvUlVyNEVKeHkzbUFxMms1cHh3U0kzdEJYcWZJVmdCeENOeXNaYz0=', NULL),
+(155, '2023-12-31 17:42:04', 'dFVndDNSYlVzN3NlL2IrdlhjS3RpMDYvcXdSa1pxUWhDQTFDMi9uV0YrRmhIay9aRGJwRE4zcGU1Z3I3cnZKa2Jod3ZZNmFzaDlxYUhBa29DZWRvZXdtQU8ybTF0cG1sOHFWZndBV0JsWGhUbms0WlpRYzVmTEdKam9PeFAvRE9KUnh6eENqVUR5Wmo2b0Zsc0M5VisvWlZNcXFtejBHNDd2amhPZUR5Wi8wdjRhMzJVbXE0c0JrQ2pod0ZFQjYrMGJzMEZwZXV0TnNNU25Ib25xRXB5UT09', NULL),
+(156, '2023-12-31 17:42:04', 'ZUlOV252MzJONGF6MGZuYWVsYlU1b01rTEw3Nm5NS2dZRU1MaHYycU1nclpOeiswVmNTRHZtOFBpYVQ1TmxsNUxZdVV5S241b1hCRjRjWFgxWi85VjZvc1Mza2oyc0dtK0VhZVE0LzRFUlpJSVFHem5SOHVJQWNMNFhRWXFsRFFsNnNwYlMrdG5pU1p1VTA4QzJnWDlZUlBqMUw3OTRWV0tWS0Q2UlU2VFI5eWJSdWl5bmVyTnk2Yi9zUFZnZmlqRUhDdm95Y0RPRm5EZ2tsa3FMTWJTQT09', NULL),
+(157, '2023-12-31 17:42:04', 'dTdLL0REQURJUERmeThJOXZCck8yYTcrYnRhWDVnSFFxZmFZY0ZZa1I0Qzg3MXJZTE5MbEpKRHFqNUtPR2Q0OEVaNm9GdHNBb2R2WjNLVkMrM3JNMGR2WFVUWFpSNjBFcEpRWlB5TDQ5NDFkbVFNSXdUYUhZUDdVK09XOVJXMkk=', NULL),
+(160, '2023-12-31 17:42:04', 'RlQrdzRjL0h5VmY1WkVIYy9TZEI0L2tSR0xjNWpIRWlPY2N4UERWUTFINVkvRUdxSW8zNU9BOG1ibVhOa0ZsWXdyK2E5bE5RL0lUZEh4TmxabVJVdFVLeXpGRmxqdUhDMERtS1YyUWRJRUNwNTcvTko0L201bERnakZqQjUvT1E1d0tiNDZGejlTbVdtaFMvVFhGQzBaelc2V2duc0JqaTNGbDNGYUZZVFRvSE1zR243aVJsZnFYdHRQVEZMeUxNTTZNR2k1akt6NTBMTEhJSEtMU0x5cDFYZUZ5YlYzdUlseWp1MXpvVjl6VnprazlJdkUxV0VjSUljM2dMSnVxb3V3Q3RaTFVocURaUWNLRHdLU2Nmd2c9PQ==', NULL),
+(162, '2023-12-31 17:42:04', 'NmtwZFpYT0k5eVExaEY0K05VbnhueG9FcWVqUExGNHgxWGhKNHE2Y3N3bU1YSHgrRUdzZWlUaGxBNDdEUEVTL01EUkRSa1dtSWlhbTl0Ymh5VFBLQVI1WTc5bEhUL215M2NHdTlrZVREUmsxSnJzV0Z0RjZCRER5RE5JOHZscVVuN1BaRlBZTFdSZmpsM3NwT3c4a290cUtEUU56UWFNNGtqQi9haUtmRGIwPQ==', NULL),
+(164, '2023-12-31 17:42:04', 'OTlGdW1CSmdJblZDbk1rTTBpdXdIZmZEYnYzZnllUlZaM2JxQk94b2hwV2M0YmtjdmYxeHQxMVNiTEU3SVBmSlRyT0JRbURycENKanhzTlFJay9KTG9xOHZrZlZYUlJHRGgrZlg2M1RzU0pMelRWTkJpWlY1bmV1cFpQclpGcFVsU2xvMDdMbDhiUXF3UDltbnJsK1hzRC9vVWxhSk5lN25RdUExNkY5dHp4eE9rdEhGSG1TNGw0QzBsZzM3bGpGWUF6azl3V2dBNS8yVllHTC9ZUkYrSy9CM3dOd0ZwUkpVUzk0N2ZJMW1rYz0=', NULL),
+(165, '2023-12-31 17:42:04', 'ZXd2bHdXWGpCVXVNNDRjSW1sbmZ1VG8vYnJJbVhXcUhjVzhiamswK2wyQzRzVXRQOTFUZFJMTHR2U3krNUVzNU1OWkh6aVRBNmZuN3UybHZuZ00yRHNTcFZFOUhpT3BxNEVHdlkrUFRQQTJVa01URU5GNzBQWHYrSzZVV3FWTHI0NnNHNEErdGk3YVVLeWNUWXFhMEtRPT0=', NULL),
+(166, '2023-12-31 17:42:04', 'bTl3Rk9rdWkvUm5EVWsvZSs1Y0dZTXFwY3lVU2NpRGZ2RkdIL2crak94c2xISEE3RmltVWlhOG5UNTJCQTdIbDZPcnJaaTNoVDlFUzZEc3c2QkVpZFAyZWpNVGthWDZyNlJKUjFOajBxN3UvT00rWW1nVkJIMjBrUjZqK0RZQXJ3cUtzZ2tOMHZMTTNtd21PeHZTbHpwclpaVjROZnFQRDRGblhsSU9GZlRpeVZneitXak93L0NUTmZIWi9SR1ht', NULL),
+(168, '2023-12-31 17:42:04', 'cTg1YnY4UjhlZkp3dDJLcVBuQjhoQ1ExMVdHYVVTUXZtakhWcUwwTmgxUXlDWk1CTXh6T0hDN0dOZmxKOTBtM0VYZjdUc3hnL1UxaFpZQ0F4Y0pYU0tERU9QMVBsaFRQSjVmTTJPVm03d29SUlU0Q0NPUGxVQWY1dXVaK3ZZbVJ2NlRhTGFScXNkQ21sc01zZU93Tnh3bUhZa1ZlVUJINlAvWDZZM3RUN2ZOSUU0cTE2SlJ3YXVWSldYMHNBVkFX', NULL),
+(169, '2023-12-31 17:42:04', 'MVhpTy9PNUJ3Ym9JSExNbHpFcDRkZ0dRemhGaXRPY010dWZ2eWEwaEQxYkpHaXZuYThEZXpzSlUzeWphYmRyY3N2ZW0zSStDRW5LV2pDMHphNDVVSkd3M1AxbGlZZ3B1aXEzZnFCd0pVdkpTRjBEZndvS2Nac05nRVpkNmNjNFNJcVhBZVpzY3dMKzlmcDdrQU0xdVk0NGpGSkI2UHdpMmdQK01hWUJpMnIrUGx1MisyOExFTTF5dFBHQXVVTHEz', NULL),
+(171, '2023-12-31 17:42:04', 'NlBkYlVjZ2J3RWp0NWlScmlPTnpzT1FidGM3TkYvalFsRitoZ0VOYWIyR21Qa3N1ZUhUeHFJN3ZZL0ZHZEkyQS9sSVJBdzlDYnl0Q1p0NkxjL05vQk4zbk1aUDFkWE5KSFkxRkg3VnRpVzU2R2dOZlVlRFR4TGEycmxxZG9aUGwxUmk2eHdwTjZlR1JNOStVbEQxMFYxdk9zaUFEOTFaSURVQ2VHQUk2NFlRPQ==', NULL),
+(173, '2023-12-31 17:42:04', 'R0U5SjNGYnpLUDNFU0dkMS9Tcjk1VUtnWmVYUFFsT2syY0ZXbk5HUVZackJWUWRJdC9zcU5PZTA3V1NuVXF1TTVNSXJUbnMzWTQvL1dWdjljV1hBUi9uTTdJL0VwNlhYWHVzZHRRbEhMQ0cyUU9XUW5ZdUVnaUMwUkd5QXB1ZjVvcCtSU1lldW9zc3lMcXFGL00zL3kzRnlYN0pvckY3UVNpQlJxamN1Yk02NThLb0tUQ0ZzbU1RRXFibWVKYks1', NULL),
+(174, '2023-12-31 17:42:04', 'SGtKYkRxUUR2NlVYSnNlSXlEYjZSY2hrdHZsSm56eHJqMmlKNFFRT0Q1WU5nZk5DN29FR1FVT09FU2JhblFKVWZYN0Fjb3NRS3VTdmNnc2h0eUU3YVhidXAyTHBFVjJWeG1iaWovL2Q0RzBjTnM3NFZ1YTYrTmRpajhNMGVqN3FxMlJEMVdOSnBsTG5Odmh3M3NsTFZBcWdsZVV6ZEdwb2p6Q2tXWVFENzNrZEVJaklYWEJxbCtFM05jcC8zTnZR', NULL),
+(176, '2023-12-31 17:42:04', 'QWVNVG1kcWhjMFFWSWJOcEFteDJCeU1XNmVFS1Q4dTVsSjhkSTZ2UGljYlI0dW9oajRnMzJaUG03bEFZZTVZSHFRbnNmRUU4MTcwanNJdVJZU0JmQjI5YkRzVkFyOHBlMi9GdWVjK24vMmV5M3c0c090Qk5iWGRaank3TnpPM1F3RHJ5NmdJNXFTVUtqb2ZrU0F3KzY0WlRkVDhjbklPL0VIU1Y5YXJ1cVFzPQ==', NULL),
+(178, '2023-12-31 17:42:04', 'eGZYejEwUHFadjBHb0dySlFId1E2bk81WkxSR3l0bU02UlptbHY1OTdCQjl0N05FNDRsNkJSemJzdXJZTnBXazF0dk9tRDhmejNoRFFSZE1KUjA0N3I4TmZwYXlOS0NaVzZqUjRjNWQvMnB4WmdLdlVMTkdFN1dwaXRaajc4WHRMNUZ0MTRTT0F6NGUwK2Rubmt2U0UxVi9IeXZyTmNCbEFHMm4xT1NaZUs0PQ==', NULL),
+(180, '2023-12-31 17:42:04', 'MTVyUFBpYmhMWlMxMmxuaUhWSjZlUkppSWoxUWEvM0t2VXVuQVJmMlVOUmJtWU1iYnRLRFRxTnkrR05pcFVJdERuU1dXUTRiY0grdEVRTGl3b01ncm1ZY1g1V3UzOHFjMUIraDBnRXZnaDV6K3Qxb1J3NDc1T0d4ZHhzSVFrUUZMUXNUQ2x6RnZ4TmJsUkR5dXFOOSswYkY0RWtyM2Z4VG9zRWZhMnpjZXhSOERtRm13dlVTZ2tqaFRmUFlHYUo2', NULL),
+(182, '2023-12-31 17:42:04', 'VnBLZEMzeFVIbWxwaTU3N0hMWmhvZ0cva3hiTk5ZemQ2b1IzMGFGNC9EN05KQ0VudGFYUk1zQUNhNVM5aU5wVy9FRXFRYmpEOWJrOHorUXJrcjhueHBRc05rVkhCd0hHK0NPcFBUeU5pMDQvRzZLRzF5SXVzQ3V3SVdTUnhpUVBIRW9MQXN3ako0ald2b09aL0JNZWdtWjFqWWZPUWRIS1lBbElmU0VpaFhua1RPSTloTDVmNmQveFlHOUdmQWRt', NULL),
+(184, '2023-12-31 17:42:04', 'b2pXVG1OZnNtN2hNUVQ2d09JamthVURYbjFBWFlwemYzQVlPVzV4QlZIcjMyT3ZiWmo5UmlieEw1LzU1VVhsaUVGbjFjK0xkL1FRbnJ2aHVrMWN4QVhKSkVtSW92elBMZHBLdHJLNEdUdGs2SmFEcHprakQyODJzQ1FnZmYzQ0Y1djlZSWNyTWdLalZGNlgwUGV1UUk3N0F2RGV3MVNCL2FmbXNIS3hEQk1XVEY0YVZDZHYya0FZOU9kZzdzS0ROSWZSN2pWaFRFU3U3SWtLZ1M0YW5pVHF4ZjA4WU16dk5Wc0p4VERNWnVtT2R2SVlzdjFyaVlFdkcxbUczMllyeQ==', NULL),
+(187, '2023-12-31 17:42:04', 'SmcvYVZxZ3Rna2JVWW5hbXkyWXlvaXNkOE9FbXRtNkhsUkVrNXBCUWZvVi9PMTB2akVnU0tleWltQldwbTUxSnp2OHpyQ2piWGFOK09Yd0NEanJSOHBxUUt4WlFRNzA1TVE1WGRMZWNzL3JZS0wzYS9IV2ZYc2VHaStjVHppb3E1Q2o1dlN5RE1TNTR3SjZDeEFmNmtpQVkybjk4bXFhRW5GZmdZVXdtS3JEb29YSFk0WjZuK0J0MmIvcjNJVklEU1dDa2dkSGw0eW1FKzVhSVpzSlNzdkVYdHpFZXR5VENKUktLeEtXVGlYTT0=', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_gestaorecepcao_roomstatus`
+--
+
+CREATE TABLE `hssa_wy_excel_gestaorecepcao_roomstatus` (
+  `id` int(11) NOT NULL,
+  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `room_number` mediumtext NOT NULL,
+  `room_status` mediumtext NOT NULL,
+  `room_type` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_gestaorecepcao_roomstatus`
+--
+
+INSERT INTO `hssa_wy_excel_gestaorecepcao_roomstatus` (`id`, `data_importacao`, `room_number`, `room_status`, `room_type`) VALUES
+(1, '2023-12-31 17:42:04', '    0151', 'Sujo', 'STFM'),
+(2, '2023-12-31 17:42:04', '    0152', 'Sujo', 'STQN'),
+(3, '2023-12-31 17:42:04', '    0153', 'Sujo', 'STFM'),
+(4, '2023-12-31 17:42:04', '    0154', 'Sujo', 'STQN'),
+(5, '2023-12-31 17:42:04', '    0155', 'Sujo', 'STTN'),
+(6, '2023-12-31 17:42:04', '    0156', 'Sujo', 'STQN'),
+(7, '2023-12-31 17:42:04', '    0157', 'Sujo', 'STQN'),
+(8, '2023-12-31 17:42:04', '    0158', 'Sujo', 'STQN'),
+(9, '2023-12-31 17:42:04', '    0160', 'Sujo', 'STQN'),
+(10, '2023-12-31 17:42:04', '    0162', 'Sujo', 'STQN'),
+(11, '2023-12-31 17:42:04', '    0163', 'Sujo', 'STQN'),
+(12, '2023-12-31 17:42:04', '    0164', 'Sujo', 'STQN'),
+(13, '2023-12-31 17:42:04', '    0165', 'Limpo', 'STQN'),
+(14, '2023-12-31 17:42:04', '    0166', 'Limpo', 'STQN'),
+(15, '2023-12-31 17:42:04', '    0167', 'Limpo', 'ROFF'),
+(16, '2023-12-31 17:42:04', '    0169', 'Limpo', 'ROFF'),
+(17, '2023-12-31 17:42:04', '    0171', 'Sujo', 'STQN'),
+(18, '2023-12-31 17:42:04', '    0176', 'Sujo', 'STQN'),
+(19, '2023-12-31 17:42:04', '    0178', 'Sujo', 'STQN'),
+(20, '2023-12-31 17:42:04', '    0179', 'Sujo', 'STQN'),
+(21, '2023-12-31 17:42:04', '    0180', 'Sujo', 'STQN'),
+(22, '2023-12-31 17:42:04', '    0181', 'Sujo', 'STFM'),
+(23, '2023-12-31 17:42:04', '    0182', 'Manutenção', 'STQN'),
+(24, '2023-12-31 17:42:04', '    0183', 'Sujo', 'STTN'),
+(25, '2023-12-31 17:42:04', '    0184', 'Sujo', 'STQN'),
+(26, '2023-12-31 17:42:04', '    0185', 'Sujo', 'STTN'),
+(27, '2023-12-31 17:42:04', '    0186', 'Sujo', 'STQN'),
+(28, '2023-12-31 17:42:04', '    0251', 'Limpo', 'STFM'),
+(29, '2023-12-31 17:42:04', '    0252', 'Sujo', 'STQN'),
+(30, '2023-12-31 17:42:04', '    0253', 'Sujo', 'STFM'),
+(31, '2023-12-31 17:42:04', '    0254', 'Sujo', 'STQN'),
+(32, '2023-12-31 17:42:04', '    0255', 'Sujo', 'STTN'),
+(33, '2023-12-31 17:42:04', '    0256', 'Sujo', 'STQN'),
+(34, '2023-12-31 17:42:04', '    0257', 'Sujo', 'STQN'),
+(35, '2023-12-31 17:42:04', '    0258', 'Sujo', 'STQN'),
+(36, '2023-12-31 17:42:04', '    0260', 'Ocupado', 'STQN'),
+(37, '2023-12-31 17:42:04', '    0262', 'Sujo', 'STQN'),
+(38, '2023-12-31 17:42:04', '    0263', 'Sujo', 'STQN'),
+(39, '2023-12-31 17:42:04', '    0264', 'Sujo', 'STQN'),
+(40, '2023-12-31 17:42:04', '    0265', 'Limpo', 'STQN'),
+(41, '2023-12-31 17:42:04', '    0266', 'Sujo', 'STQN'),
+(42, '2023-12-31 17:42:04', '    0267', 'Limpo', 'STQN'),
+(43, '2023-12-31 17:42:04', '    0268', 'Limpo', 'STQN'),
+(44, '2023-12-31 17:42:04', '    0269', 'Sujo', 'STQN'),
+(45, '2023-12-31 17:42:04', '    0270', 'Sujo', 'STQN'),
+(46, '2023-12-31 17:42:04', '    0271', 'Limpo', 'STQN'),
+(47, '2023-12-31 17:42:04', '    0272', 'Sujo', 'STQN'),
+(48, '2023-12-31 17:42:04', '    0274', 'Sujo', 'STQN'),
+(49, '2023-12-31 17:42:04', '    0276', 'Limpo', 'STHD'),
+(50, '2023-12-31 17:42:04', '    0278', 'Limpo', 'STHD'),
+(51, '2023-12-31 17:42:04', '    0279', 'Sujo', 'STQN'),
+(52, '2023-12-31 17:42:04', '    0280', 'Sujo', 'STQN'),
+(53, '2023-12-31 17:42:04', '    0281', 'Sujo', 'STFM'),
+(54, '2023-12-31 17:42:04', '    0282', 'Sujo', 'STQN'),
+(55, '2023-12-31 17:42:04', '    0283', 'Sujo', 'STQN'),
+(56, '2023-12-31 17:42:04', '    0284', 'Limpo', 'STQN'),
+(57, '2023-12-31 17:42:04', '    0285', 'Limpo', 'STQN'),
+(58, '2023-12-31 17:42:04', '    0286', 'Limpo', 'STQN'),
+(59, '2023-12-31 17:42:04', '    0351', 'Sujo', 'STFM'),
+(60, '2023-12-31 17:42:04', '    0352', 'Reservado', 'STQN'),
+(61, '2023-12-31 17:42:04', '    0353', 'Sujo', 'STFM'),
+(62, '2023-12-31 17:42:04', '    0354', 'Reservado', 'STQN'),
+(63, '2023-12-31 17:42:04', '    0355', 'Reservado', 'STQN'),
+(64, '2023-12-31 17:42:04', '    0356', 'Reservado', 'STQN'),
+(65, '2023-12-31 17:42:04', '    0357', 'Sujo', 'STQN'),
+(66, '2023-12-31 17:42:04', '    0358', 'Reservado', 'STQN'),
+(67, '2023-12-31 17:42:04', '    0360', 'Reservado', 'STQN'),
+(68, '2023-12-31 17:42:04', '    0362', 'Sujo', 'STQN'),
+(69, '2023-12-31 17:42:04', '    0363', 'Reservado', 'STQN'),
+(70, '2023-12-31 17:42:04', '    0364', 'Sujo', 'STQN'),
+(71, '2023-12-31 17:42:04', '    0365', 'Reservado', 'STQN'),
+(72, '2023-12-31 17:42:04', '    0366', 'Sujo', 'STQN'),
+(73, '2023-12-31 17:42:04', '    0367', 'Reservado', 'STQN'),
+(74, '2023-12-31 17:42:04', '    0368', 'Reservado', 'STQN'),
+(75, '2023-12-31 17:42:04', '    0369', 'Reservado', 'STQN'),
+(76, '2023-12-31 17:42:04', '    0370', 'Reservado', 'STQN'),
+(77, '2023-12-31 17:42:04', '    0371', 'Reservado', 'STQN'),
+(78, '2023-12-31 17:42:04', '    0372', 'Reservado', 'STQN'),
+(79, '2023-12-31 17:42:04', '    0374', 'Reservado', 'STQN'),
+(80, '2023-12-31 17:42:04', '    0376', 'Limpo', 'STHD'),
+(81, '2023-12-31 17:42:04', '    0378', 'Limpo', 'STHD'),
+(82, '2023-12-31 17:42:04', '    0379', 'Sujo', 'STQN'),
+(83, '2023-12-31 17:42:04', '    0380', 'Reservado', 'STQN'),
+(84, '2023-12-31 17:42:04', '    0381', 'Sujo', 'STFM'),
+(85, '2023-12-31 17:42:04', '    0382', 'Reservado', 'STQN'),
+(86, '2023-12-31 17:42:04', '    0383', 'Sujo', 'STQN'),
+(87, '2023-12-31 17:42:04', '    0384', 'Sujo', 'STQN'),
+(88, '2023-12-31 17:42:04', '    0385', 'Reservado', 'STQN'),
+(89, '2023-12-31 17:42:04', '    0386', 'Sujo', 'STQN'),
+(90, '2023-12-31 17:42:04', '    0451', 'Sujo', 'STFM'),
+(91, '2023-12-31 17:42:04', '    0452', 'Sujo', 'STQN'),
+(92, '2023-12-31 17:42:04', '    0453', 'Sujo', 'STFM'),
+(93, '2023-12-31 17:42:04', '    0454', 'Reservado', 'STQN'),
+(94, '2023-12-31 17:42:04', '    0455', 'Reservado', 'STQN'),
+(95, '2023-12-31 17:42:04', '    0456', 'Reservado', 'STQN'),
+(96, '2023-12-31 17:42:04', '    0457', 'Reservado', 'STQN'),
+(97, '2023-12-31 17:42:04', '    0458', 'Reservado', 'STQN'),
+(98, '2023-12-31 17:42:04', '    0460', 'Sujo', 'STQN'),
+(99, '2023-12-31 17:42:04', '    0462', 'Reservado', 'STQN'),
+(100, '2023-12-31 17:42:04', '    0463', 'Reservado', 'STQN'),
+(101, '2023-12-31 17:42:04', '    0464', 'Reservado', 'STQN'),
+(102, '2023-12-31 17:42:04', '    0465', 'Reservado', 'STQN'),
+(103, '2023-12-31 17:42:04', '    0466', 'Reservado', 'STQN'),
+(104, '2023-12-31 17:42:04', '    0467', 'Reservado', 'STQN'),
+(105, '2023-12-31 17:42:04', '    0468', 'Reservado', 'STQN'),
+(106, '2023-12-31 17:42:04', '    0469', 'Reservado', 'STQN'),
+(107, '2023-12-31 17:42:04', '    0470', 'Sujo', 'STQN'),
+(108, '2023-12-31 17:42:04', '    0471', 'Reservado', 'STQN'),
+(109, '2023-12-31 17:42:04', '    0472', 'Reservado', 'STQN'),
+(110, '2023-12-31 17:42:04', '    0474', 'Sujo', 'STQN'),
+(111, '2023-12-31 17:42:04', '    0476', 'Limpo', 'STHD'),
+(112, '2023-12-31 17:42:04', '    0478', 'Limpo', 'STHD'),
+(113, '2023-12-31 17:42:04', '    0479', 'Reservado', 'STQN'),
+(114, '2023-12-31 17:42:04', '    0480', 'Sujo', 'STQN'),
+(115, '2023-12-31 17:42:04', '    0481', 'Sujo', 'STFM'),
+(116, '2023-12-31 17:42:04', '    0482', 'Reservado', 'STQN'),
+(117, '2023-12-31 17:42:04', '    0483', 'Reservado', 'STQN'),
+(118, '2023-12-31 17:42:04', '    0484', 'Reservado', 'STQN'),
+(119, '2023-12-31 17:42:04', '    0485', 'Reservado', 'STQN'),
+(120, '2023-12-31 17:42:04', '    0486', 'Reservado', 'STQN'),
+(121, '2023-12-31 17:42:04', '    0551', 'Sujo', 'STFM'),
+(122, '2023-12-31 17:42:04', '    0552', 'Reservado', 'STQN'),
+(123, '2023-12-31 17:42:04', '    0553', 'Sujo', 'STFM'),
+(124, '2023-12-31 17:42:04', '    0554', 'Manutenção', 'STQN'),
+(125, '2023-12-31 17:42:04', '    0555', 'Sujo', 'STQN'),
+(126, '2023-12-31 17:42:04', '    0556', 'Reservado', 'STQN'),
+(127, '2023-12-31 17:42:04', '    0557', 'Reservado', 'STQN'),
+(128, '2023-12-31 17:42:04', '    0558', 'Reservado', 'STQN'),
+(129, '2023-12-31 17:42:04', '    0560', 'Reservado', 'STQN'),
+(130, '2023-12-31 17:42:04', '    0562', 'Limpo', 'STQN'),
+(131, '2023-12-31 17:42:04', '    0563', 'Limpo', 'STQN'),
+(132, '2023-12-31 17:42:04', '    0564', 'Sujo', 'STQN'),
+(133, '2023-12-31 17:42:05', '    0565', 'Sujo', 'STQN'),
+(134, '2023-12-31 17:42:05', '    0566', 'Sujo', 'STQN'),
+(135, '2023-12-31 17:42:05', '    0567', 'Sujo', 'STQN'),
+(136, '2023-12-31 17:42:05', '    0568', 'Reservado', 'STQN'),
+(137, '2023-12-31 17:42:05', '    0569', 'Limpo', 'STQN'),
+(138, '2023-12-31 17:42:05', '    0570', 'Limpo', 'STQN'),
+(139, '2023-12-31 17:42:05', '    0571', 'Limpo', 'STQN'),
+(140, '2023-12-31 17:42:05', '    0572', 'Limpo', 'STQN'),
+(141, '2023-12-31 17:42:05', '    0574', 'Sujo', 'STQN'),
+(142, '2023-12-31 17:42:05', '    0576', 'Limpo', 'STHD'),
+(143, '2023-12-31 17:42:05', '    0578', 'Limpo', 'STHD'),
+(144, '2023-12-31 17:42:05', '    0579', 'Limpo', 'STQN'),
+(145, '2023-12-31 17:42:05', '    0580', 'Limpo', 'STQN'),
+(146, '2023-12-31 17:42:05', '    0581', 'Limpo', 'STFM'),
+(147, '2023-12-31 17:42:05', '    0582', 'Limpo', 'STQN'),
+(148, '2023-12-31 17:42:05', '    0583', 'Limpo', 'STQN'),
+(149, '2023-12-31 17:42:05', '    0584', 'Limpo', 'STQN'),
+(150, '2023-12-31 17:42:05', '    0585', 'Limpo', 'STQN'),
+(151, '2023-12-31 17:42:05', '    0586', 'Limpo', 'STQN'),
+(152, '2023-12-31 17:42:05', '    0651', 'Sujo', 'STFM'),
+(153, '2023-12-31 17:42:05', '    0652', 'Sujo', 'STTN'),
+(154, '2023-12-31 17:42:05', '    0653', 'Limpo', 'STFM'),
+(155, '2023-12-31 17:42:05', '    0654', 'Limpo', 'STTN'),
+(156, '2023-12-31 17:42:05', '    0655', 'Limpo', 'STQN'),
+(157, '2023-12-31 17:42:05', '    0656', 'Sujo', 'STTN'),
+(158, '2023-12-31 17:42:05', '    0657', 'Sujo', 'STTN'),
+(159, '2023-12-31 17:42:05', '    0658', 'Sujo', 'STTN'),
+(160, '2023-12-31 17:42:05', '    0660', 'Manutenção', 'STTN'),
+(161, '2023-12-31 17:42:05', '    0662', 'Sujo', 'STTN'),
+(162, '2023-12-31 17:42:05', '    0663', 'Sujo', 'STTN'),
+(163, '2023-12-31 17:42:05', '    0664', 'Limpo', 'STTN'),
+(164, '2023-12-31 17:42:05', '    0665', 'Limpo', 'STTN'),
+(165, '2023-12-31 17:42:05', '    0666', 'Limpo', 'STQN'),
+(166, '2023-12-31 17:42:05', '    0667', 'Sujo', 'STTN'),
+(167, '2023-12-31 17:42:05', '    0668', 'Limpo', 'STTN'),
+(168, '2023-12-31 17:42:05', '    0669', 'Limpo', 'STQN'),
+(169, '2023-12-31 17:42:05', '    0670', 'Limpo', 'STTN'),
+(170, '2023-12-31 17:42:05', '    0671', 'Sujo', 'STTN'),
+(171, '2023-12-31 17:42:05', '    0672', 'Limpo', 'STTN'),
+(172, '2023-12-31 17:42:05', '    0674', 'Sujo', 'STTN'),
+(173, '2023-12-31 17:42:05', '    0676', 'Limpo', 'STHD'),
+(174, '2023-12-31 17:42:05', '    0678', 'Limpo', 'STHD'),
+(175, '2023-12-31 17:42:05', '    0679', 'Sujo', 'STQN'),
+(176, '2023-12-31 17:42:05', '    0680', 'Sujo', 'STQN'),
+(177, '2023-12-31 17:42:05', '    0681', 'Limpo', 'STFM'),
+(178, '2023-12-31 17:42:05', '    0682', 'Limpo', 'STQN'),
+(179, '2023-12-31 17:42:05', '    0683', 'Limpo', 'STQN'),
+(180, '2023-12-31 17:42:05', '    0684', 'Limpo', 'STQN'),
+(181, '2023-12-31 17:42:05', '    0685', 'Limpo', 'STQN'),
+(182, '2023-12-31 17:42:05', '    0686', 'Limpo', 'STQN'),
+(183, '2023-12-31 17:42:05', '    0751', 'Limpo', 'STFM'),
+(184, '2023-12-31 17:42:05', '    0752', 'Sujo', 'STQN'),
+(185, '2023-12-31 17:42:05', '    0753', 'Limpo', 'STFM'),
+(186, '2023-12-31 17:42:05', '    0754', 'Limpo', 'STQN'),
+(187, '2023-12-31 17:42:05', '    0755', 'Sujo', 'STTN'),
+(188, '2023-12-31 17:42:05', '    0756', 'Limpo', 'STQN'),
+(189, '2023-12-31 17:42:05', '    0757', 'Limpo', 'STQN'),
+(190, '2023-12-31 17:42:05', '    0758', 'Sujo', 'STQN'),
+(191, '2023-12-31 17:42:05', '    0760', 'Sujo', 'STQN'),
+(192, '2023-12-31 17:42:05', '    0762', 'Limpo', 'STQN'),
+(193, '2023-12-31 17:42:05', '    0763', 'Limpo', 'STQN'),
+(194, '2023-12-31 17:42:05', '    0764', 'Sujo', 'STQN'),
+(195, '2023-12-31 17:42:05', '    0765', 'Limpo', 'STQN'),
+(196, '2023-12-31 17:42:05', '    0766', 'Manutenção', 'STQN'),
+(197, '2023-12-31 17:42:05', '    0767', 'Sujo', 'STQN'),
+(198, '2023-12-31 17:42:05', '    0768', 'Limpo', 'STQN'),
+(199, '2023-12-31 17:42:05', '    0769', 'Limpo', 'STQN'),
+(200, '2023-12-31 17:42:05', '    0770', 'Limpo', 'STQN'),
+(201, '2023-12-31 17:42:05', '    0771', 'Sujo', 'STQN'),
+(202, '2023-12-31 17:42:05', '    0772', 'Limpo', 'STQN'),
+(203, '2023-12-31 17:42:05', '    0774', 'Sujo', 'STQN'),
+(204, '2023-12-31 17:42:05', '    0776', 'Limpo', 'STHD'),
+(205, '2023-12-31 17:42:05', '    0778', 'Limpo', 'STHD'),
+(206, '2023-12-31 17:42:05', '    0779', 'Limpo', 'STQN'),
+(207, '2023-12-31 17:42:05', '    0780', 'Sujo', 'STQN'),
+(208, '2023-12-31 17:42:05', '    0781', 'Limpo', 'STFM'),
+(209, '2023-12-31 17:42:05', '    0782', 'Manutenção', 'STQN'),
+(210, '2023-12-31 17:42:05', '    0783', 'Sujo', 'STQN'),
+(211, '2023-12-31 17:42:05', '    0784', 'Limpo', 'STQN'),
+(212, '2023-12-31 17:42:05', '    0785', 'Sujo', 'STTN'),
+(213, '2023-12-31 17:42:05', '    0786', 'Limpo', 'STQN'),
+(214, '2023-12-31 17:42:05', '    0851', 'Sujo', 'STFM'),
+(215, '2023-12-31 17:42:05', '    0852', 'Sujo', 'STQN'),
+(216, '2023-12-31 17:42:05', '    0853', 'Sujo', 'STFM'),
+(217, '2023-12-31 17:42:05', '    0854', 'Limpo', 'STQN'),
+(218, '2023-12-31 17:42:05', '    0855', 'Sujo', 'STTN'),
+(219, '2023-12-31 17:42:05', '    0856', 'Limpo', 'STQN'),
+(220, '2023-12-31 17:42:05', '    0857', 'Limpo', 'STQN'),
+(221, '2023-12-31 17:42:05', '    0858', 'Limpo', 'STQN'),
+(222, '2023-12-31 17:42:05', '    0860', 'Sujo', 'STQN'),
+(223, '2023-12-31 17:42:05', '    0862', 'Limpo', 'STQN'),
+(224, '2023-12-31 17:42:05', '    0863', 'Limpo', 'STQN'),
+(225, '2023-12-31 17:42:05', '    0864', 'Limpo', 'STQN'),
+(226, '2023-12-31 17:42:05', '    0865', 'Sujo', 'STQN'),
+(227, '2023-12-31 17:42:05', '    0866', 'Limpo', 'STQN'),
+(228, '2023-12-31 17:42:05', '    0867', 'Limpo', 'STQN'),
+(229, '2023-12-31 17:42:05', '    0868', 'Limpo', 'STQN'),
+(230, '2023-12-31 17:42:05', '    0869', 'Reservado', 'STQN'),
+(231, '2023-12-31 17:42:05', '    0870', 'Limpo', 'STQN'),
+(232, '2023-12-31 17:42:05', '    0871', 'Reservado', 'STQN'),
+(233, '2023-12-31 17:42:05', '    0872', 'Sujo', 'STQN'),
+(234, '2023-12-31 17:42:05', '    0874', 'Limpo', 'STQN'),
+(235, '2023-12-31 17:42:05', '    0876', 'Limpo', 'STHD'),
+(236, '2023-12-31 17:42:05', '    0878', 'Site Inspection', 'STHD'),
+(237, '2023-12-31 17:42:05', '    0879', 'Limpo', 'STQN'),
+(238, '2023-12-31 17:42:05', '    0880', 'Sujo', 'STQN'),
+(239, '2023-12-31 17:42:05', '    0881', 'Sujo', 'STFM'),
+(240, '2023-12-31 17:42:05', '    0882', 'Sujo', 'STQN'),
+(241, '2023-12-31 17:42:05', '    0883', 'Limpo', 'STTN'),
+(242, '2023-12-31 17:42:05', '    0884', 'Sujo', 'STQN'),
+(243, '2023-12-31 17:42:05', '    0885', 'Sujo', 'STTN'),
+(244, '2023-12-31 17:42:05', '    0886', 'Sujo', 'STQN'),
+(245, '2023-12-31 17:42:05', '    0951', 'Sujo', 'STFM'),
+(246, '2023-12-31 17:42:05', '    0952', 'Inspeção', 'STQN'),
+(247, '2023-12-31 17:42:05', '    0953', 'Limpo', 'STFM'),
+(248, '2023-12-31 17:42:05', '    0954', 'Sujo', 'STQN'),
+(249, '2023-12-31 17:42:05', '    0955', 'Site Inspection', 'STTN'),
+(250, '2023-12-31 17:42:05', '    0956', 'Sujo', 'STQN'),
+(251, '2023-12-31 17:42:05', '    0957', 'Limpo', 'STQN'),
+(252, '2023-12-31 17:42:05', '    0958', 'Sujo', 'STQN'),
+(253, '2023-12-31 17:42:05', '    0960', 'Sujo', 'STQN'),
+(254, '2023-12-31 17:42:05', '    0962', 'Sujo', 'STQN'),
+(255, '2023-12-31 17:42:05', '    0963', 'Limpo', 'STQN'),
+(256, '2023-12-31 17:42:05', '    0964', 'Limpo', 'STQN'),
+(257, '2023-12-31 17:42:05', '    0965', 'Sujo', 'STQN'),
+(258, '2023-12-31 17:42:05', '    0967', 'Sujo', 'STQN'),
+(259, '2023-12-31 17:42:05', '    0968', 'Sujo', 'STQN'),
+(260, '2023-12-31 17:42:05', '    0969', 'Sujo', 'STQN'),
+(261, '2023-12-31 17:42:05', '    0970', 'Sujo', 'STQN'),
+(262, '2023-12-31 17:42:05', '    0971', 'Limpo', 'STQN'),
+(263, '2023-12-31 17:42:05', '    0972', 'Sujo', 'STQN'),
+(264, '2023-12-31 17:42:05', '    0974', 'Sujo', 'STQN'),
+(265, '2023-12-31 17:42:05', '    0976', 'Limpo', 'STHD'),
+(266, '2023-12-31 17:42:05', '    0978', 'Limpo', 'STHD'),
+(267, '2023-12-31 17:42:05', '    0979', 'Sujo', 'STQN'),
+(268, '2023-12-31 17:42:05', '    0980', 'Limpo', 'STQN'),
+(269, '2023-12-31 17:42:05', '    0981', 'Limpo', 'STFM'),
+(270, '2023-12-31 17:42:05', '    0982', 'Site Inspection', 'STQN'),
+(271, '2023-12-31 17:42:05', '    0983', 'Sujo', 'STTN'),
+(272, '2023-12-31 17:42:05', '    0984', 'Sujo', 'STQN'),
+(273, '2023-12-31 17:42:05', '    0985', 'Limpo', 'STTN'),
+(274, '2023-12-31 17:42:05', '    0986', 'Site Inspection', 'STFM');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_gestaorecepcao_roomtypes`
+--
+
+CREATE TABLE `hssa_wy_excel_gestaorecepcao_roomtypes` (
+  `id` int(11) NOT NULL,
+  `room_type` varchar(50) NOT NULL,
+  `room_type_qtd` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_gestaorecepcao_roomtypes`
+--
+
+INSERT INTO `hssa_wy_excel_gestaorecepcao_roomtypes` (`id`, `room_type`, `room_type_qtd`) VALUES
+(1, 'ROFF', 2),
+(2, 'STFM', 28),
+(3, 'STHD', 16),
+(4, 'STQN', 200),
+(5, 'STTN', 28);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_gestaorecepcao_saldos`
+--
+
+CREATE TABLE `hssa_wy_excel_gestaorecepcao_saldos` (
+  `id` int(11) NOT NULL,
+  `data_importacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `dados_saldos` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `hssa_wy_excel_gestaorecepcao_saldos`
+--
+
+INSERT INTO `hssa_wy_excel_gestaorecepcao_saldos` (`id`, `data_importacao`, `dados_saldos`) VALUES
+(2, '2023-12-31 17:42:05', 'c2QrV1FNSndiRWk2LzJZQlF6SkEybXhHbVlWNEpVVjRGY0VXVlFsdTJ5V0wrOE85SnZjUFh1V2FsZ1lNM2JkaQ=='),
+(3, '2023-12-31 17:42:05', 'L0dZZXJKTEZaT2s4dkQ1SzV3OG5GazZXdnAxWWVEOU0rRzNXWHpLWWtMbzdXZTkxaWxtTk1Uc0tTNUlILzBFMA=='),
+(5, '2023-12-31 17:42:05', 'R3hWY3dqREdGZXFkWU1IV2ZoTXBzS1JkN0ZGK2xNUHo4VzQwcXEzdFpqaHhmcjZjYkRZWUI0NDd3a3BaK1k4bw=='),
+(6, '2023-12-31 17:42:05', 'RVpnMjg2ZUJQSFBRbW8yM1FpNFJGWEQ1SkhkbUZXVXZtVlJhcWh5VGtzRlNIYmloUmovV2tKQS9ZUnFpV24wNg=='),
+(8, '2023-12-31 17:42:05', 'ZzV3VTNxWDhVQjNib1ZHZGhDTDZtV1ovVjlkdGZ6c1pqRHF4bjA4VkE3Z1ZQV0c0b0RJVjhBcStqTWxWbENOMw=='),
+(9, '2023-12-31 17:42:05', 'U2dzRXdiaWt1NmIvZU84REJNVkZCdTFHaFV4MVBYMWJpOG84ZkdjaWZYb01yaGtXbDgvc0pVcG1DbENMTExuRQ=='),
+(10, '2023-12-31 17:42:05', 'aFRoQXBnUGNhd2l3RWdBZWMxK1JMZXNub1BZbTQ1aDZCaXZWT1U5VldBdUZ5bWx6Lytjb1AyNzZGajhCUS9rNg=='),
+(11, '2023-12-31 17:42:05', 'K1BsUkNWU0hYVW1aQVgwZXowUXRuTTNXamZQZE4rcy9uMmFzUU1qL1dxSzdLTEpQbm5Dc2tERDR6bzBFMVI5Qw=='),
+(13, '2023-12-31 17:42:05', 'aDQzaEZxck5lTlJmampiTzVoMkRIMktyWHd1TnFTK1kxd2VjbmxxL25FY2U1cUU3R1IrSEZvSmhmZ1BJNGVyMw=='),
+(14, '2023-12-31 17:42:05', 'RkJUUkRHRDM4dEFUUG9KZlFxdENyaFRMUmY2RnFqWVpHeWdQZGs0Z0xFOVBEZUtjdnRlNjdNaCtWQWJSUkVpMA=='),
+(15, '2023-12-31 17:42:05', 'ZTV1WTE0ZTNtK3dCNTI1N1RRYURRZUJyaGJST0VMM1AwMDJCd0cwU242bTA0OE4wVmEwZ3lMN0twcEJPSE9LQg=='),
+(16, '2023-12-31 17:42:05', 'VWxIcStnZlUxUmViRkxDSlFXalhNRGU0bXFmcDN2YnB6YldoZHgrOHdMcm40RDZWaVRuQXJTREJwZXVRTnNJRA=='),
+(17, '2023-12-31 17:42:05', 'bmN4SVVrWFN5NVlYMGZjeHA1bkJhZEt4Q2lxVUFIVGV2N09jNEU1THlLTU1hSVNTcDZwd3Q1emlLNFRLVGM1WA=='),
+(18, '2023-12-31 17:42:05', 'enQ3NDA3eTU5cnNRYlE0bi83cTZPc3RNaDQreGlQZS9ZK3UrS2tjM1VPWEtIUzFtNjJTNk4zUVRWRXllMXE1RQ=='),
+(19, '2023-12-31 17:42:05', 'eUx6TGl0bEkrb0QyMHZEZnUzTmVPWUtnbG43Yk1UQkdEYVFkTlI0eWlqbk1GZUhOdEJEWGNBcTQ3UUtHOUxzcA=='),
+(20, '2023-12-31 17:42:05', 'WTR6dCtTRENDY0I2WDhoOXJLbkRLQUw0Mmp2akpvRlN6K1dJbXpKYzBzbEtBV1puQU1heFg4MENHb2lFTHF2SA=='),
+(21, '2023-12-31 17:42:05', 'K1BJSmM3TG8zUTBacE9Uakt5SGtIYmpEcGZwSWdpazRVZ2paTnFzUGxVcW9icmFkZmRmTSt1V1BGLzl1RTB5MQ=='),
+(22, '2023-12-31 17:42:05', 'dlJtdDhiWmZ1QitLazhVZTZTV3REVVFRSmpEdjB1d0lpT3F0UjJZaXp2SEkycWFmMUN1aTlPYm95RitMZTYvZw=='),
+(23, '2023-12-31 17:42:05', 'cHk4Z3FxQk1Gc2ovZnZLUjV3UGZMbXoycmFHdFpaelpFYmFmSFRTWUNxdzFmTkd5UWdxdmd2YWN5eUlnYmw1Yg=='),
+(24, '2023-12-31 17:42:05', 'UWVaR013dnkva3o3RWxPQ2JyZDc0Nmo2dGJ5cUVNZFJUQmcxMVFtWGlQU3JEY2o3UEk0M1hQcVNyV3FJakJ1cg=='),
+(25, '2023-12-31 17:42:05', 'RlZBZ2VLcU1ER0ppVHppYXhQaDVucXg0eHliRU1nWkhHY3ZoT2tWUk1rbXlhNC9FZlpnTGxXTUYyd2hXYzM2NA=='),
+(26, '2023-12-31 17:42:05', 'VlNEdTFpcHJTa21waFdKSXJhNWdLRy95RW5yejN1QUlJOW16RzhIczRaRTU5c0d0bDB6TllFVmhkb0ovNzA1TA=='),
+(27, '2023-12-31 17:42:05', 'c1AxYnRmSG4vbFVvc2dObjVSaCtJRmk1TjYxU1V1N0ZsWnp0VjhzYmtvd2FOekY2WUZORmFBVEZ6UnBRWmJVcA=='),
+(28, '2023-12-31 17:42:05', 'WG9oVmRtNEk0d2ZxOWRGWmE2R3B2ckxpVEJQRmxqeDlUR0J5R3RDMVRrbXRFUVZ5VGx3UGUweDc5QVNaN3YyRg=='),
+(29, '2023-12-31 17:42:05', 'aG5rdEQ1L3VkVHNJVTMyems5OGRjaUo2WFVVanNZZmg0c3NFVDd0SHFKK0QvNERqeXk3cG5MTDdxalhMQklTRg=='),
+(30, '2023-12-31 17:42:05', 'eldhaWRHaFdvSDNXVHNkYVZIZ0phNytHa055a2E3WjhIOFltWGN4YkZFT2ZmUG1aL1pZNEI4R1RSVFEvQ1kvKw=='),
+(31, '2023-12-31 17:42:05', 'cWZqZE1jbDRpazV2OWRBTFVNZGtnUWwxakFaVEhJSGg3eGFuZTlsa1FKSVFvb0xhV1lFbW5IMDZaY2g2eXo2Sg=='),
+(32, '2023-12-31 17:42:05', 'WmdheHFYT1JDSkY4YXBUZkx1bThGdzcxQVUzY0MrSDZEbmZoWFVBYVNvY01xRC81NHJHc1hHVy9NZTRDdUovcA=='),
+(33, '2023-12-31 17:42:05', 'a3phWkp6N0x2bVJnU2JyS0p3YjhIK2ZNeFFnWlJ0UDFaSWE3WHdCNmpqU2dVSUxWVGV1SU4vVG0yZW5PeVRqZg=='),
+(34, '2023-12-31 17:42:05', 'SVE3bVpWRzFpa1FlM1ozSUYvcmZLR1BhZTJBTmtMUUxWelpkbCtyR1VzT3lXQ1VIRW8wRVhzRlhqL3ZxTDVTMw=='),
+(35, '2023-12-31 17:42:05', 'U0ZqYi9haDc5YlRjTFVPVGFheC9KRmhzbFE5M1dqUE1RQ0dZMjhjWjdvSVFjZmdPY1h3QmdBWlhRTDB3ZmxieQ=='),
+(36, '2023-12-31 17:42:05', 'UTQ3a2swVjN1aC9COUxVREt6Uks0Zm84T0hzUzhLaHhWNlM2N1Z1ZmVFTHdqUnFrcmhWdEFJcUUxeG44VjFKSg=='),
+(37, '2023-12-31 17:42:05', 'NEZzaHJ5UFRyZHpCRHhZaS9oa3d1VTVMNlNiMzE5S1BQOXlSamYvMHBGTU51eTJSdWd0cmtnWFJBN0lwV2JQag=='),
+(38, '2023-12-31 17:42:05', 'anJCQTNCblBBeTFSc2xlblVoSVRzU1I5L1A4ZysxTGFFNno5RHBNVDFoUEdjSzZqSFJ5QUNHVGV0ck80UllxcQ=='),
+(39, '2023-12-31 17:42:05', 'eGZES0d4QjVNSm0wTGEvTWpBWjRmaFBsYkRrd3BIWHFPaW9hMXZiYXcrcWhocDQrQ2ZZWERyVlY3RWhJSk5FYg=='),
+(41, '2023-12-31 17:42:05', 'ZkhhR3pCQkFSYjdIa25FTjVzZkF4Qk9QUFJFTUlUUVJ0MjFqVThrUTRGZXFDTXE0cTdaWFdLbHhjblJQRE9IQw=='),
+(42, '2023-12-31 17:42:05', 'bVRkVjdBZ0FIdE0vaDd5NFFVQTlFR0p0Q2lPejcreFE1VE5PbzltVk02UXNuQnhwSVE1VFNRalRzT0c0OGhDaw=='),
+(43, '2023-12-31 17:42:05', 'TlJKV0lvR3FtZGowREV4bWpwaDFvYlpsbFpYb1JNcnBhL0M4Ni9qSHpLWGhmSnhtdHRyS29NUUpGQzcwUUdmOA=='),
+(44, '2023-12-31 17:42:05', 'MVVhZnJkSW9oN1E2eHQvSUNKTjBwWWtUSjgvUUxHN0gwRG5NL1VqdDhXRDRwVmFxRElodWh6VG53RlBqODdpNQ=='),
+(45, '2023-12-31 17:42:05', 'MmJ3Qy9XbmpoY2FDRnc4S2FGaU5ER2JQUGlpc0NBem1CWEFCN2tkcTc3bDl1NGg2REpkK241VEpzRlRtTXl5Vw=='),
+(46, '2023-12-31 17:42:05', 'ZStZcHRoQmFPQVRQaDRlTTk1T0FLWlZXc1N3eHpDMTdmNUlhbWUzekErN1lGL2Z1eXU5ZldGQWQyZEVJYnNrVQ=='),
+(47, '2023-12-31 17:42:05', 'eTAyUW9vc2dCczMzdDBlUTVobFEweWY5S1h2alJyRWtJMUxnc0pZYzJncnlXVS9JOVpFVy8vaWZSakJ3Z0ZhKw=='),
+(48, '2023-12-31 17:42:05', 'Qmg0UVRqeGdvYzdleG5heFZiWmNzcHkwOGVSUmV4YThqdFFqQVNIcjlvM0pidnhGckxBMnBsK0trUTdSUzdYQg=='),
+(49, '2023-12-31 17:42:05', 'U2dUaXkyTW5PNmh0eU5VV3cvc2NGakpHdlJxYjZPOFBsRmJ5SzlPZDMzVGJYVnl1ei9wOG1xekJNRStzdUxtVA=='),
+(50, '2023-12-31 17:42:05', 'cUJtdm5BVDlsbjMzbTFzT0xGckFWVzVSZ2FSUzNla3U0MHVFRUQwSEttQ0E3NjZTODVTNDdUUGN1MnlwNVUxaA=='),
+(52, '2023-12-31 17:42:05', 'bG9FQjRXYW5ic2YzTmNWaTJXSGFuNitZcVQ4UHI2QmJlVkE5MHNUcjQ3YlVveit5cVdCbitKQU1mbnF5SXR5VQ=='),
+(53, '2023-12-31 17:42:05', 'SmM1TmFPNU1iemRUQVlleWxIM2Zwc0hCM25scHFjOFhwVHZLUDVEWGZjNnZTYnF5dksydVpEanhGTFl2V0tLeQ=='),
+(54, '2023-12-31 17:42:05', 'b3BwMlpWQ2lPaXNuRXhYQkdtTTJFdytmOE43N1hLMXdKWktwTzNOc3Eyb2RSMjEzYkRidlNjVjZzOGR2aGY1bA=='),
+(55, '2023-12-31 17:42:05', 'bUxCM21reWVyWEhVSWc0aXNpNGdOMWVoWjlvWjdWQ29ESGNycGR3RG8yWjlVWk02RktUZ1RHYWZXbnNOelJFMQ=='),
+(56, '2023-12-31 17:42:05', 'NUh6V1p5aGo0WGxsY0ZtR0t5bjdjOHluU21pTTNNcWt3YWNTbDVKd0xRZDlGR0lJek9SMkNTS0FVMDNVVit0ag=='),
+(57, '2023-12-31 17:42:05', 'a3dWd3pXTU5aNzV1SGl5WU9aUWFQYU90Z01vMEFlMzB1TldBYWQyS0ZvbHA1aHRlckFOR1hqL1U2anB2UGVjWQ=='),
+(58, '2023-12-31 17:42:05', 'bE1kOUF4ZWV5L2hNbmhKQzJUY3JoUmVGUmJkWFArNGxXem5yNlBjNnR6MnZyZ2plZXNQNjIrVTZscU1jRkpSaQ=='),
+(59, '2023-12-31 17:42:05', 'YmE0a280VEMvTWtSZjRWYUF0YVRsaGhBL0hFbGExMmswR2NsOERqRVJSTldBYlVZRWZnZCt2SFVIVGpEeFdBTQ=='),
+(60, '2023-12-31 17:42:05', 'TGlVd3cvcjNtY2E2bGpsNXN3MVB3T3g2ajE4TDJaMEtGdzJlVHYvbTltalNMRytqcG9CS2hIcVVpVjVyalFoMA=='),
+(62, '2023-12-31 17:42:05', 'ZkpHRzhIbUVFL3MyckVNMGxmdGVPYzVodTlKMTQ2dENpUjhTdnUyU2JLRUZsMHBuWXNIK2dCK1hWN3FzMkFJaQ=='),
+(63, '2023-12-31 17:42:05', 'Y3ZuQTZHZHNKTGIyK3B1ZWY1NWNUNmNYZlBqYTlXbXBoYnMwMzEzRUVPY3o5OFF2aSs0YUxzd0xxbGJ5dFRGNA=='),
+(64, '2023-12-31 17:42:05', 'bmpkc0RneU1ZZU4xYmdiMS9rR2IxRmwwalVGTnJTU3VkWkhWVnFueXo0MTVJN0V0elNYQ1VsNi94S0oxdlRoYQ=='),
+(66, '2023-12-31 17:42:05', 'VkR2SWJvNG5Wd0ErNW1JMW4vNUttNTFsY1F6UDk5cmo2K3JaUm9ZcUY5Qk96NHI0TjIrMUlCTjdFZjVBZ1Eveg=='),
+(68, '2023-12-31 17:42:05', 'R1MwQStkNVZKSzN3aFFDVVpWUDBQa1VBZlFvdE9CcjV2bkl4U0IyaDU3ZGo0ZlRlay9RMEhSZFI2eHNiTGRsVA=='),
+(69, '2023-12-31 17:42:05', 'RC9BTjRqSnN6SkY1OTNPZ1l2VkpqNFUzR2JQRm5hQ1RPSXNBQzMxRzBNUDZaWDV5RjBsTStDNUVNUjkrWjVIQQ=='),
+(71, '2023-12-31 17:42:05', 'b3JBZUtHdDYyR1pMOXRzbytLc0FUaGlIQlI1bzB4UWdCdmxhOEtxREswWHNsQlNSQUtsTmFYeTZlVlVFQWc2ZQ=='),
+(72, '2023-12-31 17:42:05', 'cVZzNHpPSDVSWlBmVXhuRVQyMlY2NHhpaDRjRXFhdytqZ3p4OU9ldmlBUm0ySThSbkFEWEkyY041WUpTMHYzNg=='),
+(73, '2023-12-31 17:42:05', 'Vm9nQSswNys1YjVuSHhiOWpMUklKZkIzaEJNUC9WdXBBWmQzQ1VaRFVrWmtMVll3L3ZFRVo1RXZRZnVjVUxndQ=='),
+(74, '2023-12-31 17:42:05', 'WWVoMjRaQ25hYnFTOHZzNGxDeTVBR0ROajJnRUNGTHlQc2UxalJLOTZuZXBtZTg0QUw1Y0pSbzBNdHowcFpNeA=='),
+(75, '2023-12-31 17:42:05', 'ejFzbVdCMldsSThxZVFNcjQvakE5aHVSZWExNUgzaG9VSFhVUytKcGlaS01hZkdsbVRnVzF1aFdxY3pzRTA1Nw=='),
+(77, '2023-12-31 17:42:05', 'VS9VZDhCUklFUzA4dVJibE03SWhKbE5NNmFJUW9namtWNzN4dXgzVHBoWXFoMVhqWGpwMStueTg2WFFwUWJSdw=='),
+(78, '2023-12-31 17:42:05', 'bDF6UGcyaEt1UlFwdytNQkoxdU1lYy9LMmlBRnVFNllibG1PUjFoTVBPc3M4TGZubGpLOGZkY29KRnF1dzhkdg=='),
+(79, '2023-12-31 17:42:05', 'aE5qWXlvdWZLZ2pBTC9JdjIxaFRhTFIvN2g5SlRRQTN3UWFlbGJRRzc3WT0='),
+(80, '2023-12-31 17:42:05', 'c0VhS3FwT0V6NVdncnhmRmt0N3JIaTNiT0o0cng3RHNENEpyNFovWEFsa2k4NjBmWVF5Q1VmcHMrbDUzYktrMA=='),
+(81, '2023-12-31 17:42:05', 'VE4wd3YzbWNNUGhOQnB2ckx0dU1sV2F6RXI0TmNRdEw1ZkZGc0hBTW1iWT0='),
+(82, '2023-12-31 17:42:05', 'UGMrRUZNOUlnaVltNmVPa3QwcDg1bmtPTExaR2xvK1hKOHBQZW5MeE5JMkkwbTEwRzdXMm91N05TQ3FlTmdtdA=='),
+(83, '2023-12-31 17:42:05', 'QXNiV1ZrTjJCUGJ1bzNMVjZydFVNR1Nkak5pMnFpd0RSbUdpVVN2WmlDdz0='),
+(84, '2023-12-31 17:42:05', 'RzZyeWVjb2NsVHk0ZDVBZzVUVHV4S09mOWVpaVBJcmVBYk0rcTBDRllWa1RFbHp0ZUZQS3RLZmFmNnVQcmliVQ=='),
+(85, '2023-12-31 17:42:05', 'QU5EbWlTb1QrMldzODAvMGFuNWFmeWVXQi9nRFJoYzNjekxCUEpNL1NsU0U5Vzl6T3RWY3J3UkttU2Z5bmdZVw=='),
+(86, '2023-12-31 17:42:05', 'eEVabDlFOE5FTmFVREh0LzZtTEFNY0ptVkhrVU15UW9DV1NHN0lTR1pxK0w2N3JITG5TaXQ4bzFpemVhNlladg=='),
+(88, '2023-12-31 17:42:05', 'VUJnNXpPT3Z4TXphVm9nWHd4QjVnS2g5algxMm1WR25LdkRiTHlyeURoUzNuZ05BbTFzWW5xUGNRc1hqRXB4cA=='),
+(89, '2023-12-31 17:42:05', 'bTYyVlJVSiszUlJpUjU3anM0aDd1aWt5b2FVRHJDcE5ncnFhcVk5TVZwRytOdHJnUTJRZ2xoaWJ3NVNwRGtSaw=='),
+(90, '2023-12-31 17:42:05', 'MVREMUgrZkNSNGxtT1VmMWVkVitJbno5My83TGl6bkJoalFFeUlybDArVkRTT2FJVUFoVm5Ia01POW1aSE9iVw=='),
+(91, '2023-12-31 17:42:05', 'Wmd4SFJqMG84ZjBpUWx6NC8rTXVvcHJPWFpSVVk3RGJvVzdmZkFMNEc5WUNFcnBtc2lqWXRtVEZiUHdpRHJqSA=='),
+(92, '2023-12-31 17:42:05', 'R3c0SGJjd2docU42ZTlsekVCaVdCMGNwRmNXaEV0QWUrYzlxa3JhMTN3N1VOOVM1cVhTSkkvUVJxZmh5WDU3TQ=='),
+(93, '2023-12-31 17:42:05', 'U3E1VE5HU2NtckdLaHliZXFjNjBHelFjTGRJNVgvMHRBY2lZemtNNGhsaWxMSFNLSjlySXc3ck4zRkUycHpBeA=='),
+(95, '2023-12-31 17:42:05', 'OTgrZ2xXKytOdUpkYlNXeXJ4QXpkUzZWNm8rSGU3Z3JzS1RUWmpYQldqUnNDM1BiVmFVVEgzcDZhempXK3hTdw=='),
+(97, '2023-12-31 17:42:05', 'M1ZHcE1YQmI0N2RPSElmdmc0WEVzMmtKb3I1THpjSytxYUxvSk1EamJWUVpNNEJiMm8wRXVlK2hxMWg4US80bg=='),
+(98, '2023-12-31 17:42:05', 'cTZEM0d5RjBFbEJxdWN2K0dZWENpSFUvWExneWYyVGVTZGg1bUNsckpLUmNVNkgwSTNiZDVmRkN2ZVYrY1o2Ng=='),
+(99, '2023-12-31 17:42:05', 'SXVUNjBYcWNGYmtrZUtRME9QZ1ZWTFZtZDBJTXd6R1BCdU9HYXVyLzRsU2tIR05IajNWQU5aWGVGSFpzS2ZXYQ=='),
+(100, '2023-12-31 17:42:05', 'cHFUTkJqTFJLcytRNzlsMUgzTzlsQjF1WXlPR2RmUlV0akFiNndyUWEyUUkrMmFJZVBiUEcvNUZZWm5aVG5JTQ=='),
+(101, '2023-12-31 17:42:05', 'TWJYcXFRbWtHaUlobXhLNG80UWhRTWFCam9LSVVUUXBJSzhwcnVMblBuK0xKTjFPQjhKeTFsbHRDY1hqREluRA=='),
+(102, '2023-12-31 17:42:05', 'Z1dUOFc4Ulc5dGFTVEJYMDhjU1pqQmJmL1F6R09QclVQSlp5NkI1RExhWHA3RlMrdWpTVjJLTDlXYjA1ZmZaRg=='),
+(103, '2023-12-31 17:42:05', 'VTRwMFVVMkdEcnQ4WUNzdWlXSDBvZTRjNTFNUGJBWTZaamZoMm02cGJHeTY1U05OZ1B1Rm9MTjBzMmNhTHFpSg=='),
+(104, '2023-12-31 17:42:05', 'MmU5TnhZWVBKU0VzSFVvSGdhaGhsZ09HdE1GdjZmMlNnNzdhYlI5YkhhNGlJZWxPdkhuamdDQWJoVEp1NVIwag=='),
+(105, '2023-12-31 17:42:05', 'U1AyN1UzUVdIdW10UFVaK0krZ1VkUmFHcTJPYWx0NnBobmpWc1U1K0ZURUxmZm9yZjRQQ3hGeEViaEQ1WXdqbg=='),
+(106, '2023-12-31 17:42:05', 'aFo4VUttKzd3cFAyZkNqUzZMS2FyZldERVNGaFc5WnhsbERGbmliWkNoQT0='),
+(107, '2023-12-31 17:42:05', 'b2M1U2RHN2ZKOXNuVlVjcHg2VDdsSDYwYnJrTnBSSlE3cHZtZDFnei9mVVNSQkhld3ZsNE9QMDFGYlFaTzQzNw=='),
+(108, '2023-12-31 17:42:05', 'MVJPakIzNUZPRnp2NjRsS2xCeUZGU24zSWlNQlYrOVRDcTJKKzdDaG9nVkdKdWFSV29aWXRTNExaQnBYdkpPYg=='),
+(109, '2023-12-31 17:42:05', 'L3E4bUtqZ0FsQ2RJRnBueUwzOStxV0crSmdUSENLYjhEWHJMWHpBcGVSTnVMVXlCd2dwN0RMQXlMcGNjTEVsNQ=='),
+(110, '2023-12-31 17:42:05', 'VzJHVG8yU2xMc0NCNm5ONEw1cjlTSkVOZ3RJbjRoZzhJK1NYQU5JSlk3RT0='),
+(111, '2023-12-31 17:42:05', 'QnRTMW1hcmZPWkhoc242WkQ1cTVJN3lJQTdHZ3BnODAxMHMva0NBUFNHUzVLVFZYYjVuT01YViticEVwSExrRA=='),
+(112, '2023-12-31 17:42:05', 'VjlsQTZwai91TDkzR3A5SWtkZUNNdzNUQ0pMb09GVEs5a2dGL2RkSUNkY2dHYnRMWCtWTGNTYkhQV3NJQ3FXMg=='),
+(113, '2023-12-31 17:42:05', 'MnAzK0U4Z2ZrRUFySWhUbWNnTDlEd2FaeVVnVkRCMlBvSVJQQWl3VTBBa2F5ZHlDNnlBd3pjTzNXbjBhR0k0Sw=='),
+(115, '2023-12-31 17:42:05', 'R3N3QXhBUHBFMm1mVUpuUGhtMndnVExnOWwvMld4cE81UzFHckNzNmM1MWdJUTIrOWM1YXI5ZFEyMUZOcXByKw=='),
+(116, '2023-12-31 17:42:05', 'Mnh2UGlrMlo0d1U3OERBZUVtREwrSkRBRmIwMy9ZNUwwYmNSVWNBdzQwZWhRdHBRTjFvUWM4WUU1UWx2T2s3NA=='),
+(117, '2023-12-31 17:42:05', 'dGRXTHU5Vk1ZZlllbFFRWW9wWmpaRGtERDA4SDBBbHRaeHNuQXNvRXJEMD0='),
+(118, '2023-12-31 17:42:05', 'b0llMkp1M1RQZEdOaTMrQkNCMlBQOWdiUndlMVl2eHFCYWhuUXVtZ0lxZjZKTGc4d1dpNUdpN2lmQ0JDclVNcg=='),
+(119, '2023-12-31 17:42:05', 'QWRoN0cxdk4zVm13ejA3L3pjYTNSOVY5TmowQVFiUndoUWpMdVVnU1FtQkNUa3MvTHR5S04vanlkL1hlWkdydw=='),
+(120, '2023-12-31 17:42:05', 'dlBaRHN1QXB5N2RWYzVjM3J2SDl5NUlKVHRPcVU5a0JIQUFSUG9sR0R1SlNLQUxEZjZVNG1JQkg5YStvZW9LMQ=='),
+(121, '2023-12-31 17:42:05', 'c0pveGVTMEdwdzluVjIwWlZoUkRuSVRRb2ZGT2Rkam5ReTg0cHdndHBIbTBDOFlhWE9CeEVEc1RQZXlnSU5ocQ=='),
+(122, '2023-12-31 17:42:05', 'dWhZSVlJTUhsalhoNjJPSCt0OGdvMkV4WnRmTVFzaDIxVU5rczdkVTlsWlpVQlNFeG12WFUvamQ0WVRTbkg4Wg=='),
+(123, '2023-12-31 17:42:05', 'M0sycmh0eFJiR2Z6NHFOZHRNSDgrWFdnT2c0cmVMWjdOcDRYTVRmOGx1dTk4Q0FKWWhlem1uUU5rbTgySHdSOQ=='),
+(124, '2023-12-31 17:42:05', 'VXhSRll4T3prK3U1Z3NSV0Q4NzdNaFJ1VmN5U043M3BBQWgxOFprMUt5WlBlcmRzWXdkVHhJYTB4a0RCYWpMbw=='),
+(125, '2023-12-31 17:42:05', 'VUcyY3kvbGRqbU0rZUlGZS91MzhvbU5KN2NacWRSYjNRZG15elczMkk4QVZGYk9veUUyR1lCL1hGcTFpWW42WQ=='),
+(126, '2023-12-31 17:42:05', 'V1FFNmJwd0RoSmlOMWYweXFQSkt5ak56ZWxScldlb1hoQlBiSUNZa0lBSEpyMnkvY3NDNEJnaXUyeDBxUlhJeg=='),
+(127, '2023-12-31 17:42:05', 'UFFvalIwaEdlUHlmcDNhSEY5TmpaZC82WmhuR21WOTJTWnJjaEQvbWpzOXA5TjJ6dXRsY2ZLMGFRUlpHTzNCSA=='),
+(128, '2023-12-31 17:42:05', 'N1BKSVc2ajcvMUdGQVhQN3kyelVOcDFNL1F6aHpDUnNZREFyY3JHNzlkRT0='),
+(129, '2023-12-31 17:42:05', 'eHBHd1g5SVptLzE1SlhpUWFXNDdoQUFocU9ZdEdlZnM1ZjRwVDl2Mk50a0hvWWJMeDdWRThkWnpRWlVRQk1JOQ=='),
+(130, '2023-12-31 17:42:05', 'MVpLZTgvaXFmd0JoaHZGejdkSEltdmRJa2c3NUY3eldTdEJTWENEN3N1alBPUzdtSFA1QWJrbG9oaUFTNmFBTQ=='),
+(131, '2023-12-31 17:42:05', 'cjRXNDB5M21razk0ZmhFWHRsTGZCRWMxWG1LWHYyS25HaEQwT2ZIODZhOEgyc01PdHdEL1pCZzVaQXpxaU1lVQ=='),
+(132, '2023-12-31 17:42:05', 'dWdScGZacnhxbmozMURTcXpwUUNaVWk0dmU1MVJ6SUp1aVNsbFRYSElXNWRKR1VqdnFtTVF3MHlzMHp1ZExscA=='),
+(133, '2023-12-31 17:42:05', 'UkcxTHgzc09qS1FhWUJhUUdibDhWYXU1aG9CeTBIaTljY1Vid20rSFc5dkdHVm1DeURkbjFndmtHSnV1TzlMRA=='),
+(134, '2023-12-31 17:42:05', 'emNvRXYyVEJwWUtBQjN3MmJVQU02M2Z3ZWhiY0xWeTFxNlB6aHpPTEdvdWI0eGJzK0NEU3hqSzFTME9PN3lOcA=='),
+(135, '2023-12-31 17:42:05', 'UHNuYTZyWnVvTFFNZWt5ZE5DdGZabkpZQU50TVhMc2h3YnlTVy9aNk5CL01xNTRIb0MzckVkWVJUczUxR1plQw=='),
+(136, '2023-12-31 17:42:05', 'WHRBdzhKcWF3WVE3bFdLZmdBdWE1ZXpqcVp0SDV3SVRBTTdKK2Q0Q3pNNjBOaTRuU29aQWV5d1JLRmpoVGxKMA=='),
+(137, '2023-12-31 17:42:05', 'SVE1Y1l2RlRXYnFHU2FFM2JUeHMxWi9OME9BZ0lUNmZPbDRpQWJNTFFiUngwOEdVYXV3NVphU2tFNUhzRXhaKw=='),
+(138, '2023-12-31 17:42:05', 'ZnFlY3FHTUQyd3g3UU9nR0lHL2ZwV25pSVlCNUVnanR3NU5WWXUxTlBQWnIyd1FqQ2pEYzhjb01sTjE0Q2N0aQ=='),
+(139, '2023-12-31 17:42:05', 'M0tESWJ3ZTFJcGV3UGhRcDk3SVJUczNpR0k5WVRHQUxiMFkxdy85SmJucDFKTHlMY1kwOVFCdWRYSi93UEhmWg=='),
+(141, '2023-12-31 17:42:05', 'Qjc4UEtYRjFpVlV5TktEUVVqbHVMenk3ajZnT3IrSXlFTVBBTmhUQVFQOFRFTERLRTFiWHYrcm51Q2hZSjdyQw=='),
+(142, '2023-12-31 17:42:05', 'SmdyQnozdEhzS1dqTHFGRzIrQnJ6VzBZOGFobmhnajN4VTQrQlkxbXpzTT0='),
+(143, '2023-12-31 17:42:05', 'UVBmZ1RjSGZCeGhpaENXeTRNUm9lUythY3B0Wkk0ZjVaTHAveWcvcWVpWU9OT1YvK0JhWEVldnRpZEluVHpSYQ=='),
+(144, '2023-12-31 17:42:05', 'cG9CR1M3L0toVWxjTXBSR0pWVElQc1JHd2JFRmY0aUpVVng3cis0dW5qbUNncG5pTWkrQmExd3V2dEZDMVFRNw=='),
+(146, '2023-12-31 17:42:05', 'SFgvSk5ld01wNDNnNlUzYXpMaFUzTVhwU1F5d3UvdzM1R2l3aWpIK3ozNGZZc0RaUXQ2MTc2WmhrTk5ndHFyTg==');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_plano_camareiras`
+--
+
+CREATE TABLE `hssa_wy_excel_plano_camareiras` (
+  `data_plano` date NOT NULL,
+  `id` int(11) NOT NULL,
+  `id_camareira` int(11) NOT NULL,
+  `camareira` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `hssa_wy_excel_plano_quartos`
+--
+
+CREATE TABLE `hssa_wy_excel_plano_quartos` (
+  `data_plano` date NOT NULL,
+  `id` int(11) NOT NULL,
+  `qtd_camareira` int(11) NOT NULL,
+  `id_camareira` int(11) NOT NULL,
+  `room_number` int(11) NOT NULL,
+  `guest_name` varchar(200) NOT NULL,
+  `room_stay_status` varchar(200) NOT NULL,
+  `room_status_1` varchar(200) NOT NULL,
+  `room_status_2` varchar(200) NOT NULL,
+  `room_type` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -229,10 +1835,16 @@ CREATE TABLE `h8185_excel_gestaorecepcao_roomtypes` (
 --
 
 --
+-- Índices de tabela `configuracoes`
+--
+ALTER TABLE `configuracoes`
+  ADD PRIMARY KEY (`config_empresa`);
+
+--
 -- Índices de tabela `excel_hotels`
 --
 ALTER TABLE `excel_hotels`
-  ADD PRIMARY KEY (`1`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices de tabela `excel_users`
@@ -241,63 +1853,159 @@ ALTER TABLE `excel_users`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8181_excel_gestaorecepcao_arrivals`
+-- Índices de tabela `hssa_bw_excel_auditoria`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_arrivals`
+ALTER TABLE `hssa_bw_excel_auditoria`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8181_excel_gestaorecepcao_cashier`
+-- Índices de tabela `hssa_bw_excel_auditoria_auditorias`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_cashier`
+ALTER TABLE `hssa_bw_excel_auditoria_auditorias`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8181_excel_gestaorecepcao_inhouse`
+-- Índices de tabela `hssa_bw_excel_auditoria_poa`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_inhouse`
+ALTER TABLE `hssa_bw_excel_auditoria_poa`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8181_excel_gestaorecepcao_roomstatus`
+-- Índices de tabela `hssa_bw_excel_comboedas`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_roomstatus`
+ALTER TABLE `hssa_bw_excel_comboedas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8181_excel_gestaorecepcao_roomtypes`
+-- Índices de tabela `hssa_bw_excel_comboedas_lojinha`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_roomtypes`
+ALTER TABLE `hssa_bw_excel_comboedas_lojinha`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8185_excel_gestaorecepcao_arrivals`
+-- Índices de tabela `hssa_bw_excel_gestaorecepcao_arrivals`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_arrivals`
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_arrivals`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8185_excel_gestaorecepcao_cashier`
+-- Índices de tabela `hssa_bw_excel_gestaorecepcao_cashier`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_cashier`
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_cashier`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8185_excel_gestaorecepcao_inhouse`
+-- Índices de tabela `hssa_bw_excel_gestaorecepcao_inhouse`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_inhouse`
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_inhouse`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8185_excel_gestaorecepcao_roomstatus`
+-- Índices de tabela `hssa_bw_excel_gestaorecepcao_roomstatus`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_roomstatus`
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_roomstatus`
   ADD PRIMARY KEY (`id`);
 
 --
--- Índices de tabela `h8185_excel_gestaorecepcao_roomtypes`
+-- Índices de tabela `hssa_bw_excel_gestaorecepcao_roomtypes`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_roomtypes`
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_roomtypes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_bw_excel_gestaorecepcao_saldos`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_saldos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_bw_excel_plano_camareiras`
+--
+ALTER TABLE `hssa_bw_excel_plano_camareiras`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_bw_excel_plano_quartos`
+--
+ALTER TABLE `hssa_bw_excel_plano_quartos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_auditoria`
+--
+ALTER TABLE `hssa_wy_excel_auditoria`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_auditoria_auditorias`
+--
+ALTER TABLE `hssa_wy_excel_auditoria_auditorias`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_auditoria_poa`
+--
+ALTER TABLE `hssa_wy_excel_auditoria_poa`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_comboedas`
+--
+ALTER TABLE `hssa_wy_excel_comboedas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_comboedas_lojinha`
+--
+ALTER TABLE `hssa_wy_excel_comboedas_lojinha`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_gestaorecepcao_arrivals`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_arrivals`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_gestaorecepcao_cashier`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_cashier`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_gestaorecepcao_inhouse`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_inhouse`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_gestaorecepcao_roomstatus`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_roomstatus`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_gestaorecepcao_roomtypes`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_roomtypes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_gestaorecepcao_saldos`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_saldos`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_plano_camareiras`
+--
+ALTER TABLE `hssa_wy_excel_plano_camareiras`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `hssa_wy_excel_plano_quartos`
+--
+ALTER TABLE `hssa_wy_excel_plano_quartos`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -308,72 +2016,168 @@ ALTER TABLE `h8185_excel_gestaorecepcao_roomtypes`
 -- AUTO_INCREMENT de tabela `excel_hotels`
 --
 ALTER TABLE `excel_hotels`
-  MODIFY `1` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de tabela `excel_users`
 --
 ALTER TABLE `excel_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
--- AUTO_INCREMENT de tabela `h8181_excel_gestaorecepcao_arrivals`
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_auditoria`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_arrivals`
+ALTER TABLE `hssa_bw_excel_auditoria`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8181_excel_gestaorecepcao_cashier`
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_auditoria_auditorias`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_cashier`
+ALTER TABLE `hssa_bw_excel_auditoria_auditorias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_auditoria_poa`
+--
+ALTER TABLE `hssa_bw_excel_auditoria_poa`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_comboedas`
+--
+ALTER TABLE `hssa_bw_excel_comboedas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8181_excel_gestaorecepcao_inhouse`
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_comboedas_lojinha`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_inhouse`
+ALTER TABLE `hssa_bw_excel_comboedas_lojinha`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_gestaorecepcao_arrivals`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_arrivals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_gestaorecepcao_cashier`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_cashier`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_gestaorecepcao_inhouse`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_inhouse`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=188;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_gestaorecepcao_roomstatus`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_roomstatus`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=275;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_gestaorecepcao_roomtypes`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_roomtypes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_gestaorecepcao_saldos`
+--
+ALTER TABLE `hssa_bw_excel_gestaorecepcao_saldos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_plano_camareiras`
+--
+ALTER TABLE `hssa_bw_excel_plano_camareiras`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8181_excel_gestaorecepcao_roomstatus`
+-- AUTO_INCREMENT de tabela `hssa_bw_excel_plano_quartos`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_roomstatus`
+ALTER TABLE `hssa_bw_excel_plano_quartos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8181_excel_gestaorecepcao_roomtypes`
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_auditoria`
 --
-ALTER TABLE `h8181_excel_gestaorecepcao_roomtypes`
+ALTER TABLE `hssa_wy_excel_auditoria`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8185_excel_gestaorecepcao_arrivals`
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_auditoria_auditorias`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_arrivals`
+ALTER TABLE `hssa_wy_excel_auditoria_auditorias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_auditoria_poa`
+--
+ALTER TABLE `hssa_wy_excel_auditoria_poa`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_comboedas`
+--
+ALTER TABLE `hssa_wy_excel_comboedas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8185_excel_gestaorecepcao_cashier`
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_comboedas_lojinha`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_cashier`
+ALTER TABLE `hssa_wy_excel_comboedas_lojinha`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_gestaorecepcao_arrivals`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_arrivals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_gestaorecepcao_cashier`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_cashier`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_gestaorecepcao_inhouse`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_inhouse`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=188;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_gestaorecepcao_roomstatus`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_roomstatus`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=275;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_gestaorecepcao_roomtypes`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_roomtypes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_gestaorecepcao_saldos`
+--
+ALTER TABLE `hssa_wy_excel_gestaorecepcao_saldos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
+
+--
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_plano_camareiras`
+--
+ALTER TABLE `hssa_wy_excel_plano_camareiras`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de tabela `h8185_excel_gestaorecepcao_inhouse`
+-- AUTO_INCREMENT de tabela `hssa_wy_excel_plano_quartos`
 --
-ALTER TABLE `h8185_excel_gestaorecepcao_inhouse`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `h8185_excel_gestaorecepcao_roomstatus`
---
-ALTER TABLE `h8185_excel_gestaorecepcao_roomstatus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `h8185_excel_gestaorecepcao_roomtypes`
---
-ALTER TABLE `h8185_excel_gestaorecepcao_roomtypes`
+ALTER TABLE `hssa_wy_excel_plano_quartos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
