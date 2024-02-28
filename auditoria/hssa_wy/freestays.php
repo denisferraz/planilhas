@@ -17,26 +17,17 @@ if($dir != $_SESSION['hotel']){
 
 error_reporting(0);
 
-$data_auditoria = $_SESSION['data_auditoria'];
+$id = mysqli_real_escape_string($conn_mysqli, $_GET['id']);
 
-$query_status = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria_auditorias WHERE id > 0 AND data_auditoria = '{$data_auditoria}'");
-$query_status->execute();
-while($select_status = $query_status->fetch(PDO::FETCH_ASSOC)){
-    $status_auditoria = $select_status['auditoria_status'];
-}
+$data_auditoria = date('Y-m-d', $id);
 
-if($status_auditoria == 'Pendente'){
-    echo "<script>
-    alert('Auditoria não foi Iniciada!')
-    top.location.replace('index.php')
-    </script>";
-    exit();
-}
+$mes = date('m', strtotime($data_auditoria));
 
 $chave = $_SESSION['hotel'].$chave;
 
 //$_SESSION['dados_presentlist']
-$query = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria WHERE data_auditoria = '{$data_auditoria}'");
+$query = $conexao->prepare("SELECT * FROM {$dir}_excel_auditoria WHERE MONTH(data_auditoria) = :mes");
+$query->bindParam(':mes', $mes, PDO::PARAM_INT);
 $query->execute();
 
 $dados_presentlist = [];
@@ -112,7 +103,8 @@ $quantidade_dados = count($dados_filtrados);
 <table>
 <th colspan="8">Cortesias e Uso da Casa</th>
 <tr><td style="background-color: black" colspan="8"></td></tr>
-<tr><td align="center" colspan="8">Quantidade: <b><?php echo $quantidade_dados; ?></b></td>
+<tr><td align="center" colspan="8">Periodo de Conferencia: <b><?php $mes_completo = (new DateTime($data_auditoria))->format('F Y'); echo $mes_completo; ?></b></td>
+<tr><td align="center" colspan="8">Quantidade Total: <b><?php echo $quantidade_dados; ?></b></td>
 <tr><td style="background-color: black" colspan="8"></td></tr>
 <tr style="background-color: grey">
     <td align="center"><b>Qtd</b></td>
@@ -187,7 +179,7 @@ foreach ($dados_filtrados as $select) {
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
 <input type="hidden" name="data_auditoria" value="<?php echo strtotime("$data_auditoria") ?>">
-<input type="hidden" name="id_job" value="freestay">
+<input type="hidden" name="id_job" value="freestays">
 <input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>

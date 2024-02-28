@@ -21,17 +21,16 @@ error_reporting(0);
 
 $data_auditoria = $_SESSION['data_auditoria'];
 
-$query_status = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria_auditorias WHERE id > 0 AND data_auditoria = '{$data_auditoria}'");
-$query_status->execute();
-while($select_status = $query_status->fetch(PDO::FETCH_ASSOC)){
-    $status_auditoria = $select_status['auditoria_status'];
-}
-
-
 $chave = $_SESSION['hotel'].$chave;
 
-//$_SESSION['dados_presentlist']
+if (isset($_POST['data_auditoria'])) {
+$data_auditoria = mysqli_real_escape_string($conn_mysqli, $_POST['data_auditoria']);
+$mes = date('m', $data_auditoria);
+$query = $conexao->prepare("SELECT * FROM {$dir}_excel_auditoria WHERE MONTH(data_auditoria) = :mes");
+$query->bindParam(':mes', $mes, PDO::PARAM_INT);
+}else{
 $query = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria WHERE data_auditoria = '{$data_auditoria}'");
+}
 $query->execute();
 
 $dados_presentlist = [];
@@ -83,8 +82,20 @@ $dados_caixa[] = [
   $forecast_dm_1 = $dados_array[4];
   $forecast_dm_2 = $dados_array[5];
   $forecast_dm_3 = $dados_array[6];
-}
-}
+}else if($dados_array[0] == 'noshow'){
+    $dados_noshow[] = [
+      'id' => $id,
+      'reserva' => $dados_array[2],
+      'guest_name' => $dados_array[3],
+      'checkin' => $dados_array[4],
+      'checkout' => $dados_array[5],
+      'room_rate' => $dados_array[6],
+      'cobrado' => $dados_array[7],
+      'situacao' => $dados_array[8],
+      'data_cobranca' => $dados_array[9],
+      'rps' => $dados_array[10]
+    ];
+}}
 
 $id_job = mysqli_real_escape_string($conn_mysqli, $_POST['id_job']);
 if (isset($_POST['id_acao'])) {
@@ -97,7 +108,7 @@ if($id_acao == 'salvar_parcial' && $id_job != 'poa'){
     $_SESSION[$id_job] = 1;
 }
 
-if($id_job == 'freestay'){
+if($id_job == 'freestay' || $id_job == 'freestays'){
 
     $quantidade = $_POST['quantidade'];
 
@@ -112,8 +123,6 @@ if($id_job == 'freestay'){
 
         foreach ($dados_presentlist as &$item) {
             if ($item['id'] == $id) {
-                $item['comentario_freestay'] = $comentario;
-
                 $reserva = $item['reserva'];
                 $room_number = $item['room_number'];
                 $guest_name = $item['guest_name'];
@@ -121,7 +130,7 @@ if($id_job == 'freestay'){
                 $checkout = $item['checkout'];
                 $room_rate = $item['room_rate'];
                 $comentario_checkins = $item['comentario_checkins'];
-                $comentario_freestay = $item['comentario_freestay'];
+                $comentario_freestay = $comentario;
                 $auditoria_diarias = $item['auditoria_diarias'];
                 $auditoria_garantia = $item['auditoria_garantia'];
 
@@ -138,7 +147,7 @@ if($id_job == 'freestay'){
     $stmt->close();
 
 echo   "<script>
-    alert('Comentarios Salvos com Sucesso')
+    alert('Free Stays Salvos com Sucesso')
     window.location.replace('$id_job.php')
         </script>";
         exit();
@@ -337,4 +346,50 @@ if($query_qtd > 0){
             </script>";
             exit();
     
+}else if($id_job == 'noshows'){
+
+    $quantidade = $_POST['quantidade'];
+
+    //Update Inhouse no Database
+    $sql = "UPDATE $dir"."_excel_auditoria SET dados_auditoria = ? WHERE id = ?";
+    $stmt = $conn_mysqli->prepare($sql);
+    $stmt->bind_param("ss", $dados_final, $id);
+
+    for ($diarias = 1; $diarias <= $quantidade; $diarias++) {
+        $id = $_POST["id_$diarias"];
+        $situacao = $_POST["situacao_$diarias"];
+        $cobrado = $_POST["cobrado_$diarias"];
+        $data_cobranca = $_POST["data_cobranca_$diarias"];
+        $rps = $_POST["rps_$diarias"];
+
+        foreach ($dados_noshow as &$item) {
+            if ($item['id'] == $id) {
+                $reserva = $item['reserva'];
+                $guest_name = $item['guest_name'];
+                $checkin = $item['checkin'];
+                $checkout = $item['checkout'];
+                $room_rate = $item['room_rate'];
+                $cobrado = $cobrado;
+                $situacao = $situacao;
+                $data_cobranca = $data_cobranca;
+                $rps = $rps;
+
+                $dados_auditoria = 'noshow;'.$id.';'.$reserva.';'.$guest_name.';'.$checkin.';'.$checkout.';'.$room_rate.';'.$cobrado.';'.$situacao.';'.$data_cobranca.';'.$rps;
+                $dados_criptografados = openssl_encrypt($dados_auditoria, $metodo, $chave, 0, $iv);
+                $dados_final = base64_encode($dados_criptografados);
+                $stmt->execute();
+
+                break;
+            }
+        }
     }
+
+    $stmt->close();
+
+echo   "<script>
+    alert('No Show validado com Sucesso')
+    window.location.replace('$id_job.php')
+        </script>";
+        exit();
+
+}

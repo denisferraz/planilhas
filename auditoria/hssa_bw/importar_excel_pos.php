@@ -273,7 +273,10 @@ if (!empty($_FILES["xlsFile"]["name"]) && (count($_FILES["xlsFile"]["name"]) == 
                         'checkin' => $colunaB_formatada,
                         'checkout' => $colunaC_formatada,
                         'room_rate' => $colunaD,
-                        'cobrado' => $colunaF
+                        'cobrado' => $colunaF,
+                        'situacao' => 'Pendente',
+                        'data_cobranca' => '',
+                        'rps' => ''
                     ];
                 }
 
@@ -368,8 +371,11 @@ $query->execute();
      $checkout = $select['checkout'];
      $room_rate = $select['room_rate'];
      $cobrado = $select['cobrado'];
+     $situacao = $select['situacao'];
+     $data_cobranca = $select['data_cobranca'];
+     $rps = $select['rps'];
 
-     $dados_auditoria = 'noshow;'.$id.';'.$reserva.';'.$guest_name.';'.$checkin.';'.$checkout.';'.$room_rate.';'.$cobrado;
+     $dados_auditoria = 'noshow;'.$id.';'.$reserva.';'.$guest_name.';'.$checkin.';'.$checkout.';'.$room_rate.';'.$cobrado.';'.$situacao.';'.$data_cobranca.';'.$rps;
      $dados_criptografados = openssl_encrypt($dados_auditoria, $metodo, $chave, 0, $iv);
      $dados_final = base64_encode($dados_criptografados);
      $stmt->execute();

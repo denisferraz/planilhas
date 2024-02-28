@@ -549,7 +549,7 @@ $revpar_mes = number_format(floatval($receita_hospedagem_mes) / floatval($quarto
 $revpar_dia_total = number_format(floatval($receita_total_dia) / floatval($quartos_construidos_dia), 2, ',', '.');
 $revpar_mes_total = number_format(floatval($receita_total_mes) / floatval($quartos_construidos_mes), 2, ',', '.');
 
-//Planilha
+//Planilha Excel
 $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
 $protection = $spreadsheet->getActiveSheet()->getProtection();
 $protection->setPassword("$worksheet_password");

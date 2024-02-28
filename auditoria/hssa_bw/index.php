@@ -66,6 +66,8 @@ $_SESSION['noshow'] = 0;
 <h1><?php echo $_SESSION['hotel_name']; ?> - Auditoria Digital</h1>
 <span class="card-group-right"><a href="../../logout.php"><button>Clique aqui para Sair</button></a></span>
 <span class="card-group-left"><a href="../../painel.php"><button>Voltar</button></a></span>
+<span class="card-group-right"><a href="index_noshow.php"><button>No-Shows</button></a></span>
+<span class="card-group-right"><a href="index_freestay.php"><button>Cortesias/Uso da Casa</button></a></span>
 <?php
 if($_SESSION['hierarquia'] != 'Colaborador'){
 $id = base64_encode('Novo,123');

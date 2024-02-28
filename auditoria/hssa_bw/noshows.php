@@ -17,26 +17,17 @@ if($dir != $_SESSION['hotel']){
 
 error_reporting(0);
 
-$data_auditoria = $_SESSION['data_auditoria'];
+$id = mysqli_real_escape_string($conn_mysqli, $_GET['id']);
 
-$query_status = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria_auditorias WHERE id > 0 AND data_auditoria = '{$data_auditoria}'");
-$query_status->execute();
-while($select_status = $query_status->fetch(PDO::FETCH_ASSOC)){
-    $status_auditoria = $select_status['auditoria_status'];
-}
+$data_auditoria = date('Y-m-d', $id);
 
-if($status_auditoria == 'Pendente'){
-    echo "<script>
-    alert('Auditoria não foi Iniciada!')
-    top.location.replace('index.php')
-    </script>";
-    exit();
-}
+$mes = date('m', strtotime($data_auditoria));
 
 $chave = $_SESSION['hotel'].$chave;
 
 //$_SESSION['dados_presentlist']
-$query = $conexao->prepare("SELECT * FROM $dir"."_excel_auditoria WHERE data_auditoria = '{$data_auditoria}'");
+$query = $conexao->prepare("SELECT * FROM {$dir}_excel_auditoria WHERE MONTH(data_auditoria) = :mes");
+$query->bindParam(':mes', $mes, PDO::PARAM_INT);
 $query->execute();
 
 $dados_presentlist = [];
@@ -50,29 +41,24 @@ $dados_decifrados = openssl_decrypt($dados, $metodo, $chave, 0, $iv);
 
 $dados_array = explode(';', $dados_decifrados);
 
-if($dados_array[0] == 'inhouse'){
-$dados_presentlist[] = [
-  'id' => $id,
-  'reserva' => $dados_array[2],
-  'room_number' => $dados_array[3],
-  'guest_name' => $dados_array[4],
-  'checkin' => $dados_array[5],
-  'checkout' => $dados_array[6],
-  'room_rate' => $dados_array[7],
-  'comentario_checkins' => $dados_array[8],
-  'comentario_freestay' => $dados_array[9],
-  'auditoria_diarias' => $dados_array[10],
-  'auditoria_garantia' => $dados_array[11]
-];
+if($dados_array[0] == 'noshow'){
+    $dados_noshow[] = [
+      'id' => $id,
+      'reserva' => $dados_array[2],
+      'guest_name' => $dados_array[3],
+      'checkin' => $dados_array[4],
+      'checkout' => $dados_array[5],
+      'room_rate' => $dados_array[6],
+      'cobrado' => $dados_array[7],
+      'situacao' => $dados_array[8],
+      'data_cobranca' => $dados_array[9],
+      'rps' => $dados_array[10]
+    ];
 }}
-
-$reservas = array_filter($dados_presentlist, function($item) {
-    return $item['room_rate'] == 0;
-});
 
 $dados_filtrados = [];
 
-foreach ($reservas as $select) {
+foreach ($dados_noshow as $select) {
     $reserva = $select['reserva'];
     
     // Verificar se já existe uma entrada para essa reserva
@@ -82,9 +68,9 @@ foreach ($reservas as $select) {
     }
 }
 
-// Ordenar o array por 'room_number'
+// Ordenar o array por 'checkin'
 usort($dados_filtrados, function($a, $b) {
-    return $a['room_number'] <=> $b['room_number'];
+    return $a['checkin'] <=> $b['checkin'];
 });
 
 $quantidade_dados = count($dados_filtrados);
@@ -100,28 +86,32 @@ $quantidade_dados = count($dados_filtrados);
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../../css/style_tabela.css">
-    <title>Free Stays</title>
+    <title>No-Shows</title>
 </head>
 <body>
 
 <div class="container">
 <!-- Diarias -->
 <fieldset>
-<legend>Free Stays</legend>
+<legend>No-Shows</legend>
 <form action="acao.php" method="POST" id="formulario_auditoria">
 <table>
-<th colspan="8">Cortesias e Uso da Casa</th>
-<tr><td style="background-color: black" colspan="8"></td></tr>
-<tr><td align="center" colspan="8">Quantidade: <b><?php echo $quantidade_dados; ?></b></td>
-<tr><td style="background-color: black" colspan="8"></td></tr>
+<th colspan="11">No-Shows Acumulados</th>
+<tr><td style="background-color: black" colspan="11"></td></tr>
+<tr><td align="center" colspan="11">Periodo de Conferencia: <b><?php $mes_completo = (new DateTime($data_auditoria))->format('F Y'); echo $mes_completo; ?></b></td>
+<tr><td align="center" colspan="11">Quantidade Total: <b><?php echo $quantidade_dados; ?></b></td>
+<tr><td style="background-color: black" colspan="11"></td></tr>
 <tr style="background-color: grey">
     <td align="center"><b>Qtd</b></td>
     <td align="center"><b>Reserva</b></td>
-    <td align="center"><b>Apto.</b></td>
     <td align="center"><b>Hospede</b></td>
     <td align="center"><b>Checkin</b></td>
     <td align="center"><b>Checkout</b></td>
-    <td align="center"><b>Comentario</b></td>
+    <td align="center"><b>Diária</b></td>
+    <td align="center"><b>Situação</b></td>
+    <td align="center"><b>Valor Cobrado</b></td>
+    <td align="center"><b>Data Cobrado</b></td>
+    <td align="center"><b>RPS</b></td>
     <td align="center"><b>Documento</b></td>
 </tr>
 
@@ -135,8 +125,11 @@ foreach ($dados_filtrados as $select) {
     $reserva = $select['reserva'];
     $checkin = $select['checkin'];
     $checkout = $select['checkout'];
-    $room_number = $select['room_number'];
-    $comentario = $select['comentario_freestay'];
+    $room_rate = $select['room_rate'];
+    $cobrado = $select['cobrado'];
+    $situacao = $select['situacao'];
+    $data_cobranca = $select['data_cobranca'];
+    $rps = $select['rps'];
 
     $qtd++;
     $quantidade++;
@@ -150,11 +143,29 @@ foreach ($dados_filtrados as $select) {
 <tr style="background-color: <?php echo $cor_tr; ?>">
     <td align="center"><b><?php echo $qtd; ?></b></td>
     <td align="center"><?php echo $reserva; ?></td>
-    <td align="center"><?php echo $room_number; ?></td>
     <td><?php echo $guest_name; ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkin")); ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
-    <td><input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>"></td>
+    <td>R$<?php echo number_format($room_rate, 2, ',', '.'); ?></td>
+    <td>
+        <select name="situacao_<?php echo $quantidade ?>">
+        <option value="Pendente" <?php if ($situacao == 'Pendente') echo 'selected'; ?>>Pendente</option>
+        <option value="Cobrado" <?php if ($situacao == 'Cobrado') echo 'selected'; ?>>Cobrado</option>
+        <option value="Cartão Recusado" <?php if ($situacao == 'Cartão Recusado') echo 'selected'; ?>>Cartão Recusado</option>
+        <option value="Reserva Cancelada" <?php if ($situacao == 'Reserva Cancelada') echo 'selected'; ?>>Reserva Cancelada</option>
+        <option value="Duplicidade" <?php if ($situacao == 'Duplicidade') echo 'selected'; ?>>Duplicidade</option>
+        <option value="No-Show Perdoado" <?php if ($situacao == 'No-Show Perdoado') echo 'selected'; ?>>No-Show Perdoado</option>
+        <option value="No-Show Não Garantido" <?php if ($situacao == 'No-Show Não Garantido') echo 'selected'; ?>>No-Show Não Garantido</option>
+        <option value="Erro Operacional" <?php if ($situacao == 'Erro Operacional') echo 'selected'; ?>>Erro Operacional</option>
+        </select>
+    </td>
+    <td>
+        <input class="input-field-auditoria replace-comma" type="text" name="cobrado_<?php echo $quantidade ?>" value="<?php echo $cobrado ?>">
+    </td>
+    <td><input type="date" max="<?php echo $hoje ?>" name="data_cobranca_<?php echo $quantidade ?>" value="<?php echo $data_cobranca ?>"></td>
+    <td>
+        <input class="input-field-auditoria replace-comma" type="number" name="rps_<?php echo $quantidade ?>" value="<?php echo $rps ?>">
+    </td>
     <td align="center">
         
         <!-- ARQUIVOS !-->
@@ -187,7 +198,7 @@ foreach ($dados_filtrados as $select) {
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
 <input type="hidden" name="data_auditoria" value="<?php echo strtotime("$data_auditoria") ?>">
-<input type="hidden" name="id_job" value="freestay">
+<input type="hidden" name="id_job" value="noshows">
 <input type="submit" class="submit" value="Validar Dados">
 </form>
 </fieldset>

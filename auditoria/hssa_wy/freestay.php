@@ -66,9 +66,21 @@ $dados_presentlist[] = [
 ];
 }}
 
-$dados_filtrados = array_filter($dados_presentlist, function($item) {
+$reservas = array_filter($dados_presentlist, function($item) {
     return $item['room_rate'] == 0;
 });
+
+$dados_filtrados = [];
+
+foreach ($reservas as $select) {
+    $reserva = $select['reserva'];
+    
+    // Verificar se já existe uma entrada para essa reserva
+    if (!isset($dados_filtrados[$reserva])) {
+        // Se não existir, adiciona a entrada
+        $dados_filtrados[$reserva] = $select;
+    }
+}
 
 // Ordenar o array por 'room_number'
 usort($dados_filtrados, function($a, $b) {
@@ -88,7 +100,7 @@ $quantidade_dados = count($dados_filtrados);
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../../css/style_tabela.css">
-    <title>Auditoria Digital</title>
+    <title>Free Stays</title>
 </head>
 <body>
 
@@ -96,21 +108,21 @@ $quantidade_dados = count($dados_filtrados);
 <!-- Diarias -->
 <fieldset>
 <legend>Free Stays</legend>
-<?php if($status_auditoria != 'Finalizada'){ ?>
 <form action="acao.php" method="POST" id="formulario_auditoria">
-<?php } ?>
 <table>
-<th colspan="6">Cortesias e Uso da Casa</th>
-<tr><td style="background-color: black" colspan="6"></td></tr>
-<tr><td align="center" colspan="6">Free Stays: <b><?php echo $quantidade_dados ?></b></td>
-<tr><td style="background-color: black" colspan="6"></td></tr>
+<th colspan="8">Cortesias e Uso da Casa</th>
+<tr><td style="background-color: black" colspan="8"></td></tr>
+<tr><td align="center" colspan="8">Quantidade: <b><?php echo $quantidade_dados; ?></b></td>
+<tr><td style="background-color: black" colspan="8"></td></tr>
 <tr style="background-color: grey">
     <td align="center"><b>Qtd</b></td>
+    <td align="center"><b>Reserva</b></td>
     <td align="center"><b>Apto.</b></td>
     <td align="center"><b>Hospede</b></td>
     <td align="center"><b>Checkin</b></td>
     <td align="center"><b>Checkout</b></td>
     <td align="center"><b>Comentario</b></td>
+    <td align="center"><b>Documento</b></td>
 </tr>
 
 
@@ -137,21 +149,46 @@ foreach ($dados_filtrados as $select) {
     ?>
 <tr style="background-color: <?php echo $cor_tr; ?>">
     <td align="center"><b><?php echo $qtd; ?></b></td>
+    <td align="center"><?php echo $reserva; ?></td>
     <td align="center"><?php echo $room_number; ?></td>
     <td><?php echo $guest_name; ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkin")); ?></td>
     <td align="center"><?php echo date('d/m/Y', strtotime("$checkout")); ?></td>
-    <td><input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>" required ></td>
+    <td><input class="input-field" type="text" name="comentarios_<?php echo $quantidade ?>" value="<?php echo $comentario ?>"></td>
+    <td align="center">
+        
+        <!-- ARQUIVOS !-->
+        <?php
+        $diretorio = 'arquivos/'.$reserva;
+        $files = glob($diretorio . '.pdf');
+        $numFiles = count($files);
+
+        if($numFiles < 1){
+
+            ?>
+            <a href="javascript:void(0)" onclick='window.open("arquivos.php?id=<?php echo $reserva ?>","iframe-home"); return false'><button class="botao-topo">Enviar PDF</button></a>
+            <?php
+
+        }else{
+
+            foreach ($files as $file) {
+                $fileName = basename($file);
+                echo '<a href="javascript:void(0);" onclick="window.open(\'' . $file . '\',\'_blank\'); return false"><button class="botao">Ver PDF</button></a>';
+            }
+
+        }
+        ?>
+
+    </td>
 </tr>
 <input type="hidden" name="id_<?php echo $quantidade ?>" value="<?php echo $id ?>">
 <?php } ?>
 </table>
 <br><br>
 <input type="hidden" name="quantidade" value="<?php echo $quantidade_dados ?>">
+<input type="hidden" name="data_auditoria" value="<?php echo strtotime("$data_auditoria") ?>">
 <input type="hidden" name="id_job" value="freestay">
-<?php if($status_auditoria != 'Finalizada'){ ?>
 <input type="submit" class="submit" value="Validar Dados">
-<?php } ?>
 </form>
 </fieldset>
 </div>
