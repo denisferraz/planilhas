@@ -16,6 +16,9 @@ if($dir != $_SESSION['hotel']){
 
 error_reporting(0);
 
+$min_date = date('Y-m-d', strtotime("-1 days"));
+$max_date = date('Y-m-d', strtotime("+1 days"));
+
 ?>
 
 <!DOCTYPE html>
@@ -46,8 +49,10 @@ while($select = $query->fetch(PDO::FETCH_ASSOC)){
     </select><br><br>
 <label id="guest_name">Hospede</label>
 <input class="input-field" type="text" id="guest_name" name="guest_name" placeholder="Nome Completo" required><br>
-<label id="noites">Noites</label>
-<input class="input-field" min="1" max="99" type="number" id="noites" value="1" name="noites"><br>
+<label id="checkin">Checkin</label>
+<input class="input-field" type="date" id="checkin" value="<?php echo $hoje; ?>" min="<?php echo $min_date; ?>" max="<?php echo $max_date; ?>" name="checkin"><br>
+<label id="checkout">Checkout</label>
+<input class="input-field" type="date" id="checkout" value="<?php echo $max_date; ?>" min="<?php echo $hoje; ?>" name="checkout"><br>
 <label id="adultos">Adultos</label>
 <input class="input-field" min="1" max="4" type="number" id="adultos" value="1" name="adultos"><br>
 <label id="criancas">Crianças</label>

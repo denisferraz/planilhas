@@ -30,6 +30,7 @@ $guest_name = mysqli_real_escape_string($conn_mysqli, $_POST['guest_name']);
 $guest_email = mysqli_real_escape_string($conn_mysqli, $_POST['guest_email']);
 $guest_telefone = mysqli_real_escape_string($conn_mysqli, $_POST['guest_telefone']);
 $guest_documento = mysqli_real_escape_string($conn_mysqli, $_POST['guest_documento']);
+$guest_nascimento = mysqli_real_escape_string($conn_mysqli, $_POST['guest_nascimento']);
 $guest_endereco_cep = mysqli_real_escape_string($conn_mysqli, $_POST['guest_endereco_cep']);
 $guest_endereco_rua = mysqli_real_escape_string($conn_mysqli, $_POST['guest_endereco_rua']);
 $guest_endereco_bairro = mysqli_real_escape_string($conn_mysqli, $_POST['guest_endereco_bairro']);
@@ -44,27 +45,73 @@ $room_msg = mysqli_real_escape_string($conn_mysqli, $_POST['room_msg']);
 $room_ratecode = mysqli_real_escape_string($conn_mysqli, $_POST['room_ratecode']);
 $room_number = mysqli_real_escape_string($conn_mysqli, $_POST['room_number']);
 $room_type = mysqli_real_escape_string($conn_mysqli, $_POST['room_type']);
+$company = mysqli_real_escape_string($conn_mysqli, $_POST['company']);
 
-$query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_cashier (username, tipo_lancamento, pagamento_tipo, pagamento_valor, reserva_id, origem) VALUES (:username, :tipo_lancamento, :pagamento_tipo, :pagamento_valor, :reserva_id, :origem)");
-$query->execute(array('username' => $_SESSION['username'], 'tipo_lancamento' => 'Pagamento', 'pagamento_tipo' => $reserva_pagamento_tipo, 'pagamento_valor' => $reserva_pagamento_valor, 'reserva_id' => $reserva_id, 'origem' => 'arrivals'));
+$all_guests = $guest_name;
 
-$dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';'.$room_number.';Checkedin';
+for ($paxs = 1; $paxs < ($adultos + $criancas); $paxs++) {
+    ${"acte_name_$paxs"} = mysqli_real_escape_string($conn_mysqli, $_POST['acte_name_' . $paxs]);
+    ${"acte_documento_$paxs"} = mysqli_real_escape_string($conn_mysqli, $_POST['acte_documento_' . $paxs]);
+    ${"acte_nascimento_$paxs"} = mysqli_real_escape_string($conn_mysqli, $_POST['acte_nascimento_' . $paxs]);
+
+    $all_guests .= ' - '.mysqli_real_escape_string($conn_mysqli, $_POST['acte_name_' . $paxs]);
+}
+
+$query_check = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE room_number LIKE :room_number AND room_status != :room_status");
+$query_check->execute(array('room_number' => '%'.$room_number.'%', 'room_status' => 'Designado'));
+$resultado = $query_check->rowCount();
+
+if($resultado > 0){
+    echo   "<script>
+            alert('Apartamento Invalido')
+            window.location.replace('chegadas.php')
+            </script>";
+            exit();
+}
+
+if (isset($_POST['change_fnrh'])) {
+    $reserva_pagamento_diaria = 0.00;
+    $reserva_pagamento_valor = 0.00;
+}else if($reserva_pagamento_tipo != 'Faturado'){
+    $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_cashier (username, tipo_lancamento, pagamento_tipo, pagamento_valor, reserva_id, origem) VALUES (:username, :tipo_lancamento, :pagamento_tipo, :pagamento_valor, :reserva_id, :origem)");
+    $query->execute(array('username' => $_SESSION['username'], 'tipo_lancamento' => 'Pagamento', 'pagamento_tipo' => $reserva_pagamento_tipo, 'pagamento_valor' => $reserva_pagamento_valor, 'reserva_id' => $reserva_id, 'origem' => 'arrivals'));
+}
+
+$dados_arrivalslist = $guest_name.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_type.';'.$room_ratecode.';'.$room_msg.';'.$room_number.';Checkedin;'.$company.';'.$checkin.';'.$checkout;
 $dados_criptografados = openssl_encrypt($dados_arrivalslist, $metodo, $chave, 0, $iv);
 $dados_final = base64_encode($dados_criptografados);
 
 $query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_arrivals SET dados_arrivals = :alteracao WHERE id = :reserva_id");
 $query->execute(array('alteracao' => $dados_final, 'reserva_id' => $reserva_id));
 
-$query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number = :room_number");
-$query->execute(array('alteracao' => 'Ocupado', 'room_number' => $room_number));
+$query = $conexao->prepare("UPDATE $dir"."_excel_gestaorecepcao_roomstatus SET room_status = :alteracao WHERE room_number LIKE :room_number");
+$query->execute(array('alteracao' => 'Ocupado', 'room_number' => '%'.$room_number.'%'));
 
-$dados_presentlist = $guest_name.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$reserva_pagamento_valor.';'.$room_number.';'.$room_msg.';;Pendente';
+$reserva_pagamento_aeb = 0.00;
+$reserva_pagamento_outros = 0.00;
+$reserva_pagamento_saldo = $reserva_pagamento_diaria - $reserva_pagamento_valor;
+$dados_saldos = $reserva_id.';'.number_format(floatval($reserva_pagamento_diaria), 2, ',', '.').';'.number_format(floatval($reserva_pagamento_aeb), 2, ',', '.').';'.number_format(floatval($reserva_pagamento_valor), 2, ',', '.').';'.number_format(floatval($reserva_pagamento_saldo), 2, ',', '.').';'.number_format(floatval($reserva_pagamento_outros), 2, ',', '.');
+$dados_criptografados = openssl_encrypt($dados_saldos, $metodo, $chave, 0, $iv);
+$dados_final = base64_encode($dados_criptografados);
+
+$query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_saldos (dados_saldos) VALUES (:dados_saldos)");
+$query->execute(array('dados_saldos' => $dados_final));
+
+$dados_presentlist = $all_guests.';'.$checkin.';'.$checkout.';'.$noites.';'.$adultos.';'.$criancas.';'.$room_ratecode.';'.$reserva_pagamento_valor.';'.$room_number.';'.$room_msg.';;Pendente;'.$reserva_id;
 $dados_criptografados = openssl_encrypt($dados_presentlist, $metodo, $chave, 0, $iv);
 $dados_final = base64_encode($dados_criptografados);
 
 $query = $conexao->prepare("INSERT INTO $dir"."_excel_gestaorecepcao_inhouse (dados_presentlist, reserva_id) VALUES (:dados_presentlist, :reserva_id)");
 $query->execute(array('dados_presentlist' => $dados_final, 'reserva_id' => $reserva_id));
 
+
+if (isset($_POST['change_fnrh'])) {
+    echo   "<script>
+    alert('Checkin Realizado com Sucesso')
+    window.location.replace('chegadas.php')
+    </script>";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -101,8 +148,20 @@ $query->execute(array('dados_presentlist' => $dados_final, 'reserva_id' => $rese
 </center>
 <br>
 <div class="appointment-resumo-1">
-    <label><b>Nome Completo:</b> <?php echo $guest_name ?></label><br>
-    <label><b>Documento:</b> <?php echo $guest_documento ?></label><br>
+    <label><b>[Titular] Nome Completo:</b> <?php echo $guest_name ?></label><br>
+    <label><b>Nascimento:</b> <?php echo date('d/m/Y', strtotime("$guest_nascimento")) ?></label><br>
+    <label><b>Documento:</b> <?php echo $guest_documento ?></label><br><br>
+    <?php for($paxs = 1 ; $paxs < ($adultos + $criancas) ; $paxs++){ 
+        $acte_nascimento = ${"acte_nascimento_$paxs"};
+        $acte_name = ${"acte_name_$paxs"};
+        $acte_documento = ${"acte_documento_$paxs"};
+        ?>
+    <label><b>[Acompanhante <?php echo $paxs; ?>] Nome Completo:</b> <?php echo $acte_name ?></label><br>
+    <label><b>Nascimento:</b> <?php echo date('d/m/Y', strtotime("$acte_nascimento")) ?></label><br>
+    <label><b>Documento:</b> <?php echo $acte_documento ?></label><br><br>
+    <?php } ?>
+</div>
+<div class="appointment-resumo-1">
     <label><b>E-mail:</b> <?php echo $guest_email ?></label><br>
     <label><b>Telefone:</b> <?php echo $guest_telefone ?></label><br><br>
     <label><b>Endereço</b></label><br>
@@ -123,14 +182,17 @@ $query->execute(array('dados_presentlist' => $dados_final, 'reserva_id' => $rese
 </div>
 <br>
 <div class="appointment-resumo-1">
-<label><b>Assinatura</b></label><br><br><br><br>
+<label><b>Assinatura(s)</b></label><br><br><br><br>
 <center><b>
 _______________________________________________________<br>
-<?php echo $guest_name ?></b>
+<?php echo $guest_name ?>
+<?php for($paxs = 1 ; $paxs < ($adultos + $criancas) ; $paxs++){ 
+    $acte_name = ${"acte_name_$paxs"}; ?>
+<br><br><br><br>_______________________________________________________<br>
+<?php echo $acte_name; } ?></b>
 </center>
 </div>
 </div>
-
 <script>
         function printPage() {
             window.print();

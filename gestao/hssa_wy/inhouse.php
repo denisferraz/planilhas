@@ -49,10 +49,10 @@ $presentlist_array[] = [
     'adultos' => $dados_array[4],
     'criancas' => $dados_array[5],
     'room_ratecode' => $dados_array[6],
-    'room_msg' => $dados_array[9],
-    'room_number' => $dados_array[8],
-    'room_company' => $dados_array[10],
     'room_balance' => $dados_array[7],
+    'room_number' => $dados_array[8],
+    'room_msg' => $dados_array[9],
+    'room_company' => $dados_array[10],
     'alteracao' => $dados_array[11],
     'reserva' => $dados_array[12]
 ];
@@ -67,7 +67,7 @@ foreach ($presentlist_array as $item) {
 }
 
 usort($filtered_array, function ($a, $b) {
-    return $a['room_number'] - $b['room_number'];
+    return $a['room_number'] <=> $b['room_number'];
 });
 
 //Saldos
@@ -91,10 +91,13 @@ $saldos_array[] = [
     'diarias' => $dados_array[1],
     'aeb' => $dados_array[2],
     'credito' => $dados_array[3],
-    'saldo' => $dados_array[4]
+    'saldo' => $dados_array[4],
+    'outros' => $dados_array[5]
 ];
 
 }
+
+$qtd_saldos = count($saldos_array);
 ?>
 
 <!DOCTYPE html>
@@ -132,19 +135,22 @@ foreach ($filtered_array as $select_inhouse) {
     $room_balance = number_format($room_balance, 2, ',', '.');
 
     $filtered_array_saldos = [];
-foreach ($saldos_array as $item) {
-    if ($item['reserva'] === $reserva) {
-        $filtered_array_saldos[] = $item;
-    }
-}
+
+    foreach ($saldos_array as $item) {
+        if ($item['reserva'] == $reserva) {
+            // Mantém o item existente
+            $filtered_array_saldos[] = $item;
+        }
+    }    
 
 foreach ($filtered_array_saldos as $select_saldos2) {
     $diarias = $select_saldos2['diarias'];
     $aeb = $select_saldos2['aeb'];
     $credito = $select_saldos2['credito'];
     $saldo = $select_saldos2['saldo'];
+    $outros = $select_saldos2['outros'];
 }
-echo "<b>Saldo: R$$saldo [ Diarias: R$$diarias + AeB: R$$aeb - Crédito: R$$credito ]</b>";
+echo "<b>Saldo: R$$saldo [ Diarias: R$$diarias + AeB: R$$aeb + Outros: R$$outros - Crédito: R$$credito ]</b>";
 
     //Pegar o Room Type
     $query_roomtype = $conexao->prepare("SELECT room_type FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE room_number = '{$room_number}'");
@@ -155,6 +161,7 @@ echo "<b>Saldo: R$$saldo [ Diarias: R$$diarias + AeB: R$$aeb - Crédito: R$$cred
     ?>
 <div class="appointment-inhouse" onclick="selecionarRadio(this)">
     <input type="radio" name="reserva_id" value="<?php echo $id ?>">
+    <input type="hidden" name="reserva_saldo" value="<?php echo $reserva ?>">
     <span class="name">[ <?php echo $room_number ?> - <?php echo $room_type ?> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y', strtotime("$checkin")) ?> a <?php echo date('d/m/Y', strtotime("$checkout")); ?> | <span class="name">Hospedes [ <?php echo $adultos ?> ] | Company [ <?php echo $room_company ?> ]</span>
 </div>
 

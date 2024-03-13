@@ -61,13 +61,13 @@ $presentlist_array[] = [
 
 $filtered_array = [];
 foreach ($presentlist_array as $item) {
-    if (($item['alteracao'] === 'Pendente' || $item['alteracao'] === 'Prorrogado') && $item['checkout'] === $hoje) {
+    if (($item['alteracao'] === 'Pendente' || $item['alteracao'] === 'Prorrogado') && $item['checkout'] <= $hoje) {
         $filtered_array[] = $item;
     }
 }
 
 usort($filtered_array, function ($a, $b) {
-    return $a['room_number'] - $b['room_number'];
+    return $a['room_number'] <=> $b['room_number'];
 });
 
 //Saldos
@@ -91,7 +91,8 @@ $saldos_array[] = [
     'diarias' => $dados_array[1],
     'aeb' => $dados_array[2],
     'credito' => $dados_array[3],
-    'saldo' => $dados_array[4]
+    'saldo' => $dados_array[4],
+    'outros' => $dados_array[5]
 ];
 
 }
@@ -143,8 +144,9 @@ foreach ($filtered_array_saldos as $select_saldos2) {
     $aeb = $select_saldos2['aeb'];
     $credito = $select_saldos2['credito'];
     $saldo = $select_saldos2['saldo'];
+    $outros = $select_saldos2['outros'];
 }
-echo "<b>Saldo: R$$saldo [ Diarias: R$$diarias + AeB: R$$aeb - Crédito: R$$credito ]</b>";
+echo "<b>Saldo: R$$saldo [ Diarias: R$$diarias + AeB: R$$aeb + Outros: R$$outros - Crédito: R$$credito ]</b>";
 
     //Pegar o Room Type
     $query_roomtype = $conexao->prepare("SELECT room_type FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE room_number = '{$room_number}'");

@@ -114,7 +114,7 @@ while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 //Quantidade Total de Apartamentos
 $roomTotalQuantidades = array();
 
-$query_Total = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 AND (room_status != 'O.O.O-CL.' AND room_status != 'O.O.O-DTY') GROUP BY room_type");
+$query_Total = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 AND room_status != 'Bloqueado' GROUP BY room_type");
 $query_Total->execute();
 $resultados_Total = $query_Total->fetchAll(PDO::FETCH_ASSOC);
 
@@ -150,7 +150,7 @@ foreach ($resultados_rooms as $resultado_rooms) {
 //Vagos Limpos por Categoria
 $roomTypeQuantidades = array();
 
-$query_rooms_type = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 AND (room_status = 'AV.-CL.' OR room_status = 'Limpo' OR room_status = 'Designado') GROUP BY room_type");
+$query_rooms_type = $conexao->prepare("SELECT room_type, COUNT(*) as count FROM $dir"."_excel_gestaorecepcao_roomstatus WHERE id > 0 AND (room_status = 'Limpo' OR room_status = 'Designado') GROUP BY room_type");
 $query_rooms_type->execute();
 $resultados_rooms_type = $query_rooms_type->fetchAll(PDO::FETCH_ASSOC);
 
@@ -260,15 +260,11 @@ echo "<meta HTTP-EQUIV='refresh' CONTENT='1800'>";
 
 <div id="container-topo">
 <h1>Gestão Recepção (Downtime)</h1>
-<div class="botao-topo"><a href="index.php"><button>Importar</button></a></div>
+<div class="botao-topo"><a href="index.php"><button class="botao">Importar</button></a></div>
 </div>
 <div id="container-topo">
-<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("cashier.php","iframe")'><button>Caixa</button></a></div>
-<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("lancamentos.php","iframe")'><button>Lançamentos</button></a></div>
-<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("checkins.php","iframe")'><button>Checkins</button></a></div>
-<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("checkouts.php","iframe")'><button>Checkouts</button></a></div>
-<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("canceladas.php","iframe")'><button>Canceladas</button></a></div>
-<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("prorrogadas.php","iframe")'><button>Prorrogadas</button></a></div>
+<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("alteracoes.php","iframe")'><button>Alterações</button></a></div>
+<div class="botao-topo"><a href="javascript:void(0)" onclick='window.open("cashier.php","iframe")'><button>Fechar Caixa</button></a></div>
 </div>
 <div id="container-topo">
 <div class="botao-topo-chegadas"><a href="javascript:void(0)" onclick='window.open("chegadas.php","iframe")'><button>Chegadas</button></a></div>
@@ -319,8 +315,11 @@ foreach ($roomTypes as $index => $room_type) {
 <div id="container-topo">
 <div class="botao-acao"><button onclick='window.open("newarrival.php","iframe")' class="botao">New Arrival</button></div>
 <div class="botao-acao"><button onclick="executarForm('Checkin')" class="botao">Checkin</button></div>
+<div class="botao-acao"><button onclick="executarForm('DesignarApto')" class="botao">Tirar Designação</button></div>
+<div class="botao-acao"><button onclick="executarForm('EditarReserva')" class="botao">Editar Reserva</button></div>
 <div class="botao-acao"><button onclick="executarForm('CancelarReserva')" class="botao">Cancelar Reserva</button></a></div>
 <div class="botao-acao"><button onclick="executarForm('Prorrogar')" class="botao">Prorrogar Reserva</button></a></div>
+<div class="botao-acao"><button onclick="executarForm('RoomMove')" class="botao">Trocar Uh</button></div>
 <div class="botao-acao"><button onclick="executarForm('Checkout')" class="botao">Checkout</button></a></div>
 <div class="botao-acao"><button onclick="executarForm('Produtos')" class="botao">Lançar Produtos</button></a></div>
 <div class="botao-acao"><button onclick="executarForm('Pagamentos')" class="botao">Lançar Pagamentos</button></a></div>
@@ -332,10 +331,25 @@ function executarForm(valor) {
   var iframe = document.getElementById("iframe");
   var iframeWindow = iframe.contentWindow;
 
-  if(valor === 'Checkin' || valor === 'CancelarReserva'){
+  if(valor === 'Checkin' || valor === 'CancelarReserva' || valor === 'DesignarApto' || valor === 'EditarReserva'){
     var formulario = iframeWindow.document.getElementById("chegadas");
   }else{
     var formulario = iframeWindow.document.getElementById("Inhouse");
+  }
+
+  if(valor === 'DesignarApto'){
+  // Criar o elemento input hidden
+  var inputHidden2 = document.createElement("input");
+  inputHidden2.type = "hidden";
+  inputHidden2.name = "id_acao";
+  inputHidden2.value = valor;
+  valor = 'Checkin';
+  }else{
+// Criar o elemento input hidden
+  var inputHidden2 = document.createElement("input");
+  inputHidden2.type = "hidden";
+  inputHidden2.name = "id_acao";
+  inputHidden2.value = ''; 
   }
 
   // Criar o elemento input hidden
@@ -346,6 +360,7 @@ function executarForm(valor) {
 
   // Adicionar o elemento input hidden ao formulário
   formulario.appendChild(inputHidden);
+  formulario.appendChild(inputHidden2);
 
   // Faça qualquer manipulação adicional no formulário, se necessário
 

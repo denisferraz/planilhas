@@ -19,7 +19,7 @@ if($dir != $_SESSION['hotel']){
 $chave = $_SESSION['hotel'].$chave;
 
 //Reservas Checkins do Dia
-$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_cashier WHERE id > 0 AND tipo_lancamento = 'Pagamento' ORDER BY username");
+$query = $conexao->prepare("SELECT * FROM $dir"."_excel_gestaorecepcao_cashier WHERE id > 0 AND tipo_lancamento = 'Pagamento' AND username = '{$_SESSION['username']}' ORDER BY id");
 $query->execute();
 $query_qtd = $query->rowCount();
 
@@ -35,8 +35,20 @@ $query_qtd = $query->rowCount();
     <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
     <link rel="shortcut icon" href="../../images/favicon.ico" type="image/x-icon">
     <title>Gestão Recepção - Downtime</title>
+
+    <style>
+        /* CSS to hide the button when printing */
+        @media print {
+            .botao {
+                display: none;
+            }
+        }
+    </style>
+
 </head>
 <body>
+
+<button onclick="printPage()" class="botao">Imprimir Caixa</button><br>
 
 <div class="container">
 <!-- Cashier -->
@@ -77,7 +89,7 @@ while($select2 = $query2->fetch(PDO::FETCH_ASSOC)){
 
     ?>
 <div class="appointment">
-    <span class="time"><?php  echo $username ?> - [ <?php  echo $room_number?> ]</span> <span class="name"><?php echo $guest_name ?> | <?php echo $pagamento_tipo ?></span> <span class="time">R$[ <?php  echo $pagamento_valor ?> ]</span>
+<span class="time"><?php  echo $username ?> - [ <?php  echo $room_number?> ]</span> <?php echo $pagamento_tipo ?> <span class="time">R$[ <?php  echo $pagamento_valor ?> ]</span> <span class="name"><?php echo $guest_name ?></span>
 </div>
 <?php
 } ?>
@@ -85,10 +97,9 @@ while($select2 = $query2->fetch(PDO::FETCH_ASSOC)){
 </fieldset>
 </div>
 <script>
-function selecionarRadio(element) {
-  var radio = element.querySelector('input[type="radio"]');
-  radio.checked = true;
-}
+        function printPage() {
+            window.print();
+        }
 </script>
 </body>
 </html>

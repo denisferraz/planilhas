@@ -49,7 +49,9 @@ $arrivalslist_array[] = [
     'room_msg' => $dados_array[6],
     'room_number' => $dados_array[7],
     'alteracao' => $dados_array[8],
-    'company' => $dados_array[9]
+    'company' => $dados_array[9],
+    'checkin' => $dados_array[10],
+    'checkout' => $dados_array[11]
 ];
 
 }
@@ -64,9 +66,11 @@ foreach ($arrivalslist_array as $item) {
     }
 }
 
-usort($filtered_array, function ($a, $b) {
-    return strcmp($a['room_number'], $b['room_number']);
+// Ordenar o array por 'room_number'
+usort($filtered_array, function($a, $b) {
+    return $a['room_number'] <=> $b['room_number'];
 });
+
 ?>
 
 <!DOCTYPE html>
@@ -90,7 +94,6 @@ usort($filtered_array, function ($a, $b) {
 foreach ($filtered_array as $select_chegadas) {
     $id = $select_chegadas['id'];
     $guest_name = $select_chegadas['guest_name'];
-    $noites = $select_chegadas['noites'];
     $adultos = $select_chegadas['adultos'];
     $criancas = $select_chegadas['criancas'];
     $room_type = $select_chegadas['room_type'];
@@ -98,19 +101,22 @@ foreach ($filtered_array as $select_chegadas) {
     $room_msg = $select_chegadas['room_msg'];
     $room_number = $select_chegadas['room_number'];
     $company = $select_chegadas['company'];
+    $checkin = $select_chegadas['checkin'];
+    $checkout = $select_chegadas['checkout'];
     echo $company;
 
     if($room_number == ''){
     ?>
 <div class="appointment-chegadas">
-    <span class="name">[ <a href="acao.php?id=<?php echo base64_encode("DesignarApto;$id;$room_type") ?>"><button class="botao-rs-bloquear">Apto</button></a> - <?php echo $room_type ?> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y') ?> a <?php echo date('d/m/Y', strtotime("+$noites days")); ?> | <span class="name">Adulos [ <?php echo $adultos ?> ] Crianças [ <?php echo $criancas ?> ] | Diária [ R$<?php echo $room_ratecode.' - '.$room_msg ?> ]</span>
+    <span class="name">[ <a href="acao.php?id=<?php echo base64_encode("DesignarApto;$id;$room_type") ?>"><button class="botao-rs-bloquear">Apto</button></a> - <a href="acao.php?id=<?php echo base64_encode("DesignarRoomTypeApto;$id;$room_type") ?>"><button class="botao-rs-bloquear"><?php echo $room_type ?></button></a> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y', strtotime($checkin)) ?> a <?php echo date('d/m/Y', strtotime($checkout)); ?> | <span class="name">Adultos [ <?php echo $adultos ?> ] Crianças [ <?php echo $criancas ?> ] | Diária [ R$<?php echo $room_ratecode.' - '.$room_msg ?> ]</span>
+    <a href="acao.php?id=<?php echo base64_encode("Chegadas;EditarReserva;$id;0") ?>"><button class="botao-rs-bloquear">Editar</button></a>
     <a href="acao.php?id=<?php echo base64_encode("Chegadas;CancelarReserva;$id;0") ?>"><button class="botao-rs-sujar">Cancelar</button></a>
 </div>
     <?php }else{ ?>
 <form action="acao.php?id=<?php echo base64_encode("Chegadas;123") ?>" id="chegadas" method="POST">
 <div class="appointment-chegadas" onclick="selecionarRadio(this)">
 <input type="radio" name="reserva_id" value="<?php echo $id ?>">
-    <span class="name"> [ <?php  echo $room_number?> - <?php echo $room_type ?> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y') ?> a <?php echo date('d/m/Y', strtotime("+$noites days")); ?> | <span class="name">Adulos [ <?php echo $adultos ?> ] Crianças [ <?php echo $criancas ?> ] | Diária [ R$ <?php echo $room_ratecode.' - '.$room_msg ?> ]</span>
+    <span class="name"> [ <?php  echo $room_number?> - <?php echo $room_type ?> ]</span> <span class="time"><?php echo $guest_name ?> - <?php echo date('d/m/Y', strtotime($checkin)) ?> a <?php echo date('d/m/Y', strtotime($checkout)); ?> | <span class="name">Adulos [ <?php echo $adultos ?> ] Crianças [ <?php echo $criancas ?> ] | Diária [ R$ <?php echo $room_ratecode.' - '.$room_msg ?> ]</span>
 </div>
     <?php } ?>
 <?php
